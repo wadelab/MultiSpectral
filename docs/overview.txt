@@ -1,0 +1,51 @@
+% overview of led flicker code
+
+
+1: initialization code. Stores the results in a structure called 'session'
+2: Also initialize the 'display' stucture dpy containing info on the LEDs (esp the specta)
+
+3: Then call a routine 'led_getScanStruct'returning a structure 'scan' that contains fields
+
+scan.trials
+scan.comment
+
+scan.trials is an array of n trials
+
+scan.trials(n).stimulus
+scan.trials(n).onsetTime
+
+
+
+4: Wait for the scan to begin. This can be triggered by a TTL pulse into the DIO cards or else a keypress translated by thr forp.
+
+5: Enter a function pry_doScan(session,dpy,scan)
+Note the time when this fn is called using either 'now' or 'getsecs'
+
+Enter a big loop   for thisTrial=1:nTrials
+4.1: build the trial described in scan.trial(thisTrial) - returns the data in a big array ready for sending in yo the daq
+4.2 load the data into the daq 
+4.3 wait until the elapsed scan time > scan.trials(thisTrial).onsetTime
+4.4 trigger the daq in foreground mode
+4.5 next stimulus
+
+
+5: Exit the doScan function once all the trials are over
+SAVE!
+6: Shut down the daq and release the session
+
+That's it!
+
+
+functions 
+
+led_doScan
+
+led_getScanStruct
+
+led_makeTrials
+
+led_shutdown
+
+We will require the psych toolbox as well - for the quest routines and the getsecs
+
+
