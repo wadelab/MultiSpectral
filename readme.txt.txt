@@ -12,3 +12,5 @@ etc.
 Loosely based on exptTools
 
 ARW, LW 04032013
+
+240114 starter to use github
