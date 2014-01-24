@@ -91,7 +91,7 @@ end
 disp('*****Loading session*****')
 ListenChar(0);  %clears previously captured characters so that 'GetChar' doesn't output these queued keypresses
 keypressed=0;
-led_tetra_doScan(session,dpy,expt); %load first stimulus and keep running until key pressed
+led_tetra_doScan(session,dpy,expt,sensors); %load first stimulus and keep running until key pressed
 disp('Session loaded')
 thetaIndex=1;
       expt.stim.chrom.stimLMS.theta=allThetaVals(thetaIndex);
