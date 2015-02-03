@@ -3,13 +3,13 @@ function [LEDvals] = ArduinoConeIsolationLMS(contrast, dir)
 % Uses the given contrast and direction to output the values for each LED.  
 % LED values will be sent to the Arduino in a separate script.
 %
-dir = [0 0 1];
+% dir = [0 0 1];
 % dir = contains an array of 3 (if LMS) numbers which specify the
 % direction of the cone isolation, 
 % e.g. for luminance, dir = [1 1 1]
 % for L cone isolation dir = [1 0 0]
 % 
-contrast = .5;
+% contrast = .5;
 % contrast = contains a single contrast value as a decimal (i.e. where 1 =
 % 100%)
 % e.g. contrast = .5   for 50% contrast
@@ -27,7 +27,7 @@ WLrange=(380:2:720)';
 for thisLED=1:size(LEDspectraScaled,2)-1;
     LEDspectra(:,thisLED)=interp1(LEDspectraScaled(:,1),LEDspectraScaled(:,1+thisLED),WLrange);
 end
-LEDspectra=LEDspectra(:,[1 2 3 4 5 6 7]); %specify which LEDs to use out of the 7
+LEDspectra=LEDspectra(:,[2 3 4 5 6 7]); %specify which LEDs to use out of the 7
 
 
 %% create cone fundamentals using Baylor nomogram

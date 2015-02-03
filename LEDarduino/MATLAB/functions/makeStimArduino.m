@@ -50,7 +50,7 @@ end
 
 %% Determine the settings for each LED to achieve the maximum absorption of each cone:
 
-scale=expt.stim.chrom.stimLMS.scale;
+%scale=expt.stim.chrom.stimLMS.scale;
 
 
 
