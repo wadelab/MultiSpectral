@@ -3,17 +3,18 @@
 % Psychtoolbox to estimate the detection threshold.
 % Obviously, it needs PTB in the path.
 % ARW 020515
-CONNECT_TO_ARDUINO = 0; % For testing on any computer
+CONNECT_TO_ARDUINO = 1; % For testing on any computer
+fclose(instrfind());
 
 if (CONNECT_TO_ARDUINO)  
-    s=serial('/dev/tty.usbmodem5d11');%,'BaudRate',9600);
+    s=serial('/dev/tty.usbmodemfd51');%,'BaudRate',9600);
     fopen(s);
 else
     s=0;
 end
 
-
-
+disp(s);
+    
 pause(1);
 disp('Running');
 LEDamps=uint8([0,0,0,0,0,0,0]);

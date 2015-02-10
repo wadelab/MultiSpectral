@@ -7,7 +7,7 @@ clear all;
 close all;
 CONNECT_TO_ARDUINO = 1; % For testing on any computer
 if(~isempty(instrfind))
-fclose(instrfind);
+   fclose(instrfind);
 end
 
 if (CONNECT_TO_ARDUINO)  
@@ -22,7 +22,7 @@ end
 pause(1);
 disp('Running');
 LEDamps=uint8([0,0,0,0,0,0,0]);
-LEDbaseLevel=uint8([0,0,0,0,0,0,0]); % THis is convenient and makes sure that everything is off by default
+LEDbaseLevel=uint8([0,128,0,128,0,0,128]); % THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
 LEDBackground=32;
 
