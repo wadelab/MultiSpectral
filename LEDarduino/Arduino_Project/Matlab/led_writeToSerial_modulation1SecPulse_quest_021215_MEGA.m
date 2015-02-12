@@ -5,6 +5,7 @@
 % ARW 020515
 clear all;
 close all;
+addpath(genpath('/Users/wadelab/Github_MultiSpectral'))
 CONNECT_TO_ARDUINO = 1; % For testing on any computer
 if(~isempty(instrfind))
    fclose(instrfind);
@@ -17,12 +18,11 @@ else
     s=0;
 end
 
-
 %InitializePsychSound; % Initialize the Psychtoolbox sounds
 pause(1);
 disp('Running');
 LEDamps=uint8([0,0,0,0,0]);
-LEDbaseLevel=uint8([128,0,0,128,128]); % THis is convenient and makes sure that everything is off by default
+LEDbaseLevel=uint8([128,128,0,128,0]); % THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
 LEDBackground=32;
 
@@ -30,9 +30,9 @@ LEDBackground=32;
 % Ask Lauren's code for a set of LED amplitudes corresponding to a
 % particula2r direction and contrast in LMS space
 % 2: Present two flicker intervals with a random sequence
-experimentType=1;% 1=L-M, 2=(L+M+2), 3=S cone isolating
+experimentType=2;% 1=L-M, 2=(L+M+2), 3=S cone isolating
 
-LEDsToUse=[1 4 5]; % Which LEDs we want to be active in this expt
+LEDsToUse=[1 2 4]; % Which LEDs we want to be active in this expt
 nLEDs=length(LEDsToUse);
 % Iinitialize the display system
 % Load LEDspectra calib contains 1 column with wavelengths, then the LED calibs
