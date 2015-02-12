@@ -11,8 +11,8 @@ fprintf('\nCorrect response is %d\n',signalInterval);
 
 for thisInterval= 1:2
     pause(.5);
-    sound(sin(linspace(1,500*2*pi,1000))/4,8000); % Do a beep
-    pause(.4);
+    sound(sin(linspace(1,650*2*pi,1000))/4,8000); % Do a beep
+    %pause(.4); %pause after beep
     
     if (thisInterval == signalInterval) % Is this is the interval with the modulation
         % 1111
@@ -31,7 +31,7 @@ for thisInterval= 1:2
         LEDoutput=dpy.LEDamps; % Just zero
     end
     
-    fprintf('Led output levels = %d,%d,%d,%d,%d,%d,%d',LEDoutput);
+    %fprintf('Led output levels = %d,%d,%d,%d,%d',LEDoutput);
     
     if (isobject(serialObject))
         
@@ -39,8 +39,8 @@ for thisInterval= 1:2
             fwrite(serialObject,LEDoutput,'uint8');
             fwrite(serialObject,dpy.LEDbaseLevel,'uint8');
             disp(serialObject.ValuesSent);
-            %disp(LEDoutput);
-            %disp(dpy.LEDbaseLevel);
+            disp(LEDoutput);
+            disp(dpy.LEDbaseLevel);
             pause(1.0);
             
         
@@ -48,7 +48,7 @@ for thisInterval= 1:2
     
 end
 
-sound(sin(linspace(1,650*2*pi,1000))/4,8000); % Do a slightly different beep to indicate a response is required
+sound(sin(linspace(1,1000*2*pi,1000))/4,4000); % Do a slightly different beep to indicate a response is required
 % Now poll the keybaord and get a response (1 or 2)
 % Flush the keyboard buffer first
 FlushEvents;
@@ -61,8 +61,9 @@ if (response)
 else
     disp('Wrong');
         sound(sin(linspace(1,200*2*pi,1000))/4,8000); % Do a slightly different beep to indicate a response is required
-
+       
 end
+
 pause(.2);
 % Here you can feed back answers to Quest or whatever and compute the
 % next contrast to use
