@@ -11,7 +11,7 @@ fprintf('\nCorrect response is %d\n',signalInterval);
 
 for thisInterval= 1:2
     pause(.5);
-    sound(sin(linspace(1,500*2*pi,2000))/4,8000); % Do a beep
+    sound(sin(linspace(1,500*2*pi,1000))/4,8000); % Do a beep
     pause(.4);
     
     if (thisInterval == signalInterval) % Is this is the interval with the modulation
@@ -31,7 +31,7 @@ for thisInterval= 1:2
         LEDoutput=dpy.LEDamps; % Just zero
     end
     
-    %fprintf('Led output levels = %d,%d,%d,%d,%d',LEDoutput);
+    fprintf('Led output levels = %d,%d,%d,%d,%d,%d,%d',LEDoutput);
     
     if (isobject(serialObject))
         
@@ -39,8 +39,8 @@ for thisInterval= 1:2
             fwrite(serialObject,LEDoutput,'uint8');
             fwrite(serialObject,dpy.LEDbaseLevel,'uint8');
             disp(serialObject.ValuesSent);
-            disp(LEDoutput);
-            disp(dpy.LEDbaseLevel);
+            %disp(LEDoutput);
+            %disp(dpy.LEDbaseLevel);
             pause(1.0);
             
         
