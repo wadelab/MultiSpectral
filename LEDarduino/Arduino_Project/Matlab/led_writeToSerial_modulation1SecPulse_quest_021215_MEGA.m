@@ -22,9 +22,9 @@ end
 pause(1);
 disp('Running');
 LEDamps=uint8([0,0,0,0,0]);
-LEDbaseLevel=uint8([128,0,0,128,128]); % THis is convenient and makes sure that everything is off by default
+%LEDbaseLevel=uint8([128,0,0,128,128]); % THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
-LEDBackground=32;
+LEDBackground=128; %the baselevel for the selected LEDs in use - 128 is 50%
 
 % This version of the code shows how to do two things:
 % Ask Lauren's code for a set of LED amplitudes corresponding to a
