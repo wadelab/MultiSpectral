@@ -163,6 +163,10 @@ end
 
 
 if (isobject(s)) % This is shorthand for ' if s>0 '
+    % Shut down arduino to save the LEDs
+      fwrite(serialObject,zeros(5,1),'uint8');
+      fwrite(serialObject,zeros(5,1),'uint8');
+      
     fclose(s);
 end
 
