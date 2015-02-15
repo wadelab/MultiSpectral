@@ -15,7 +15,7 @@ for thisInterval= 1:2
     %pause(.4); %pause after beep
     
     if (thisInterval == signalInterval) % Is this is the interval with the modulation
-        % 1111
+       
         % Compute the LED levels we want
         
         stim.LEDvals=led_arduinoConeIsolationLMS(dpy,stim.stimLMS);
@@ -30,7 +30,6 @@ for thisInterval= 1:2
         LEDoutput=dpy.LEDamps; % Just zero
     end
     
-    %fprintf('Led output levels = %d,%d,%d,%d,%d',LEDoutput);
     
     if (isobject(serialObject))
 
@@ -42,15 +41,10 @@ for thisInterval= 1:2
             disp(serialObject.ValuesSent);
             disp(LEDoutput);
             disp(dpy.LEDbaseLevel);
-            pause(1.0);
+            pause(.8);
             
-            output=[0,0,0,0,0];
-            base=[0,0,0,0,0];
-            fwrite(serialObject,output,'uint8');
-            fwrite(serialObject,base,'uint8');
-            %pause(.5)
             if thisInterval==1;
-                pause(.5)
+                pause(.2)
             else
                 %no pause if end of stim presentation and awaiting response
                 sound(sin(linspace(1,800*2*pi,1000))/4,4000); % Do a slightly different beep to indicate a response is required
@@ -63,8 +57,14 @@ end
 % Flush the keyboard buffer first
 FlushEvents;
 a=GetChar;
-response=(str2num(a) == signalInterval);
-if (response)
+if (a =='q')
+    response=-1;
+else
+    
+    response=(str2num(a) == signalInterval);
+end
+
+if (response==1)
     disp('Right!')
     sound(sin(linspace(1,400*2*pi,1000))/5,4000); % Do a slightly different beep to indicate a response is required
 

@@ -5,6 +5,7 @@
 % ARW 020515
 clear all;
 close all;
+addpath(genpath('/Users/wadelab/Github_MultiSpectral'))
 CONNECT_TO_ARDUINO = 1; % For testing on any computer
 if(~isempty(instrfind))
    fclose(instrfind);
@@ -17,12 +18,11 @@ else
     s=0;
 end
 
-
 %InitializePsychSound; % Initialize the Psychtoolbox sounds
 pause(1);
 disp('Running');
 LEDamps=uint8([0,0,0,0,0]);
-LEDbaseLevel=uint8([128,0,0,128,128]); % THis is convenient and makes sure that everything is off by default
+LEDbaseLevel=uint8([128,128,0,0,16]); % THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
 LEDBackground=32;
 
@@ -30,14 +30,16 @@ LEDBackground=32;
 % Ask Lauren's code for a set of LED amplitudes corresponding to a
 % particula2r direction and contrast in LMS space
 % 2: Present two flicker intervals with a random sequence
-experimentType=1;% 1=L-M, 2=(L+M+2), 3=S cone isolating
+% ********************************************************
+experimentType=2;% 1=L-M, 2=(L+M+2), 3=S cone isolating
+% *********************************************************
 
-LEDsToUse=[1 4 5]; % Which LEDs we want to be active in this expt
+LEDsToUse=[1 2 5]; % Which LEDs we want to be active in this expt
 nLEDs=length(LEDsToUse);
 % Iinitialize the display system
 % Load LEDspectra calib contains 1 column with wavelengths, then the LED calibs
-theFile=(load('LED380_720_LEWoldcalib.mat')); %load in calib for the pryzmatix, already cropped to 380-720, but not in steps of 2nm - NB this is old calib from 180713 
-LEDcalib=theFile(1); %if update the file loaded, the name only has to be updated here for use in rest of code
+load('LED380_720_LEWoldcalib.mat'); %load in calib for the pryzmatix, already cropped to 380-720, but not in steps of 2nm - NB this is old calib from 180713 
+LEDcalib=LED380_720_LEWoldcalib; %if update the file loaded, the name only has to be updated here for use in rest of code
 
 %resample to specified wavelength range (LEDspectra will now only contain
 %the LED calibs, without the column for wavelengths)
@@ -46,13 +48,13 @@ for thisLED=1:size(LEDcalib,2)-1;
     LEDspectra(:,thisLED)=interp1(LEDcalib(:,1),LEDcalib(:,1+thisLED),dpy.WLrange);
 end
 LEDspectra=LEDspectra-repmat(min(LEDspectra),size(LEDspectra,1),1);
-%LEDspectra=LEDspectra./(repmat(max(LEDspectra),size(LEDspectra,1),1));
+LEDspectra=LEDspectra./(repmat(max(LEDspectra),size(LEDspectra,1),1));
 
 dpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LEDs to use out of the 7
 dpy.LEDsToUse=LEDsToUse;
 dpy.bitDepth=8; % Can be 12 on new arduinos
 dpy.backLED.dir=ones(nLEDs,1)';
-dpy.backLED.scale=.22;
+dpy.backLED.scale=.5;
 dpy.LEDamps=LEDamps; % DEfault levels
 dpy.LEDbaseLevel(LEDsToUse)=LEDBackground; % Set just the LEDs we're using to be on a 50%
 dpy.nLEDsTotal=nLEDsTotal;
@@ -68,7 +70,7 @@ switch experimentType % 1=L-M, 2=(L+M+S), 3=S cone isolating
     case 1    
         stim.stimLMS.dir=[1 -1 0]; % [1 1 1] is a pure achroamtic luminance modulation
         tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.4);
+        stim.stimLMS.maxLogCont= log10(.04);
         
     case 2
         stim.stimLMS.dir=[1 1 1]; % [1 1 1] is a pure achroamtic luminance modulation

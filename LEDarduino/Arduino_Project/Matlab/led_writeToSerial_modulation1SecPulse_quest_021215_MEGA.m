@@ -12,27 +12,33 @@ if(~isempty(instrfind))
 end
 
 if (CONNECT_TO_ARDUINO)  
+        system('say connecting to arduino');
+
     s=serial('/dev/cu.usbmodem5d11');%,'BaudRate',9600);
     fopen(s);
+    disp('*** Connecting to Arduino');
+    
 else
     s=0;
 end
 
 %InitializePsychSound; % Initialize the Psychtoolbox sounds
-pause(1);
+pause(2);
 disp('Running');
 LEDamps=uint8([0,0,0,0,0]);
-LEDbaseLevel=uint8([128,128,0,128,0]); % THis is convenient and makes sure that everything is off by default
+LEDbaseLevel=uint8([96,144,0,192,96]); % THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
-LEDBackground=32;
+%LEDBackground=32;
 
 % This version of the code shows how to do two things:
 % Ask Lauren's code for a set of LED amplitudes corresponding to a
 % particula2r direction and contrast in LMS space
 % 2: Present two flicker intervals with a random sequence
-experimentType=2;% 1=L-M, 2=(L+M+2), 3=S cone isolating
+% ********************************************************
+experimentType=3;% 1=L-M, 2=(L+M+2), 3=S cone isolating
+% *********************************************************
 
-LEDsToUse=[1 2 4]; % Which LEDs we want to be active in this expt
+LEDsToUse=find(LEDbaseLevel);%[1 2 5]; % Which LEDs we want to be active in this expt
 nLEDs=length(LEDsToUse);
 % Iinitialize the display system
 % Load LEDspectra calib contains 1 column with wavelengths, then the LED calibs
@@ -46,15 +52,15 @@ for thisLED=1:size(LEDcalib,2)-1;
     LEDspectra(:,thisLED)=interp1(LEDcalib(:,1),LEDcalib(:,1+thisLED),dpy.WLrange);
 end
 LEDspectra=LEDspectra-repmat(min(LEDspectra),size(LEDspectra,1),1);
-%LEDspectra=LEDspectra./(repmat(max(LEDspectra),size(LEDspectra,1),1));
+LEDspectra=LEDspectra./(repmat(max(LEDspectra),size(LEDspectra,1),1));
 
 dpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LEDs to use out of the 7
 dpy.LEDsToUse=LEDsToUse;
 dpy.bitDepth=8; % Can be 12 on new arduinos
 dpy.backLED.dir=ones(nLEDs,1)';
-dpy.backLED.scale=.22;
+dpy.backLED.scale=.5;
 dpy.LEDamps=LEDamps; % DEfault levels
-dpy.LEDbaseLevel(LEDsToUse)=LEDBackground; % Set just the LEDs we're using to be on a 50%
+dpy.LEDbaseLevel=LEDbaseLevel; % Set just the LEDs we're using to be on a 50%
 dpy.nLEDsTotal=nLEDsTotal;
 dpy.nLEDsToUse=length(dpy.LEDsToUse);
 
@@ -67,8 +73,8 @@ dpy.nLEDsToUse=length(dpy.LEDsToUse);
 switch experimentType % 1=L-M, 2=(L+M+S), 3=S cone isolating
     case 1    
         stim.stimLMS.dir=[1 -1 0]; % [1 1 1] is a pure achroamtic luminance modulation
-        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.4);
+        tGuess=log10(.007); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.02);
         
     case 2
         stim.stimLMS.dir=[1 1 1]; % [1 1 1] is a pure achroamtic luminance modulation
@@ -76,7 +82,7 @@ switch experimentType % 1=L-M, 2=(L+M+S), 3=S cone isolating
         stim.stimLMS.maxLogCont=log10(.95);
     case 3
         stim.stimLMS.dir=[0 0 1]; % [1 1 1] is a pure achroamtic luminance modulation
-        tGuess=log10(.3);
+        tGuess=log10(.3);2
         stim.stimLMS.maxLogCont=log10(.6);
     otherwise
         error ('Incorrect experiment type');
@@ -99,8 +105,18 @@ fprintf('Quest''s initial threshold estimate is %g +- %g\n',QuestMean(q),QuestSd
 trialsDesired=30;
 wrongRight={'wrong','right'};
 timeZero=GetSecs; % We >force< you to have PTB in the path for this so we know that GetSecs is present
+ k=0; response=0;
  
-for k=1:trialsDesired
+dummyStim=stim;
+system('say booting arduino');
+
+dummyStim.stimLMS.dir=[1 1 1];
+dummyStim.stimLMS.scale=.1;
+dummyResponse=led_doLEDTrial(dpy,dummyStim,q,s); % This should return 0 for an incorrect answer and 1 for correct
+
+ 
+ 
+while ((k<trialsDesired) && (response ~= -1))
 	% Get recommended level.  Choose your favorite algorithm.
 	tTest=QuestQuantile(q);	% Recommended by Pelli (1987), and still our favorite.
 
@@ -124,13 +140,22 @@ for k=1:trialsDesired
     disp(response)
     
    	%response=QuestSimulate(q,tTest,tActual);
- 	
-    fprintf('Trial %3d at %5.2f is %s\n',k,tTest,char(wrongRight(response+1)));
-	timeZero=timeZero+GetSecs-timeSplit;
+ 	if (response ~=-1)
+        fprintf('Trial %3d at %5.2f is %s\n',k,tTest,char(wrongRight(response+1)));
+        timeZero=timeZero+GetSecs-timeSplit;
 	
 	% Update the pdf
-	q=QuestUpdate(q,tTest,response); % Add the new datum (actual test intensity and observer response) to the database.
-  
+        q=QuestUpdate(q,tTest,response); % Add the new datum (actual test intensity and observer response) to the database.
+        k=k+1;
+    else
+        disp('Quitting...');
+        system('say quitting before all trials complete');
+
+    end
+end
+
+if (k == trialsDesired)
+            system('say all trials complete');
 end
 
 
