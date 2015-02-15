@@ -29,7 +29,7 @@ end
 pause(2);
 disp('Running');
 LEDamps=uint8([0,0,0,0,0]);
-LEDbaseLevel=uint8([100,144,0,192,96]); % THis is convenient and makes sure that everything is off by default
+LEDbaseLevel=uint8([100,144,0,192,96]); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
 
 % This version of the code shows how to do two things:
@@ -37,7 +37,7 @@ nLEDsTotal=length(LEDamps);
 % particula2r direction and contrast in LMS space
 % 2: Present two flicker intervals with a random sequence
 % ********************************************************
-experimentType=-1;
+experimentType=-1; % Ask the user to enter a valid experiment type probing a particuar direction in LMS space
 while((experimentType<1) || (experimentType>3))
     experimentTypeS=input ('Experiment type (LM=1, LMS=2, S=3)?','s'); %=2;% 1=L-M, 2=(L+M+S), 3=S cone isolating
     experimentType=str2num(experimentTypeS);
@@ -82,7 +82,7 @@ dpy.nLEDsToUse=length(dpy.LEDsToUse);
 % Here we use the same variables that QuestDemo does for consistency
 switch experimentType % 1=L-M, 2=(L+M+S), 3=S cone isolating
     case 1    
-        stim.stimLMS.dir=[1 -1 0]; % [1 1 1] is a pure achroamtic luminance modulation
+        stim.stimLMS.dir=[.5 -1 0]; % [1 1 1] is a pure achroamtic luminance modulation
         tGuess=log10(.007); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
         stim.stimLMS.maxLogCont= log10(.02);
         
@@ -175,8 +175,8 @@ end
 
 if (isobject(s)) % This is shorthand for ' if s>0 '
     % Shut down arduino to save the LEDs
-      fwrite(serialObject,zeros(5,1),'uint8');
-      fwrite(serialObject,zeros(5,1),'uint8');
+      fwrite(s,zeros(5,1),'uint8');
+      fwrite(s,zeros(5,1),'uint8');
       
     fclose(s);
 end
