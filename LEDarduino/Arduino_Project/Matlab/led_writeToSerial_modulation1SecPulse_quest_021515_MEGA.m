@@ -26,24 +26,17 @@ end
 pause(2);
 disp('Running');
 LEDamps=uint8([0,0,0,0,0]);
-<<<<<<< HEAD
-LEDbaseLevel=uint8([96,144,0,192,96]); % THis is convenient and makes sure that everything is off by default
+LEDbaseLevel=uint8([100,144,0,192,96]); % THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
-%LEDBackground=32;
-=======
-%LEDbaseLevel=uint8([128,0,0,128,128]); % THis is convenient and makes sure that everything is off by default
-nLEDsTotal=length(LEDamps);
-LEDBackground=128; %the baselevel for the selected LEDs in use - 128 is 50%
->>>>>>> FETCH_HEAD
 
 % This version of the code shows how to do two things:
 % Ask Lauren's code for a set of LED amplitudes corresponding to a
 % particula2r direction and contrast in LMS space
 % 2: Present two flicker intervals with a random sequence
 % ********************************************************
-experimentType=3;% 1=L-M, 2=(L+M+2), 3=S cone isolating
+experimentType=2;% 1=L-M, 2=(L+M+S), 3=S cone isolating
 % *********************************************************
-
+2
 LEDsToUse=find(LEDbaseLevel);%[1 2 5]; % Which LEDs we want to be active in this expt
 nLEDs=length(LEDsToUse);
 % Iinitialize the display system
@@ -118,10 +111,10 @@ system('say booting arduino');
 
 dummyStim.stimLMS.dir=[1 1 1];
 dummyStim.stimLMS.scale=.1;
-dummyResponse=led_doLEDTrial(dpy,dummyStim,q,s); % This should return 0 for an incorrect answer and 1 for correct
+dummyResponse=led_doLEDTrial(dpy,dummyStim,q,s,1); % This should return 0 for an incorrect answer and 1 for correct
 
- 
- 
+system('say experiment beginning');
+
 while ((k<trialsDesired) && (response ~= -1))
 	% Get recommended level.  Choose your favorite algorithm.
 	tTest=QuestQuantile(q);	% Recommended by Pelli (1987), and still our favorite.

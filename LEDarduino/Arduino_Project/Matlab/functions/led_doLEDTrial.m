@@ -1,9 +1,12 @@
-function response=led_doLEDTrial(dpy,stim, q,serialObject)
+function response=led_doLEDTrial(dpy,stim, q,serialObject,dummyFlag)
 % function response=led_doLEDTrial(dpy,stimLMS, q,serialObject)
 % Returns 0 or 1 for wrong/right
 %
 
 
+if (nargin < 5)
+    dummyFlag=0;
+end
 
 signalInterval=fix(rand(1,1)*2)+1; % 1 or 2
 fprintf('\nCorrect response is %d\n',signalInterval);
@@ -55,25 +58,29 @@ for thisInterval= 1:2
 end
 % Now poll the keybaord and get a response (1 or 2)
 % Flush the keyboard buffer first
-FlushEvents;
-a=GetChar;
-if (a =='q')
-    response=-1;
-else
+if (~dummyFlag) % If this was a dummy trial then don't require a key press
+    FlushEvents;
+    a=GetChar;
+    if (a =='q')
+        response=-1;
+    else
+        
+        response=(str2num(a) == signalInterval);
+    end
     
-    response=(str2num(a) == signalInterval);
-end
-
-if (response==1)
-    disp('Right!')
-    sound(sin(linspace(1,400*2*pi,1000))/5,4000); % Do a slightly different beep to indicate a response is required
-
-else
-    disp('Wrong');
+    if (response==1)
+        disp('Right!')
+        sound(sin(linspace(1,400*2*pi,1000))/5,4000); % Do a slightly different beep to indicate a response is required
+        
+    else
+        disp('Wrong');
         sound(sin(linspace(1,900*2*pi,1000))/6,4000); % Do a slightly different beep to indicate a response is required
-       
+        
+    end
+    
+    pause(.2);
+    % Here you can feed back answers to Quest or whatever and compute the
+    % next contrast to use
+else % If this was a dummy trial then don't require a key press
+    response = -1;
 end
-
-pause(.2);
-% Here you can feed back answers to Quest or whatever and compute the
-% next contrast to use
