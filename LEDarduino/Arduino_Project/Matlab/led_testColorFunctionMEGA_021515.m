@@ -2,11 +2,9 @@
 % This version of the code incorporates the Quest algorithm from
 % Psychtoolbox to estimate the detection threshold.
 % Obviously, it needs PTB in the path.
-% ARW 020515
+% ARW 021515
 clear all;
 close all;
-
-
 
 addpath(genpath('/Users/wadelab/Github_MultiSpectral'))
 CONNECT_TO_ARDUINO = 1; % For testing on any computer
@@ -48,7 +46,7 @@ while((experimentType<1) || (experimentType>3))
     % *********************************************************
 end
 
-LEDsToUse=find(LEDbaseLevel);%[1 2 5]; % Which LEDs we want to be active in this expt
+LEDsToUse=find(LEDbaseLevel);% Which LEDs we want to be active in this expt?
 nLEDs=length(LEDsToUse);
 % Iinitialize the display system
 % Load LEDspectra calib contains 1 column with wavelengths, then the LED calibs
@@ -186,3 +184,5 @@ t=QuestMean(q);		% Recommended by Pelli (1989) and King-Smith et al. (1994). Sti
 sd=QuestSd(q);
 fprintf('Final threshold estimate (mean+-sd) is %.2f +- %.2f\n',t,sd);
 fprintf('Final threshold in actual contrast units is %.2f%%\n',10^(t)*100);
+% TODO HERE - ADD IN AUTO SAVE FOR DATA...
+
