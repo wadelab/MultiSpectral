@@ -5,6 +5,9 @@
 % ARW 020515
 clear all;
 close all;
+
+
+
 addpath(genpath('/Users/wadelab/Github_MultiSpectral'))
 CONNECT_TO_ARDUINO = 1; % For testing on any computer
 if(~isempty(instrfind))
@@ -34,8 +37,16 @@ nLEDsTotal=length(LEDamps);
 % particula2r direction and contrast in LMS space
 % 2: Present two flicker intervals with a random sequence
 % ********************************************************
-experimentType=2;% 1=L-M, 2=(L+M+S), 3=S cone isolating
-% *********************************************************
+experimentType=-1;
+while((experimentType<1) || (experimentType>3))
+    experimentTypeS=input ('Experiment type (LM=1, LMS=2, S=3)?','s'); %=2;% 1=L-M, 2=(L+M+S), 3=S cone isolating
+    experimentType=str2num(experimentTypeS);
+    if(isempty(experimentType))
+        experimentType=-1;
+    end
+    
+    % *********************************************************
+end
 
 LEDsToUse=find(LEDbaseLevel);%[1 2 5]; % Which LEDs we want to be active in this expt
 nLEDs=length(LEDsToUse);
