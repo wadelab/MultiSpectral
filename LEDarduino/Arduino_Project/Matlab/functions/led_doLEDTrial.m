@@ -26,10 +26,10 @@ for thisInterval= 1:2
         
         
         LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
-        LEDoutput=LEDoutputAmps
+        LEDoutput=LEDoutputAmps;
         
     else
-        LEDoutput=zeros((dpy.nLEDsToUse),1); % Just zero
+        LEDoutput=zeros((dpy.nLEDsToUse),1)'; % Just zero
     end
     
     

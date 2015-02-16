@@ -59,13 +59,13 @@ dpy.WLrange=(380:2:720)';
 for thisLED=1:size(LEDcalib,2)-1;
     LEDspectra(:,thisLED)=interp1(LEDcalib(:,1),LEDcalib(:,1+thisLED),dpy.WLrange);
 end
-LEDspectra=LEDspectra-repmat(min(LEDspectra),size(LEDspectra,1),1);
-sumLED=sum(LEDspectra);
+%LEDspectra=LEDspectra-repmat(min(LEDspectra),size(LEDspectra,1),1);
+%sumLED=sum(LEDspectra);
 maxLED=max(LEDspectra);
 LEDscale=1./maxLED;
 %LEDscale=[128 128 128 128 128];
 
-actualLEDScale=LEDscale./max(LEDscale)
+actualLEDScale=LEDscale./max(LEDscale);
 
 
 dpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LEDs to use out of the 7
@@ -87,17 +87,17 @@ dpy.nLEDsToUse=length(dpy.LEDsToUse);
 switch experimentType % 1=L-M, 2=(L+M+S), 3=S cone isolating
     case 1    
         stim.stimLMS.dir=[.5 -1 0]; % [1 1 1] is a pure achroamtic luminance modulation
-        tGuess=log10(.007); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.02);
+        tGuess=log10(.04); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.05);
         
     case 2
         stim.stimLMS.dir=[1 1 1]; % [1 1 1] is a pure achroamtic luminance modulation
-        tGuess=log10(.02);
+        tGuess=log10(.5);
         stim.stimLMS.maxLogCont=log10(.95);
     case 3
         stim.stimLMS.dir=[0 0 1]; % [1 1 1] is a pure achroamtic luminance modulation
-        tGuess=log10(.3);2
-        stim.stimLMS.maxLogCont=log10(.6);
+        tGuess=log10(.4);
+        stim.stimLMS.maxLogCont=log10(.5);
     otherwise
         error ('Incorrect experiment type');
 end
@@ -157,17 +157,17 @@ while ((k<trialsDesired) && (response ~= -1))
     disp(response)
     
    	%response=QuestSimulate(q,tTest,tActual);
- 	if (response ~=-1)
+    if (response ~=-1)
         fprintf('Trial %3d at %5.2f is %s\n',k,tTest,char(wrongRight(response+1)));
         timeZero=timeZero+GetSecs-timeSplit;
-	
-	% Update the pdf
+        
+        % Update the pdf
         q=QuestUpdate(q,tTest,response); % Add the new datum (actual test intensity and observer response) to the database.
         k=k+1;
     else
         disp('Quitting...');
         system('say quitting before all trials complete');
-
+        
     end
 end
 
