@@ -116,7 +116,7 @@ fprintf('Quest''s initial threshold estimate is %g +- %g\n',QuestMean(q),QuestSd
 
 % Run a series of trials. 
 % On each trial we ask Quest to recommend an intensity and we call QuestUpdate to save the result in q.
-trialsDesired=30;
+trialsDesired=50;
 wrongRight={'wrong','right'};
 timeZero=GetSecs; % We >force< you to have PTB in the path for this so we know that GetSecs is present
  k=0; response=0;
