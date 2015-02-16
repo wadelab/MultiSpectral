@@ -7,17 +7,17 @@ TODO : Add noise (possibly) to increase thresholds and mask stim onset. Or allow
  */
 
 // this constant won't change:
-const int ledPins[] = {8,9,10,11,12};       // the pin that the LED is attached to
+const int ledPins[] = {8,9,11,12};       // the pin that the LED is attached to
 
 // Variables will change:
 unsigned long startTime;
 double modulationRateHz = 2; // Flicker rate of the LEDs when they're on
-byte LEDamps[] = {0,0,0,0,0}; // How much each LED flickers (from 0 to 256) about the baseline. Obviously if the baseline is 128, the flicker amplitude must be no more than 128.
-byte LEDbaseLevel[] = {0,0,0,0,0}; // These are the baseline levels of the LEDs. They are set through Matlab inputs so these values here are just examples
+byte LEDamps[] = {0,0,0,0}; // How much each LED flickers (from 0 to 256) about the baseline. Obviously if the baseline is 128, the flicker amplitude must be no more than 128.
+byte LEDbaseLevel[] = {0,0,0,0}; // These are the baseline levels of the LEDs. They are set through Matlab inputs so these values here are just examples
 long pulseDuration = 1000; // How long each pulse lasts in ms
 long elapsedTimeMilliSecs = 0; 
 int halfAmp = 128; // Half the maximum amplitude. It will be bigger if we use 12 bit precision
- 
+int nLEDs=4;
  
 void setup() {
 
@@ -25,7 +25,7 @@ void setup() {
 
   // initialize serial communication:
       Serial.begin(9600);
-     for (int thisPinIndex = 0; thisPinIndex < 5; thisPinIndex++) { 
+     for (int thisPinIndex = 0; thisPinIndex < nLEDs; thisPinIndex++) { 
 
          pinMode(ledPins[thisPinIndex], OUTPUT);
 
@@ -47,8 +47,8 @@ void loop() {
 
   while (bytesRead<1) { // Keep looping until there's something available to read
       if (Serial.available() > 0) {
-          Serial.readBytes(LEDamps,5); // First 7 bytes are the modulation amps
-          Serial.readBytes(LEDbaseLevel,5); // Second 7 bytes are the baselines.
+          Serial.readBytes(LEDamps,nLEDs); // First 7 bytes are the modulation amps
+          Serial.readBytes(LEDbaseLevel,nLEDs); // Second 7 bytes are the baselines.
 
           bytesRead=1; // Tell the loop we've read something
       }  // End while statement - we will stop when we have 7 bytes
@@ -59,7 +59,7 @@ void loop() {
                 /* We now have 7 amplitudes - one for each of the LEDs. We will modulate them with these amplitudes
                 for one second (or pulseDuration) - then go back to the start of the loop
                 */
-             for (int thisPinIndex = 0; thisPinIndex < 5; thisPinIndex++) { 
+             for (int thisPinIndex = 0; thisPinIndex < nLEDs; thisPinIndex++) { 
                    analogWrite(ledPins[thisPinIndex], 0);   // To add in a quick black flicker
               }
               
@@ -73,7 +73,7 @@ void loop() {
        elapsedTimeMilliSecs=(millis()-startTime); // Compute how long it's been in this loop in ms. We will terminate
       // when the elapsed time is greater than the pulse width that we asked for.
        
-        for (int thisPinIndex = 0; thisPinIndex < 5; thisPinIndex++) { // Loop (very quickly) over all pins
+        for (int thisPinIndex = 0; thisPinIndex < nLEDs; thisPinIndex++) { // Loop (very quickly) over all pins
                  int val = sin(double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz))*double(LEDamps[thisPinIndex])+double(LEDbaseLevel[thisPinIndex]);
                  // int val = sin( double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz))*(double(LEDamps[thisPinIndex]))+LEDbaseLevel[thisPinIndex];
         
@@ -83,15 +83,10 @@ void loop() {
     
     
     // Set everything to mean level  afterwards. 
-      for (int thisPinIndex = 0; thisPinIndex < 5; thisPinIndex++) { 
+      for (int thisPinIndex = 0; thisPinIndex < nLEDs; thisPinIndex++) { 
            analogWrite(ledPins[thisPinIndex], int(LEDbaseLevel[thisPinIndex]));   // To add in a quick black flicker
       }
-     // delay(100);
-      
-    //  for (int thisPinIndex = 0; thisPinIndex < 5; thisPinIndex++) { 
-
-        //            analogWrite(ledPins[thisPinIndex], LEDbaseLevel[thisPinIndex]);
-    //  } // next pin to zero 
+    
       
 
 } // end function

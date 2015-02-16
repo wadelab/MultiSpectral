@@ -42,12 +42,6 @@ dpy.baseValue=2.5;
 
 dpy.coneSpectra=coneSpectra;
 
-%base levels across LEDs
-dpy.backLED.dir=ones(1,size(dpy.LEDspectra,2)); %set the backLEDs to 1 for the 
-%number of LEDS (using 'size(LEDspectra,2)' means if you change the number of LEDs being used you
-%dont have to manually change this too)
-%dpy.backLED.scale=0.5;
-dpy.backLED.scale=dpy.LEDbaseLevel(:,dpy.LEDsToUse);
 
 %% Make the Stimulus
 

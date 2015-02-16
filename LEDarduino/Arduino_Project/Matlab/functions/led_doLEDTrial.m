@@ -25,19 +25,18 @@ for thisInterval= 1:2
         
         
         
-        LEDoutputAmps=((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)*dpy.backLED.scale);
-        LEDoutput=dpy.LEDamps; % Set everything to the default level
-        LEDoutput(dpy.LEDsToUse)=LEDoutputAmps;
+        LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
+        LEDoutput=LEDoutputAmps
         
     else
-        LEDoutput=dpy.LEDamps; % Just zero
+        LEDoutput=zeros((dpy.nLEDsToUse),1); % Just zero
     end
     
     
     if (isobject(serialObject))
 
-            fwrite(serialObject,LEDoutput,'uint8');
-            fwrite(serialObject,dpy.LEDbaseLevel,'uint8');
+            fwrite(serialObject,uint8(LEDoutput),'uint8');
+            fwrite(serialObject,uint8(dpy.LEDbaseLevel),'uint8');
             %pause(.1)
             sound(sin(linspace(1,650*2*pi,1000))/4,8000);
             

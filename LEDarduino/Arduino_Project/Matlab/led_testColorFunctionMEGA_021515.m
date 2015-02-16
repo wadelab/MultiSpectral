@@ -27,7 +27,7 @@ end
 pause(2);
 disp('Running');
 LEDamps=uint8([0,0,0,0,0]);
-LEDbaseLevel=uint8([128,128,0,128,128]); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
+LEDbaseLevel=uint8([32,144,0,192,16]); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
 
 % This version of the code shows how to do two things:
@@ -59,16 +59,22 @@ dpy.WLrange=(380:2:720)';
 for thisLED=1:size(LEDcalib,2)-1;
     LEDspectra(:,thisLED)=interp1(LEDcalib(:,1),LEDcalib(:,1+thisLED),dpy.WLrange);
 end
-%LEDspectra=LEDspectra-repmat(min(LEDspectra),size(LEDspectra,1),1);
-%LEDspectra=LEDspectra./(repmat(max(LEDspectra),size(LEDspectra,1),1));
+LEDspectra=LEDspectra-repmat(min(LEDspectra),size(LEDspectra,1),1);
+sumLED=sum(LEDspectra);
+maxLED=max(LEDspectra);
+LEDscale=1./maxLED;
+%LEDscale=[128 128 128 128 128];
+
+actualLEDScale=LEDscale./max(LEDscale)
+
 
 dpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LEDs to use out of the 7
 dpy.LEDsToUse=LEDsToUse;
 dpy.bitDepth=8; % Can be 12 on new arduinos
-dpy.backLED.dir=ones(nLEDs,1)';
+%dpy.backLED.dir=double(LEDbaseLevel(LEDsToUse))./max(double(LEDbaseLevel(LEDsToUse)))
+dpy.backLED.dir=actualLEDScale(LEDsToUse);
 dpy.backLED.scale=.5;
-dpy.LEDamps=LEDamps; % DEfault levels
-dpy.LEDbaseLevel=LEDbaseLevel; % Set just the LEDs we're using to be on a 50%
+dpy.LEDbaseLevel=round(dpy.backLED.dir*dpy.backLED.scale*(2.^dpy.bitDepth-1)); % Set just the LEDs we're using to be on a 50%
 dpy.nLEDsTotal=nLEDsTotal;
 dpy.nLEDsToUse=length(dpy.LEDsToUse);
 
