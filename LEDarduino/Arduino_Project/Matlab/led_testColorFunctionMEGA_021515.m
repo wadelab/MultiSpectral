@@ -52,7 +52,7 @@ nLEDs=length(LEDsToUse);
 % Load LEDspectra calib contains 1 column with wavelengths, then the LED calibs
 load('LEDspectra_16-Feb-2015.mat'); %load in calib for the prizmatix
 LEDcalib=LEDspectra; %if update the file loaded, the name only has to be updated here for use in rest of code
-
+clear LEDspectra
 %resample to specified wavelength range (LEDspectra will now only contain
 %the LED calibs, without the column for wavelengths)
 dpy.WLrange=(380:2:720)';
