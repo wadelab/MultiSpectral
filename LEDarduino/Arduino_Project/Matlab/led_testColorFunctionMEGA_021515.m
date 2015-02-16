@@ -27,7 +27,7 @@ end
 pause(2);
 disp('Running');
 LEDamps=uint8([0,0,0,0,0]);
-LEDbaseLevel=uint8([100,144,0,192,96]); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
+LEDbaseLevel=uint8([128,128,0,128,128]); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
 
 % This version of the code shows how to do two things:
@@ -59,8 +59,8 @@ dpy.WLrange=(380:2:720)';
 for thisLED=1:size(LEDcalib,2)-1;
     LEDspectra(:,thisLED)=interp1(LEDcalib(:,1),LEDcalib(:,1+thisLED),dpy.WLrange);
 end
-LEDspectra=LEDspectra-repmat(min(LEDspectra),size(LEDspectra,1),1);
-LEDspectra=LEDspectra./(repmat(max(LEDspectra),size(LEDspectra,1),1));
+%LEDspectra=LEDspectra-repmat(min(LEDspectra),size(LEDspectra,1),1);
+%LEDspectra=LEDspectra./(repmat(max(LEDspectra),size(LEDspectra,1),1));
 
 dpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LEDs to use out of the 7
 dpy.LEDsToUse=LEDsToUse;
