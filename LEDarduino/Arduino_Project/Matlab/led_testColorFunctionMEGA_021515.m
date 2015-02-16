@@ -188,7 +188,11 @@ end
 plot(q.intensity(1:q.trialCount));
 t=QuestMean(q);		% Recommended by Pelli (1989) and King-Smith et al. (1994). Still our favorite.
 sd=QuestSd(q);
+fprintf('Experiment Code: %d\n',experimentType);
 fprintf('Final threshold estimate (mean+-sd) is %.2f +- %.2f\n',t,sd);
 fprintf('Final threshold in actual contrast units is %.2f%%\n',10^(t)*100);
 % TODO HERE - ADD IN AUTO SAVE FOR DATA...
+% also add in entry of subject ID - perhaps make a gui to input the ID and
+% the experiment number, and then it can autosave out the contrast value in
+% a filename that corresponds to ID and condition, e.g. Sub001_Cond1
 
