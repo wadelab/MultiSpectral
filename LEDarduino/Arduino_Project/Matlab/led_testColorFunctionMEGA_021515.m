@@ -50,8 +50,8 @@ LEDsToUse=find(LEDbaseLevel);% Which LEDs we want to be active in this expt?
 nLEDs=length(LEDsToUse);
 % Iinitialize the display system
 % Load LEDspectra calib contains 1 column with wavelengths, then the LED calibs
-load('LED380_720_LEWoldcalib.mat'); %load in calib for the pryzmatix, already cropped to 380-720, but not in steps of 2nm - NB this is old calib from 180713 
-LEDcalib=LED380_720_LEWoldcalib; %if update the file loaded, the name only has to be updated here for use in rest of code
+load('LEDspectra_16-Feb-2015.mat'); %load in calib for the prizmatix
+LEDcalib=LEDspectra; %if update the file loaded, the name only has to be updated here for use in rest of code
 
 %resample to specified wavelength range (LEDspectra will now only contain
 %the LED calibs, without the column for wavelengths)
