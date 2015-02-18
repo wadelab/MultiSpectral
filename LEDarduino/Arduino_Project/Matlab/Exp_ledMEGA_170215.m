@@ -53,7 +53,7 @@ nLEDsTotal=length(LEDamps);
 % 2: Present two flicker intervals with a random sequence
 % ********************************************************
 
-SubID=-1; % Ask the user to enter a valid experiment type probing a particuar direction in LMS space
+SubID=-1; % Ask the user to enter a Subject ID number
 while(SubID<1)
     SubID=input ('Enter Subject ID, e.g. 001: ','s'); %prompts to enter a subject ID
     if(isempty(SubID))
@@ -74,7 +74,7 @@ while((experimentType<1) || (experimentType>3))
     % *********************************************************
 end
 
-Repeat=-1; % Ask the user to enter a valid experiment type probing a particuar direction in LMS space
+Repeat=-1; % Ask the user to enter a session number
 while(Repeat<1)
     RepeatString=input ('Enter the session number for this condition: ','s'); %=2;% 1=L-M, 2=(L+M+S), 3=S cone isolating
     Repeat=str2num(RepeatString);
@@ -233,7 +233,7 @@ plot(q.intensity(1:q.trialCount));
 t=QuestMean(q);		% Recommended by Pelli (1989) and King-Smith et al. (1994). Still our favorite.
 sd=QuestSd(q);
 contrastThresh=10^(t)*100;
-fprintf('Experiment Condition: %s\n',ExpLabel{experimentType});
+fprintf('Experiment Condition: %s\n',thisExp);
 fprintf('Final threshold estimate (mean+-sd) is %.2f +- %.2f\n',t,sd);
 fprintf('Final threshold in actual contrast units is %.2f%%\n',contrastThresh);
 % TODO HERE - ADD IN AUTO SAVE FOR DATA...
