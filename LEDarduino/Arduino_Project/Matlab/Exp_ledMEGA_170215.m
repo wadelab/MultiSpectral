@@ -246,5 +246,7 @@ cd('/Users/wadelab/Github_MultiSpectral/LEDarduino/Arduino_Project/Data')
 save(sprintf('SubID%s_Cond%s_Rep%d_%s',...
     SubID,thisExp,Repeat,Date),'contrastThresh','SubID',...
     'thisExp','Repeat','Date');
+fprintf('\nSubject %s contrast threshold saved\n',SubID);
+fprintf('\n******** End of Experiment ********\n');
 
 end
