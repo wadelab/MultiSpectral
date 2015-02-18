@@ -1,17 +1,18 @@
 function Exp_ledMEGA_170215
-% Exp_ledMEGA_170215(SubID,experimentType,Session)
+% Exp_ledMEGA_170215
 % 
-% Takes input of subject id, experiment type and the session number, then
-% runs the selected experiment, and saves out the contrast threshold in a
-% Data folder  (/GitHub_MultiSpectral/LEDarduino/Arduino_Project/DATA) with
-% the following file format:
+% Runs the experiment and prompts for subject ID, Experiment condition and
+% session number.  Data is then saved out in the 'DATA' folder within:
+% /Users/wadelab/Github_MultiSpectral/LEDarduino/Arduino_Project/
 %
-% SubID01_Cond1_Rep1_17-Feb-2015
+% File saved in the following format using the inputed session details:
 %
-% where the '01' and '1's are replaced with the relevant values for that
+% SubID001_Cond1_Rep1_17-Feb-2015
+%
+% where the '001' and '1's are replaced with the relevant values for that
 % repitition, subject and experiment condition and date.
 %
-% Note that files be to overridden if you incorrectly select a session
+% Note that files will be overridden if you incorrectly input a session
 % number that has already been done! Check current files in the data folder
 % if unsure.
 %
@@ -41,7 +42,7 @@ end
 
 %InitializePsychSound; % Initialize the Psychtoolbox sounds
 pause(2);
-disp('Running');
+fprintf('\n****** Experiment Running ******\n \n');
 LEDamps=uint8([0,0,0,0,0]);
 LEDbaseLevel=uint8([32,144,0,192,16]); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
