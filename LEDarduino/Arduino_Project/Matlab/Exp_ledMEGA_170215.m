@@ -12,9 +12,6 @@ function Exp_ledMEGA_170215
 % where the '001' and '1's are replaced with the relevant values for that
 % repitition, subject and experiment condition and date.
 %
-% Note that files will be overridden if you incorrectly input a session
-% number that has already been done! Check current files in the data folder
-% if unsure.
 %
 % This version of the code incorporates the Quest algorithm from
 % Psychtoolbox to estimate the detection threshold.
@@ -22,6 +19,8 @@ function Exp_ledMEGA_170215
 % ARW 021515
 % edited by LEW 170215 to be used with GUI and save out the contrast
 % threshold obtained.
+
+%addpath(genpath('/Users/lew507/Documents/York Uni PhD/Github_MultiSpectral'))
 
 addpath(genpath('/Users/wadelab/Github_MultiSpectral'))
 CONNECT_TO_ARDUINO = 1; % For testing on any computer
@@ -31,6 +30,8 @@ end
 
 if (CONNECT_TO_ARDUINO)  
         system('say connecting to arduino');
+
+    %s=serial('/dev/cu.usbmodem1411');%,'BaudRate',9600);
 
     s=serial('/dev/cu.usbmodem5d11');%,'BaudRate',9600);
     fopen(s);
@@ -239,8 +240,12 @@ fprintf('Final threshold in actual contrast units is %.2f%%\n',contrastThresh);
 % TODO HERE - ADD IN AUTO SAVE FOR DATA...
 
 %cd to the data folder
-Date=date; %current date
+Date=datestr(now,30); %current date with time
+
 cd('/Users/wadelab/Github_MultiSpectral/LEDarduino/Arduino_Project/Data')
+
+%cd('/Users/lew507/Documents/York Uni PhD/Github_MultiSpectral/LEDarduino/Arduino_Project/Data')
+
 %save out a file containing the contrastThresh, SubID, experimentType, and
 %Session num
 
