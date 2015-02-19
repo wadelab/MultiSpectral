@@ -91,7 +91,7 @@ LEDsToUse=find(LEDbaseLevel);% Which LEDs we want to be active in this expt?
 nLEDs=length(LEDsToUse);
 % Iinitialize the display system
 % Load LEDspectra calib contains 1 column with wavelengths, then the LED calibs
-load('LEDspectra_16-Feb-2015.mat'); %load in calib for the prizmatix
+load('LEDspectra_19-Feb-2015.mat'); %load in calib for the prizmatix
 LEDcalib=LEDspectra; %if update the file loaded, the name only has to be updated here for use in rest of code
 clear LEDspectra
 %resample to specified wavelength range (LEDspectra will now only contain
@@ -238,7 +238,7 @@ fprintf('Final threshold in actual contrast units is %.2f%%\n',contrastThresh);
 %cd to the data folder
 Date=datestr(now,30); %current date with time
 
-cd('/Users/wadelab/Github_MultiSpectral/LEDarduino/Arduino_Project/Data')
+cd('/Users/wadelab/Github_MultiSpectral/LEDarduino/Arduino_Project/Data_2hz')
 
 
 %save out a file containing the contrastThresh, SubID, experimentType, and
