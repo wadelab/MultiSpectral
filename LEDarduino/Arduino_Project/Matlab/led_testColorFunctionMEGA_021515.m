@@ -3,8 +3,8 @@
 % Psychtoolbox to estimate the detection threshold.
 % Obviously, it needs PTB in the path.
 % ARW 021515
-clear all;
-close all;
+% clear all;
+% close all;
 
 addpath(genpath('/Users/wadelab/Github_MultiSpectral'))
 CONNECT_TO_ARDUINO = 1; % For testing on any computer
@@ -14,7 +14,7 @@ end
 
 if (CONNECT_TO_ARDUINO)  
         system('say connecting to arduino');
-
+    
     s=serial('/dev/cu.usbmodem5d11');%,'BaudRate',9600);
     fopen(s);
     disp('*** Connecting to Arduino');

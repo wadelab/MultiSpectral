@@ -20,8 +20,6 @@ function Exp_ledMEGA_170215
 % edited by LEW 170215 to be used with GUI and save out the contrast
 % threshold obtained.
 
-%addpath(genpath('/Users/lew507/Documents/York Uni PhD/Github_MultiSpectral'))
-
 addpath(genpath('/Users/wadelab/Github_MultiSpectral'))
 CONNECT_TO_ARDUINO = 1; % For testing on any computer
 if(~isempty(instrfind))
@@ -30,8 +28,6 @@ end
 
 if (CONNECT_TO_ARDUINO)  
         system('say connecting to arduino');
-
-    %s=serial('/dev/cu.usbmodem1411');%,'BaudRate',9600);
 
     s=serial('/dev/cu.usbmodem5d11');%,'BaudRate',9600);
     fopen(s);
@@ -244,7 +240,6 @@ Date=datestr(now,30); %current date with time
 
 cd('/Users/wadelab/Github_MultiSpectral/LEDarduino/Arduino_Project/Data')
 
-%cd('/Users/lew507/Documents/York Uni PhD/Github_MultiSpectral/LEDarduino/Arduino_Project/Data')
 
 %save out a file containing the contrastThresh, SubID, experimentType, and
 %Session num
