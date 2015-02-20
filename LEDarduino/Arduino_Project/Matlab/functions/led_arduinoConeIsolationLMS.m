@@ -25,13 +25,21 @@ function [LEDStim] = led_arduinoConeIsolationLMS(dpy,stimLMS)
 LEDsToUse=dpy.LEDsToUse;
 
 
-%% create cone fundamentals using Baylor nomogram
-% Specify cone peaks and use same wavelength range as above for LED spectra
-conepeaks=[557 530 437]; %for L M and S cones
+%% create cone fundamentals using stockman cone fundamentals
+
 wavelengths=dpy.WLrange; %wavelength range matches that used for LED spectra
 
-coneSpectra=BaylorNomogram(wavelengths(:),conepeaks(:))';
+%using baylor nomogram - not using now
+% Specify cone peaks and use same wavelength range as above for LED spectra
+%conepeaks=[557 530 437]; %for L M and S cones
+%coneSpectra=BaylorNomogram(wavelengths(:),conepeaks(:))';
+load('stockman01nmCF.mat');
+stockmanData=cat(2,stockman.wavelength,stockman.Lcone,stockman.Mcone,stockman.Scone);
 
+%reduce and resample
+for thiscone=1:size(stockmanData,2)-1;
+    coneSpectra(:,thisLED)=interp1(stockmanData(:,1),stockmanData(:,1+thisLED),wavelengths);
+end
 
 %% set parameters of the trials so the stimulus can be built
 % Set Display (dpy) values
