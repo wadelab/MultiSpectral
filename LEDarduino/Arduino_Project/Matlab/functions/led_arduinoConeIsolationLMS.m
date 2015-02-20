@@ -38,7 +38,7 @@ stockmanData=cat(2,stockman.wavelength,stockman.Lcone,stockman.Mcone,stockman.Sc
 
 %reduce and resample
 for thiscone=1:size(stockmanData,2)-1;
-    coneSpectra(:,thisLED)=interp1(stockmanData(:,1),stockmanData(:,1+thisLED),wavelengths);
+    coneSpectra(:,thiscone)=interp1(stockmanData(:,1),stockmanData(:,1+thiscone),wavelengths);
 end
 
 %% set parameters of the trials so the stimulus can be built
