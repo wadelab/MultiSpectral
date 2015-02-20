@@ -96,7 +96,7 @@ LEDcalib=LEDspectra; %if update the file loaded, the name only has to be updated
 clear LEDspectra
 %resample to specified wavelength range (LEDspectra will now only contain
 %the LED calibs, without the column for wavelengths)
-dpy.WLrange=(390:2:720)';
+dpy.WLrange=(390:2:720)'; %using range from 390 min because the stockman CFs range from 390 to 720+
 for thisLED=1:size(LEDcalib,2)-1;
     LEDspectra(:,thisLED)=interp1(LEDcalib(:,1),LEDcalib(:,1+thisLED),dpy.WLrange);
 end
