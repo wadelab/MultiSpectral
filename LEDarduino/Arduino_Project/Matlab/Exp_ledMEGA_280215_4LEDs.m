@@ -1,3 +1,5 @@
+clear all
+close all
 %function Exp_ledMEGA_170215
 % Exp_ledMEGA_170215
 % 
@@ -40,8 +42,8 @@ end
 %InitializePsychSound; % Initialize the Psychtoolbox sounds
 pause(2);
 fprintf('\n****** Experiment Running ******\n \n');
-LEDamps=uint8([0,0,0,0,0]);
-LEDbaseLevel=uint8([32,144,0,192,16]); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
+LEDamps=uint8([0,0,0,0]);
+LEDbaseLevel=uint8([32,144,192,64]); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
 
 % This version of the code shows how to do two things:
@@ -93,13 +95,18 @@ nLEDs=length(LEDsToUse);
 % Load LEDspectra calib contains 1 column with wavelengths, then the LED calibs
 load('LEDspectra_19-Feb-2015.mat'); %load in calib for the prizmatix
 LEDcalib=LEDspectra; %if update the file loaded, the name only has to be updated here for use in rest of code
+LEDcalib(LEDcalib<0)=0;
 clear LEDspectra
 %resample to specified wavelength range (LEDspectra will now only contain
 %the LED calibs, without the column for wavelengths)
 dpy.WLrange=(390:2:720)'; %using range from 390 min because the stockman CFs range from 390 to 720+
-for thisLED=1:size(LEDcalib,2)-1;
+spectrumIndex=0;
+for thisLED=LEDsToUse
+    spectrumIndex=spectrumIndex+1;
     LEDspectra(:,thisLED)=interp1(LEDcalib(:,1),LEDcalib(:,1+thisLED),dpy.WLrange);
 end
+LEDspectra(LEDspectra<0)=0;
+
 %LEDspectra=LEDspectra-repmat(min(LEDspectra),size(LEDspectra,1),1);
 %sumLED=sum(LEDspectra);
 maxLED=max(LEDspectra);
@@ -113,7 +120,8 @@ dpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LEDs to use out of the 7
 dpy.LEDsToUse=LEDsToUse;
 dpy.bitDepth=8; % Can be 12 on new arduinos
 %dpy.backLED.dir=double(LEDbaseLevel(LEDsToUse))./max(double(LEDbaseLevel(LEDsToUse)))
-dpy.backLED.dir=actualLEDScale(LEDsToUse);
+dpy.backLED.dir=double(LEDbaseLevel)/double(max(LEDbaseLevel));
+
 dpy.backLED.scale=.5;
 dpy.LEDbaseLevel=round(dpy.backLED.dir*dpy.backLED.scale*(2.^dpy.bitDepth-1)); % Set just the LEDs we're using to be on a 50%
 dpy.nLEDsTotal=nLEDsTotal;
@@ -138,7 +146,7 @@ switch experimentType % 1=L-M, 2=(L+M+S), 3=S cone isolating
     case 3
         stim.stimLMS.dir=[0 0 1]; % [1 1 1] is a pure achroamtic luminance modulation
         tGuess=log10(.4);
-        stim.stimLMS.maxLogCont=log10(.5);
+        stim.stimLMS.maxLogCont=log10(.45);
     otherwise
         error ('Incorrect experiment type');
 end

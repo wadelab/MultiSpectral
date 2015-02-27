@@ -26,7 +26,7 @@ for thisInterval= 1:2
         
         
         LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
-        LEDoutput=LEDoutputAmps;
+        LEDoutput=LEDoutputAmps/2;
         
     else
         LEDoutput=zeros((dpy.nLEDsToUse),1)'; % Just zero

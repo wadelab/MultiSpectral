@@ -42,11 +42,6 @@ for thiscone=1:size(stockmanData,2)-1;
 end
 
 %% set parameters of the trials so the stimulus can be built
-% Set Display (dpy) values
-dpy.maxValue=4.9; % These values are specific to  the pkm device: they are the biggest voltage and the voltage we want to modulate around
-dpy.baseValue=2.5;
-
-
 
 dpy.coneSpectra=coneSpectra;
 
