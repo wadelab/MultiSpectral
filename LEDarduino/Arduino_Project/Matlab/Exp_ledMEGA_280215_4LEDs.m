@@ -94,7 +94,7 @@ nLEDs=length(LEDsToUse);
 % Iinitialize the display system
 % Load LEDspectra calib contains 1 column with wavelengths, then the LED calibs
 load('LEDspectra_19-Feb-2015_4LEDS.mat'); %load in calib for the prizmatix
-LEDcalib=LEDspectra; %if update the file loaded, the name only has to be updated here for use in rest of code
+%LEDcalib=LEDcalib; %if update the file loaded, the name only has to be updated here for use in rest of code
 LEDcalib(LEDcalib<0)=0;
 clear LEDspectra
 %resample to specified wavelength range (LEDspectra will now only contain
