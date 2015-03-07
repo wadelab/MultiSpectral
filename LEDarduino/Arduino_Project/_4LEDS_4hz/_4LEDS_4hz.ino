@@ -5,7 +5,8 @@ The name has a number in it _012715_1 that should match some matlab code somewhe
 TODO : Add noise (possibly) to increase thresholds and mask stim onset. Or allow a Gaussian temporal envelope.
 
  */
-
+ 
+ 
 // this constant won't change:
 const int ledPins[] = {8,9,11,12};       // the pin that the LED is attached to
 
