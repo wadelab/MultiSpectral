@@ -207,7 +207,7 @@ while ((k<trialsDesired) && (response ~= -1))
     
     stim.stimLMS.scale=10^tTest; % Because it's log scaled
     
-    response=led_doLEDTrial(dpy,stim,q,s); % This should return 0 for an incorrect answer and 1 for correct
+    response=tetra_led_doLEDTrial(dpy,stim,q,s); % This should return 0 for an incorrect answer and 1 for correct
     disp(response)
     
    	%response=QuestSimulate(q,tTest,tActual);
@@ -233,8 +233,8 @@ end
 
 if (isobject(s)) % This is shorthand for ' if s>0 '
     % Shut down arduino to save the LEDs
-      fwrite(s,zeros(5,1),'uint8');
-      fwrite(s,zeros(5,1),'uint8');
+      fwrite(s,zeros(4,1),'uint8'); %4 values to send for the 4 leds
+      fwrite(s,zeros(4,1),'uint8');
       
     fclose(s);
 end
@@ -251,7 +251,7 @@ fprintf('Final threshold in actual contrast units is %.2f%%\n',contrastThresh);
 %cd to the data folder
 Date=datestr(now,30); %current date with time
 
-cd('/Users/wadelab/Github_MultiSpectral/LEDarduino/Arduino_Project/Data_2hz')
+cd('/Users/wadelab/Github_MultiSpectral/TetraLEDarduino/Data_2hz')
 
 
 %save out a file containing the contrastThresh, SubID, experimentType, and
