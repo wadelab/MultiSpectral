@@ -17,8 +17,7 @@ close all
 % Psychtoolbox to estimate the detection threshold.
 % Obviously, it needs PTB in the path.
 % ARW 021515
-% edited by LEW 170215 to be used with GUI and save out the contrast
-% threshold obtained.
+% edited by LEW 170215 to save out the contrast threshold obtained.
 
 addpath(genpath('/Users/wadelab/Github_MultiSpectral'))
 CONNECT_TO_ARDUINO = 1; % For testing on any computer
@@ -41,7 +40,7 @@ end
 pause(2);
 fprintf('\n****** Experiment Running ******\n \n');
 LEDamps=uint8([0,0,0,0]);
-LEDbaseLevel=uint8([32,144,192,64]); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
+LEDbaseLevel=uint8([32,144,192,16]); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
 
 % This version of the code shows how to do two things:
@@ -62,7 +61,7 @@ end
 
 experimentType=-1; % Ask the user to enter a valid experiment type probing a particuar direction in LMS space
 while((experimentType<1) || (experimentType>3))
-    experimentTypeS=input ('Experiment condition code (LM=1, LMS=2, S=3): ','s'); %=2;% 1=L-M, 2=(L+M+S), 3=S cone isolating
+    experimentTypeS=input ('Experiment condition code (L=1, Lp=2, M=3, S=4, LMS=5): ','s'); %cone isolation, plus lum option
     experimentType=str2num(experimentTypeS);
     if(isempty(experimentType))
         experimentType=-1;
@@ -73,7 +72,7 @@ end
 
 Repeat=-1; % Ask the user to enter a session number
 while(Repeat<1)
-    RepeatString=input ('Enter the session number for this condition: ','s'); %=2;% 1=L-M, 2=(L+M+S), 3=S cone isolating
+    RepeatString=input ('Enter the session number for this condition: ','s'); %enter repeat num
     Repeat=str2num(RepeatString);
     if(isempty(Repeat))
         Repeat=-1;
@@ -82,7 +81,7 @@ while(Repeat<1)
     % *********************************************************
 end
 
-ExpLabel={'LM','LMS','S'};
+ExpLabel={'L','Lprime','M','S','LMS'};
 thisExp=ExpLabel{experimentType};
 
 
@@ -92,12 +91,12 @@ nLEDs=length(LEDsToUse);
 % Iinitialize the display system
 % Load LEDspectra calib contains 1 column with wavelengths, then the LED calibs
 load('LEDspectra_19-Feb-2015_4LEDS.mat'); %load in calib for the prizmatix
-%LEDcalib=LEDcalib; %if update the file loaded, the name only has to be updated here for use in rest of code
+LEDcalib=LEDspectra; %if update the file loaded, the name only has to be updated here for use in rest of code
 LEDcalib(LEDcalib<0)=0;
 clear LEDspectra
 %resample to specified wavelength range (LEDspectra will now only contain
 %the LED calibs, without the column for wavelengths)
-dpy.WLrange=(390:2:720)'; %using range from 390 min because the stockman CFs range from 390 to 720+
+dpy.WLrange=(400:1:720)'; %using range from 400 min (see creatingLprime code for why)
 spectrumIndex=0;
 for thisLED=LEDsToUse
     spectrumIndex=spectrumIndex+1;
@@ -114,7 +113,7 @@ LEDscale=1./maxLED;
 actualLEDScale=LEDscale./max(LEDscale);
 
 
-dpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LEDs to use out of the 7
+dpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LEDs to use
 dpy.LEDsToUse=LEDsToUse;
 dpy.bitDepth=8; % Can be 12 on new arduinos
 %dpy.backLED.dir=double(LEDbaseLevel(LEDsToUse))./max(double(LEDbaseLevel(LEDsToUse)))
@@ -131,20 +130,28 @@ dpy.nLEDsToUse=length(dpy.LEDsToUse);
 % respectively (r/g, luminance, s-cone)
 
 % Here we use the same variables that QuestDemo does for consistency
-switch experimentType % 1=L-M, 2=(L+M+S), 3=S cone isolating
+switch experimentType % 
     case 1    
-        stim.stimLMS.dir=[.5 -1 0]; % [1 1 1] is a pure achroamtic luminance modulation
-        tGuess=log10(.04); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.05);
+        stim.stimLMS.dir=[1 0 0 0]; % l cone isolating
+        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.02);
         
     case 2
-        stim.stimLMS.dir=[1 1 1]; % [1 1 1] is a pure achroamtic luminance modulation
-        tGuess=log10(.5);
-        stim.stimLMS.maxLogCont=log10(.20);
+        stim.stimLMS.dir=[0 1 0 0]; % lprime isolating
+        tGuess=log10(.01);
+        stim.stimLMS.maxLogCont=log10(.02);
     case 3
-        stim.stimLMS.dir=[0 0 1]; % [1 1 1] is a pure achroamtic luminance modulation
-        tGuess=log10(.4);
+        stim.stimLMS.dir=[0 0 1 0]; % m cone isolating
+        tGuess=log10(.01);
+        stim.stimLMS.maxLogCont=log10(.02);
+    case 4
+        stim.stimLMS.dir=[0 0 0 1]; % s cone isolating
+        tGuess=log10(.25);
         stim.stimLMS.maxLogCont=log10(.45);
+    case 5
+        stim.stimLMS.dir=[1 1 1 1]; % Luminance channel
+        tGuess=log10(.4);
+        stim.stimLMS.maxLogCont=log10(.5);
     otherwise
         error ('Incorrect experiment type');
 end
@@ -171,9 +178,9 @@ timeZero=GetSecs; % We >force< you to have PTB in the path for this so we know t
 dummyStim=stim;
 system('say booting arduino');
 
-dummyStim.stimLMS.dir=[1 1 1];
+dummyStim.stimLMS.dir=[1 1 1 1];
 dummyStim.stimLMS.scale=.1;
-dummyResponse=led_doLEDTrial(dpy,dummyStim,q,s,1); % This should return 0 for an incorrect answer and 1 for correct
+dummyResponse=tetra_led_doLEDTrial(dpy,dummyStim,q,s,1); % This should return 0 for an incorrect answer and 1 for correct
 
 system('say experiment beginning');
 

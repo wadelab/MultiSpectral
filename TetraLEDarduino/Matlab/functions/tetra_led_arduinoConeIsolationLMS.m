@@ -1,4 +1,4 @@
-function [LEDStim] = led_arduinoConeIsolationLMS(dpy,stimLMS)
+function [LEDStim] = tetra_led_arduinoConeIsolationLMS(dpy,stimLMS)
 % [LEDvals] = ArduinoConeIsolationLMS(contrast, dir, LEDsToUse) 
 % Uses the given contrast and direction to output the values for each LED.  
 % LED values will be sent to the Arduino in a separate script.
@@ -27,28 +27,34 @@ LEDsToUse=dpy.LEDsToUse;
 
 %% create cone fundamentals using stockman cone fundamentals
 
-wavelengths=dpy.WLrange; %wavelength range matches that used for LED spectra
-
-%using baylor nomogram - not using now
-% Specify cone peaks and use same wavelength range as above for LED spectra
-%conepeaks=[557 530 437]; %for L M and S cones
-%coneSpectra=BaylorNomogram(wavelengths(:),conepeaks(:))';
-load('stockman01nmCF.mat');
-stockmanData=cat(2,stockman.wavelength,stockman.Lcone,stockman.Mcone,stockman.Scone);
-
-%reduce and resample
-for thiscone=1:size(stockmanData,2)-1;
-    coneSpectra(:,thiscone)=interp1(stockmanData(:,1),stockmanData(:,1+thiscone),wavelengths);
+LprimePos=0.5;
+coneSpectra=creatingLprime(LprimePos);
+%check WL match in coneSpectra and dpy.WLrange
+try 
+    if dpy.WLrange==coneSpectra(:,1)
+    disp('wavelengths match')
+    end
+catch 
+    error('Wavelength ranges used for dpy.WLrange do not match the dpy.coneSpectra wavelengths. Edit dpy.WLranges to match')
 end
 
-%% set parameters of the trials so the stimulus can be built
+% wavelengths=dpy.WLrange;
+% load('stockman01nmCF.mat');
+% stockmanData=cat(2,stockman.wavelength,stockman.Lcone,stockman.Mcone,stockman.Scone);
+% 
+% %reduce and resample
+% for thiscone=1:size(stockmanData,2)-1;
+%     coneSpectra(:,thiscone)=interp1(stockmanData(:,1),stockmanData(:,1+thiscone),wavelengths);
+% end
+% 
+% %% set parameters of the trials so the stimulus can be built
 
-dpy.coneSpectra=coneSpectra;
+dpy.coneSpectra=coneSpectra(:,2:end); %remove the wavelengths column
 
 
 %% Make the Stimulus
 
-LEDStim=led_makeStimArduino(dpy,stimLMS); % This returns a structure with dir and scale that applies to the LEDs
+LEDStim=tetra_led_makeStimArduino(dpy,stimLMS); % This returns a structure with dir and scale that applies to the LEDs
  
 % The returned structure gives values in dir and scale ranging betweek 0
 % and 1. They are contrasts

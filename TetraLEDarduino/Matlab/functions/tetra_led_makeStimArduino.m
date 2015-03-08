@@ -1,4 +1,4 @@
-function LEDStim = led_makeStimArduino(dpy,stimLMS)
+function LEDStim = tetra_led_makeStimArduino(dpy,stimLMS)
 % stim=makeStim(dpy,expt)
 % Create the stimulus by inputting the following variables:
 %
@@ -26,13 +26,11 @@ function LEDStim = led_makeStimArduino(dpy,stimLMS)
 %TODO the comments need updating
 
 %% Here we set up the cone fundamentals.
-% Compute in 3 cone peaks and the wavelength range to produce Baylor Nomograms
-% NOTE: For now ONLY LMS stim are okay.
 % First we check to see if cone spectra are defined in the dpy structure.
 % If they are, we use them by default..
 % Note: Here we take out the generation of the sine waves - this is done on
 % the arduino now - our job here is to generate LED values.
-% For each LED, we will send to the ardunio three four numbers: amplitude,
+% For each LED, we will send to the ardunio four sets of numbers: amplitude,
 % frequency, duration and phase.
 
 if isfield(dpy,'coneSpectra')
@@ -54,7 +52,7 @@ end
 
 
 
-LEDStim= sensor2primary(dpy,stimLMS);
+LEDStim= tetra_sensor2primary(dpy,stimLMS);
 
 
 

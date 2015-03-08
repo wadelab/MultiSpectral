@@ -1,4 +1,4 @@
-function response=led_doLEDTrial(dpy,stim, q,serialObject,dummyFlag)
+function response=tetra_led_doLEDTrial(dpy,stim, q,serialObject,dummyFlag)
 % function response=led_doLEDTrial(dpy,stimLMS, q,serialObject)
 % Returns 0 or 1 for wrong/right
 %
@@ -21,7 +21,7 @@ for thisInterval= 1:2
        
         % Compute the LED levels we want
         
-        stim.LEDvals=led_arduinoConeIsolationLMS(dpy,stim.stimLMS);
+        stim.LEDvals=tetra_led_arduinoConeIsolationLMS(dpy,stim.stimLMS);
         
         
         
