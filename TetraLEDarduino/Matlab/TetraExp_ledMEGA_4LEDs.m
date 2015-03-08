@@ -246,7 +246,6 @@ contrastThresh=10^(t)*100;
 fprintf('Experiment Condition: %s\n',thisExp);
 fprintf('Final threshold estimate (mean+-sd) is %.2f +- %.2f\n',t,sd);
 fprintf('Final threshold in actual contrast units is %.2f%%\n',contrastThresh);
-% TODO HERE - ADD IN AUTO SAVE FOR DATA...
 
 %cd to the data folder
 Date=datestr(now,30); %current date with time
