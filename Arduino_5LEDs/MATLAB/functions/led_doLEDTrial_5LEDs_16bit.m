@@ -39,7 +39,7 @@ for thisInterval= 1:2
 
             fwrite(serialObject,uint16(LEDoutput),'uint16');
             fwrite(serialObject,uint16(dpy.LEDbaseLevel),'uint16');
-            fwrite(serialObject,uint16(dpy.modulationRateHz),'uint16');
+            fwrite(serialObject,uint16(dpy.modulationRateHz*128),'uint16'); % Because this is now 16 bit we can specify it more precisely
             %pause(.1)
             sound(sin(linspace(1,650*2*pi,1000))/4,8000);
             
