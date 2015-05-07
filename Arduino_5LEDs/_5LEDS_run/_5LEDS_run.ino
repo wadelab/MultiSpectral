@@ -56,9 +56,10 @@ void loop() {
       }  // End while statement - we will stop when we have 7 bytes
   }
   
+  
   Serial.flush(); // Not sure if we need this but it can't hurt
    
-                /* We now have 7 amplitudes - one for each of the LEDs. We will modulate them with these amplitudes
+                /* We now have amplitudes - one for each of the LEDs. We will modulate them with these amplitudes
                 for one second (or pulseDuration) - then go back to the start of the loop
                 */
              for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { 

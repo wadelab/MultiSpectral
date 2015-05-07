@@ -1,7 +1,7 @@
 clear all
 close all
-%function Exp_ledMEGA_170215
-% Exp_ledMEGA_170215
+%function Exp_ledDUE_5LEDs
+% Exp_ledDUE_5LEDs
 % 
 % Runs the experiment and prompts for subject ID, Experiment condition and
 % session number.  Data is then saved out in the 'DATA' folder within:
@@ -9,7 +9,7 @@ close all
 %
 % File saved in the following format using the inputed session details:
 %
-% SubID001_Cond1_Rep1_17-Feb-2015
+% SubID001_Cond1_Freq1_Rep1_17-Feb-2015
 %
 % where the '001' and '1's are replaced with the relevant values for that
 % repitition, subject and experiment condition and date.
@@ -43,7 +43,7 @@ end
 pause(2);
 fprintf('\n****** Experiment Running ******\n \n');
 LEDamps=uint8([0,0,0,0,0]);
-LEDbaseLevel=uint8([32,100,185,192,64]); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
+LEDbaseLevel=uint8([35,90,65,150,90]); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
 
 
@@ -107,7 +107,7 @@ LEDsToUse=find(LEDbaseLevel);% Which LEDs we want to be active in this expt?
 nLEDs=length(LEDsToUse);
 % Iinitialize the display system
 % Load LEDspectra calib contains 1 column with wavelengths, then the LED calibs
-load('LEDspectra_19-Feb-2015.mat'); %load in calib for the prizmatix
+load('LEDspectra_070515.mat'); %load in calib for the prizmatix
 LEDcalib=LEDspectra; %if update the file loaded, the name only has to be updated here for use in rest of code
 LEDcalib(LEDcalib<0)=0;
 clear LEDspectra
@@ -278,9 +278,9 @@ Date=datestr(now,30); %current date with time
 % %save out a file containing the contrastThresh, SubID, experimentType, and
 % %Session num
 % 
-% save(sprintf('SubID%s_Cond%s_Rep%d_%s',...
-%     SubID,thisExp,Repeat,Date),'contrastThresh','SubID',...
-%     'thisExp','Repeat','Date');
+% save(sprintf('SubID%s_Cond%s_Freq%d_Rep%d_%s',...
+%     SubID,thisExp,modulationRateHz,Repeat,Date),'contrastThresh','SubID',...
+%     'thisExp','modulationRateHz','Repeat','Date');
 % fprintf('\nSubject %s contrast threshold saved\n',SubID);
 % fprintf('\n******** End of Experiment ********\n');
 % 
