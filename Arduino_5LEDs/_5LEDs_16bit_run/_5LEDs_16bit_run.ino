@@ -12,12 +12,12 @@ const int ledPins[] = {8,9,10,11,12};       // the pin that the LED is attached 
 
 // Variables will change:
 unsigned long startTime;
-byte modulationRateHz[] = {0}; // Flicker rate of the LEDs when they're on - default 0, overridden when serial port receives the value
-byte LEDamps[] = {0,0,0,0,0}; // How much each LED flickers (from 0 to 256) about the baseline. Obviously if the baseline is 128, the flicker amplitude must be no more than 128.
-byte LEDbaseLevel[] = {0,0,0,0,0}; //{32,144,192,128}; // These are the baseline levels of the LEDs. They are set through Matlab inputs so these values here are just examples
+byte modulationRateHz16Bit[2]; // Flicker rate of the LEDs when they're on - default 0, overridden when serial port receives the value
+unsigned int LEDamps[] = {0,0,0,0,0}; // How much each LED flickers (from 0 to 256) about the baseline. Obviously if the baseline is 128, the flicker amplitude must be no more than 128.
+unsigned int LEDbaseLevel[] = {0,0,0,0,0}; //{32,144,192,128}; // These are the baseline levels of the LEDs. They are set through Matlab inputs so these values here are just examples
 byte LEDampInputArray[10] ; // Explicitly set to the number of LEDs * 2
 byte LEDampBaseInputArray[10]; // Explicitly set to the number of LEDs * 2
-
+double modulationRateHz;
 long pulseDuration = 1000; // How long each pulse lasts in ms
 long elapsedTimeMilliSecs = 0; 
 int halfAmp = 128; // Half the maximum amplitude. It will be bigger if we use 12 bit precision
@@ -53,12 +53,20 @@ void loop() {
   
   // In the 16 bit version of the code, we read two bytes per LED. When matlab sends 16 bit values, it sends low, then high byte.
   // When we read them, we read the low byte first, then add this to a bit-shifted (<<8) version of the next byte.
-  // Initially we read everything into char arrays, then do the maths at the end.
+  // Initially we read everything into byte arrays, then do the maths at the end.
   
       if (Serial.available() > 0) {
-          Serial.readBytes(LEDamps,nPins); // First nPins bytes are the modulation amps
-          Serial.readBytes(LEDbaseLevel,nPins); // Second nPins bytes are the baselines.
-          Serial.readBytes(modulationRateHz,1); // Last byte is the frequency in Hz
+          Serial.readBytes(LEDampInputArray,nPins*2); // First nPins bytes are the modulation amps
+          Serial.readBytes(LEDampBaseInputArray,nPins*2); // Second nPins bytes are the baselines.
+          Serial.readBytes(modulationRateHz16Bit,2); // Last 2 bytes are the frequency in Hz multiplied by 128; 
+
+          for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { // Loop (very quickly) over all pins
+              LEDamps[thisPinIndex]=unsigned int(LEDampInputArray[thisPinIndex*2-1])+(unsigned int(LEDampInputArray[thisPinIndex*2])<<8);
+              LEDbaseLevel[thisPinIndex]=unsigned int(LEDampBaseInputArray[thisPinIndex*2-1]+(unsigned int(LEDampBaseInputArray[thisPinIndex*2])<<8);
+          }
+          
+          modulationRateHz= double(modulationRateHz16Bit[1]+(uint16(modulationRateHz16Bit[2])));
+          
 
           bytesRead=1; // Tell the loop we've read something
       }  // End while statement - we will stop when we have 7 bytes
