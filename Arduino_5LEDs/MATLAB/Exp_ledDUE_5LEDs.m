@@ -98,11 +98,6 @@ while(Repeat<1)
     % *********************************************************
 end
 
-ExpLabel={'LM','LMS','S'};
-thisExp=ExpLabel{experimentType};
-
-
-
 LEDsToUse=find(LEDbaseLevel);% Which LEDs we want to be active in this expt?
 nLEDs=length(LEDsToUse);
 % Iinitialize the display system
@@ -153,25 +148,32 @@ switch experimentTypeS % 1=L-M, 2=(L+M+S), 3=S cone isolating
         stim.stimLMS.dir=[1 0 0]; % L cone isolating
         tGuess=log10(.04); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
         stim.stimLMS.maxLogCont= log10(.05);
+        thisExp='L';
     
     case {'M','m'}    
         stim.stimLMS.dir=[0 1 0]; % M cone isolating
         tGuess=log10(.04); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
         stim.stimLMS.maxLogCont= log10(.05);
+        thisExp='M';
         
     case {'LM','lm'}    
         stim.stimLMS.dir=[.5 -1 0]; % L-M isolating
         tGuess=log10(.04); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
         stim.stimLMS.maxLogCont= log10(.05);
+        thisExp='LM';
         
     case {'LMS','lms'}
         stim.stimLMS.dir=[1 1 1]; % [1 1 1] is a pure achromatic luminance modulation
         tGuess=log10(.5);
         stim.stimLMS.maxLogCont=log10(.20);
+        thisExp='LMS';
+        
     case {'S','s'}
         stim.stimLMS.dir=[0 0 1]; % S cone isolating
         tGuess=log10(.4);
         stim.stimLMS.maxLogCont=log10(.45);
+        thisExp='S';
+        
     otherwise
         error ('Incorrect experiment type');
 end
@@ -264,24 +266,37 @@ plot(q.intensity(1:q.trialCount));
 t=QuestMean(q);		% Recommended by Pelli (1989) and King-Smith et al. (1994). Still our favorite.
 sd=QuestSd(q);
 contrastThresh=10^(t)*100;
+contrastStDev=10^(sd)*100;
 fprintf('Experiment Condition: %s\n',thisExp);
 fprintf('Final threshold estimate (mean+-sd) is %.2f +- %.2f\n',t,sd);
-fprintf('Final threshold in actual contrast units is %.2f%%\n',contrastThresh);
+fprintf('Final threshold in actual contrast units is %.2f%% +- %.2f%%\n',contrastThresh,contrastStDev);
 % TODO HERE - ADD IN AUTO SAVE FOR DATA...
 
 %cd to the data folder
 Date=datestr(now,30); %current date with time
 
-% cd('/Users/wadelab/Github_MultiSpectral/LEDarduino/Arduino_Project/Data_4hz')
-% 
-% 
-% %save out a file containing the contrastThresh, SubID, experimentType, and
-% %Session num
-% 
-% save(sprintf('SubID%s_Cond%s_Freq%d_Rep%d_%s',...
-%     SubID,thisExp,modulationRateHz,Repeat,Date),'contrastThresh','SubID',...
-%     'thisExp','modulationRateHz','Repeat','Date');
-% fprintf('\nSubject %s contrast threshold saved\n',SubID);
-% fprintf('\n******** End of Experiment ********\n');
-% 
+cd('/Users/wadelab/Github_MultiSpectral/Arduino_5LEDs/MATLAB/Data')
+
+Data.rawThresh=t;
+Data.rawStDev=sd;
+Data.contrastThresh=contrastThresh;
+Data.contrastStDev=contrastStDev;
+Data.SubID=SubID;
+Data.thisExp=thisExp;
+Data.modulationRateHz=modulationRateHz;
+Data.Repeat=Repeat;
+Data.Date=Date;
+
+%save out a file containing the contrastThresh, SubID, experimentType, freq and
+%Session num
+
+save(sprintf('SubID%s_Cond%s_Freq%.1f_Rep%d_%s.mat',...
+    SubID,thisExp,modulationRateHz,Repeat,Date),'Data');
+
+%save figure
+savefig(sprintf('SubID%s_Cond%s_Freq%.1f_Rep%d_%s.fig',...
+    SubID,thisExp,modulationRateHz,Repeat,Date));
+fprintf('\nSubject %s data saved\n',SubID);
+fprintf('\n******** End of Experiment ********\n');
+
 
