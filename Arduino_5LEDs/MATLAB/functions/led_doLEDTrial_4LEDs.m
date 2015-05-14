@@ -1,4 +1,4 @@
-function response=led_doLEDTrial_5LEDs(dpy,stim, q,serialObject,dummyFlag)
+function response=led_doLEDTrial_4LEDs(dpy,stim, q,serialObject,dummyFlag)
 % function response=led_doLEDTrial(dpy,stimLMS, q,serialObject)
 % Returns 0 or 1 for wrong/right
 %

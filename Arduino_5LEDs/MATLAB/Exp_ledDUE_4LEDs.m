@@ -42,8 +42,8 @@ end
 %InitializePsychSound; % Initialize the Psychtoolbox sounds
 pause(2);
 fprintf('\n****** Experiment Running ******\n \n');
-LEDamps=uint8([0,0,0,0,0]);
-LEDbaseLevel=uint8([35,90,65,150,90]); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
+LEDamps=uint8([0,0,0,0]);
+LEDbaseLevel=uint8([32,130,192,64]); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
 
 
@@ -77,7 +77,7 @@ while((experimentType<1) || (experimentType>3))
 end
 
 modulationRateHz=-1; % Ask the user to enter a valid experiment type probing a particuar direction in LMS space
-while((modulationRateHz<0) || (modulationRateHz>65))
+while((modulationRateHz<0) || (modulationRateHz>120))
     modulationRateHzString=input ('Frequency in Hz e.g. 0.5, 1, 2, 4, etc: ','s'); %enter the Hz for exp
     modulationRateHz=str2num(modulationRateHzString);
     if(isempty(modulationRateHz))
@@ -102,7 +102,7 @@ LEDsToUse=find(LEDbaseLevel);% Which LEDs we want to be active in this expt?
 nLEDs=length(LEDsToUse);
 % Iinitialize the display system
 % Load LEDspectra calib contains 1 column with wavelengths, then the LED calibs
-load('LEDspectra_070515.mat'); %load in calib for the prizmatix
+load('LEDspectra4LEDs_070515.mat'); %load in calib for the prizmatix
 LEDcalib=LEDspectra; %if update the file loaded, the name only has to be updated here for use in rest of code
 LEDcalib(LEDcalib<0)=0;
 clear LEDspectra
@@ -202,7 +202,7 @@ system('say booting arduino');
 
 dummyStim.stimLMS.dir=[1 1 1];
 dummyStim.stimLMS.scale=.1;
-dummyResponse=led_doLEDTrial_5LEDs(dpy,dummyStim,q,s,1); % This should return 0 for an incorrect answer and 1 for correct
+dummyResponse=led_doLEDTrial_4LEDs(dpy,dummyStim,q,s,1); % This should return 0 for an incorrect answer and 1 for correct
 
 system('say experiment beginning');
 
@@ -229,7 +229,7 @@ while ((k<trialsDesired) && (response ~= -1))
     
     stim.stimLMS.scale=10^tTest; % Because it's log scaled
     
-    response=led_doLEDTrial_5LEDs(dpy,stim,q,s); % This should return 0 for an incorrect answer and 1 for correct
+    response=led_doLEDTrial_4LEDs(dpy,stim,q,s); % This should return 0 for an incorrect answer and 1 for correct
     disp(response)
     
    	%response=QuestSimulate(q,tTest,tActual);
