@@ -46,7 +46,7 @@ LEDamps=uint8([0,0,0,0,0]);
 LEDbaseLevel=uint8([35,90,65,150,90]); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
 
-
+system('say Enter experiment parameters');
 % This version of the code shows how to do two things:
 % Ask Lauren's code for a set of LED amplitudes corresponding to a
 % particula2r direction and contrast in LMS space

@@ -43,6 +43,7 @@ void setup() {
 void loop() {
 // This runs forever  
   int bytesRead=0; // Have we read from the serial port recently? 0 for no, 1 for yes
+  long randPhase=random(0,6.283);
   
     Serial.flush(); // Not sure if we need this but it can't hurt
 
@@ -77,7 +78,7 @@ void loop() {
       // when the elapsed time is greater than the pulse width that we asked for.
        
         for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { // Loop (very quickly) over all pins
-                 int val = sin(double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz[1]))*double(LEDamps[thisPinIndex])+double(LEDbaseLevel[thisPinIndex]);
+                 int val = sin(double(randPhase)+double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz[0]))*double(LEDamps[thisPinIndex])+double(LEDbaseLevel[thisPinIndex]);
                  // int val = sin( double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz))*(double(LEDamps[thisPinIndex]))+LEDbaseLevel[thisPinIndex];
         
                       analogWrite(ledPins[thisPinIndex], val); // Write value to the pin

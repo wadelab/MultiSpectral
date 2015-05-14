@@ -35,23 +35,24 @@ for thisInterval= 1:2
     
     if (isobject(serialObject))
 
+            sound(sin(linspace(1,650*2*pi,1000))/4,4000);
             fwrite(serialObject,uint8(LEDoutput),'uint8');
             fwrite(serialObject,uint8(dpy.LEDbaseLevel),'uint8');
             fwrite(serialObject,uint8(dpy.modulationRateHz),'uint8');
             %pause(.1)
-            sound(sin(linspace(1,650*2*pi,1000))/4,8000);
+            
             
             %disp(serialObject.ValuesSent);
             disp(LEDoutput);
             disp(dpy.LEDbaseLevel);
             disp(dpy.modulationRateHz);
-            pause(.8);
+            
             
             if thisInterval==1;
-                pause(.2)
-            else
+                pause(.25)
+            else continue
                 %no pause if end of stim presentation and awaiting response
-                sound(sin(linspace(1,800*2*pi,1000))/4,4000); % Do a slightly different beep to indicate a response is required
+                %sound(sin(linspace(1,800*2*pi,1000))/4,4000); % Do a slightly different beep to indicate a response is required
             end
        
     end
@@ -75,11 +76,11 @@ if (~dummyFlag) % If this was a dummy trial then don't require a key press
         
     else
         disp('Wrong');
-        sound(sin(linspace(1,900*2*pi,1000))/6,4000); % Do a slightly different beep to indicate a response is required
+        sound(sin(linspace(1,800*2*pi,1000))/5,4000); % Do a slightly different beep to indicate a response is required
         
     end
     
-    pause(.2);
+    
     % Here you can feed back answers to Quest or whatever and compute the
     % next contrast to use
 else % If this was a dummy trial then don't require a key press
