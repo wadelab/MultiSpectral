@@ -1,25 +1,11 @@
 function [LEDStim] = tetra_led_arduinoConeIsolationLMS(dpy,stimLMS)
-% [LEDvals] = ArduinoConeIsolationLMS(contrast, dir, LEDsToUse) 
-% Uses the given contrast and direction to output the values for each LED.  
+% [LEDStim] = tetra_led_arduinoConeIsolationLMS(dpy,stimLMS)
+% Uses the variables in dpy and stimLMS to output the values for each LED.  
 % LED values will be sent to the Arduino in a separate script.
 %
-% dir = [0 0 1];
-% dir = contains an array of 3 (if LMS) numbers which specify the
-% direction of the cone isolation, 
-% e.g. for luminance, dir = [1 1 1]
-% for L cone isolation dir = [1 0 0]
-% LEDsToUse: Indices of LEDs that we want to modulate. E.g. [2 5 7] uses
-% the blue, green and red LEDs from a 7 LED array on the 3D printed device.
-% 
-% contrast = .5;
-% contrast = contains a single contrast value as a decimal (i.e. where 1 =
-% 100%)
-% e.g. contrast = .5   for 50% contrast
-%
-% Example for use in a script:
-% LEDvals=ArduinoConeIsolationLMS(.4,[1 1 1],[2 5 7])
 %
 % Written by LEW 09/01/15
+% edited by LEW 21/05/15 - compatible with 5LEDs controlled by arduino DUE
 
 %% Load the Calibration data for the LEDs
 LEDsToUse=dpy.LEDsToUse;
@@ -27,12 +13,12 @@ LEDsToUse=dpy.LEDsToUse;
 
 %% create cone fundamentals using stockman cone fundamentals
 
-LprimePos=0.5;
+LprimePos=0.5; %position of peak between the L and M cones, 0.5 is half way
 coneSpectra=creatingLprime(LprimePos);
 %check WL match in coneSpectra and dpy.WLrange
 try 
     if dpy.WLrange==coneSpectra(:,1)
-    disp('wavelengths match')
+    %disp('wavelengths match')
     end
 catch 
     error('Wavelength ranges used for dpy.WLrange do not match the dpy.coneSpectra wavelengths. Edit dpy.WLranges to match')
@@ -51,10 +37,18 @@ end
 
 dpy.coneSpectra=coneSpectra(:,2:end); %remove the wavelengths column
 
-
+%replace NaNs with 0
+for thisColumn=1:size(dpy.coneSpectra,2);
+    for thisRow=1:size(dpy.coneSpectra,1);
+        if isnan(dpy.coneSpectra(thisRow,thisColumn));
+            dpy.coneSpectra(thisRow,thisColumn)=0;
+        end
+    end
+end
+            
 %% Make the Stimulus
 
-LEDStim=tetra_led_makeStimArduino(dpy,stimLMS); % This returns a structure with dir and scale that applies to the LEDs
+LEDStim=led_makeStimArduino(dpy,stimLMS); % This returns a structure with dir and scale that applies to the LEDs
  
 % The returned structure gives values in dir and scale ranging betweek 0
 % and 1. They are contrasts

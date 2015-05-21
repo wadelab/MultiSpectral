@@ -15,7 +15,7 @@ locationLprime=LprimePos; %e.g. 0.5 for half way
 %desired WL range
 WL1nm=(400:1:720)'; %N.B. for now must be 400 and 720, else interp won't work - would need to edit part 1 and 2 values too if this changes
 %can comment this bit out on lab mac
-addpath(genpath('/Users/lew507/Documents/York Uni PhD/ArduinoStim'))
+%addpath(genpath(' ')) enter path containing the stockman01nmCF
 
 %load in the 0.1nm stockmanCFs
 load('stockman01nmCF.mat');
@@ -143,7 +143,7 @@ finalLprimecone1nmResample=interp1(cones.allLprimeconeCFWLs(:,1),cones.allLprime
 
 %save out spectra with wavelengths (WL,L,L',M,S)
 Spectra=cat(2,WL1nm,finalLcone1nmResample,finalLprimecone1nmResample,finalMcone1nmResample,finalScone1nmResample);
-
-%plot figure
-figure()
-plot(Spectra(:,1),Spectra(:,2:end))
+% 
+% %plot figure
+% figure()
+% plot(Spectra(:,1),Spectra(:,2:end))
