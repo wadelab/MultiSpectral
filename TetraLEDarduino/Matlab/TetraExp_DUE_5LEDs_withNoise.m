@@ -208,7 +208,7 @@ system('say booting arduino');
 
 dummyStim.stimLMS.dir=[1 1 1 1];
 dummyStim.stimLMS.scale=.1;
-dummyResponse=tetra_led_doLEDTrial_5LEDs(dpy,dummyStim,q,s,1); % This should return 0 for an incorrect answer and 1 for correct
+dummyResponse=tetra_led_doLEDTrial_5LEDs_withNoise(dpy,dummyStim,q,s,1); % This should return 0 for an incorrect answer and 1 for correct
 
 %prompt to press 1 to start
 toStart=-1;
@@ -250,7 +250,7 @@ while ((k<trialsDesired) && (response ~= -1))
     
     stim.stimLMS.scale=10^tTest; % Because it's log scaled
     
-    response=tetra_led_doLEDTrial_5LEDs(dpy,stim,q,s); % This should return 0 for an incorrect answer and 1 for correct
+    response=tetra_led_doLEDTrial_5LEDs_withNoise(dpy,stim,q,s); % This should return 0 for an incorrect answer and 1 for correct
     %disp(response)
     
    	%response=QuestSimulate(q,tTest,tActual);

@@ -1,4 +1,4 @@
-function response=tetra_led_doLEDTrial_5LEDs(dpy,stim, q,serialObject,dummyFlag)
+function response=tetra_led_doLEDTrial_5LEDs_withNoise(dpy,stim, q,serialObject,dummyFlag)
 % function response=led_doLEDTrial(dpy,stimLMS, q,serialObject)
 % Returns 0 or 1 for wrong/right
 %
@@ -27,9 +27,10 @@ for thisInterval= 1:2
         
         LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
         LEDoutput=LEDoutputAmps/2;
+        LEDoutput=LEDoutput+10; % add same val to each pin
         
     else
-        LEDoutput=zeros((dpy.nLEDsToUse),1)'; % Just zero
+        LEDoutput=repmat(10,(dpy.nLEDsToUse),1)'; % add same val to each pin
     end
     
     

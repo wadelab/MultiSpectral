@@ -22,7 +22,7 @@ int nPins = 5;
  
 void setup() {
 
-       //    analogWriteResolution(8);
+       analogWriteResolution(8);
 
   // initialize serial communication:
       Serial.begin(9600);
@@ -43,8 +43,8 @@ void setup() {
 void loop() {
 // This runs forever  
   int bytesRead=0; // Have we read from the serial port recently? 0 for no, 1 for yes
-  long randPhase=random(0,6.283);
-  
+  long randPhaseLong=random(0,6283);
+  double randPhase=double(randPhaseLong)/1000;
     Serial.flush(); // Not sure if we need this but it can't hurt
 
   while (bytesRead<1) { // Keep looping until there's something available to read
@@ -78,7 +78,7 @@ void loop() {
       // when the elapsed time is greater than the pulse width that we asked for.
        
         for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { // Loop (very quickly) over all pins
-                 int val = sin(double(randPhase)+double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz[0]))*double(LEDamps[thisPinIndex])+double(LEDbaseLevel[thisPinIndex]);
+                 int val = sin(double(randPhase)+double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz[0]))*(double(LEDamps[thisPinIndex])-double(LEDbaseLevel[thisPinIndex]))+double(LEDbaseLevel[thisPinIndex]);
                  // int val = sin( double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz))*(double(LEDamps[thisPinIndex]))+LEDbaseLevel[thisPinIndex];
         
                       analogWrite(ledPins[thisPinIndex], val); // Write value to the pin
