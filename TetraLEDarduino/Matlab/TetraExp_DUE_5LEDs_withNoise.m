@@ -288,8 +288,8 @@ title(sprintf('%s cone at %.1f Hz Trial %d',thisExp,modulationRateHz,Repeat))
 t=QuestMean(q);		% Recommended by Pelli (1989) and King-Smith et al. (1994). Still our favorite.
 sd=QuestSd(q);
 contrastThresh=10^(t)*100;
-contrastStDevPos=(10^(t)*100)-(10^(t-sd)*100);
-contrastStDevNeg=(10^(t+sd)*100)-(10^(t)*100);
+contrastStDevPos=(10^(t+sd)*100)-(10^(t)*100);
+contrastStDevNeg=(10^(t)*100)-(10^(t-sd)*100);
 fprintf('Experiment Condition: %s Freq: %.1f\n',thisExp,modulationRateHz);
 fprintf('Final threshold estimate (mean+-sd) is %.2f +- %.2f\n',t,sd);
 fprintf('Final threshold in actual contrast units is %.2f%% SD is + %.2f%% -%.2f%%\n',contrastThresh,contrastStDevPos,contrastStDevNeg);
