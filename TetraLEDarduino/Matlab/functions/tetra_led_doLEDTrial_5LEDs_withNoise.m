@@ -20,17 +20,24 @@ for thisInterval= 1:2
     if (thisInterval == signalInterval) % Is this is the interval with the modulation
        
         % Compute the LED levels we want
-        
+        stim.stimLMS.dir=stim.stimLMS.dir+1; %add a value to all cones for a lum element
         stim.LEDvals=tetra_led_arduinoConeIsolationLMS(dpy,stim.stimLMS);
         
         
         
         LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
         LEDoutput=LEDoutputAmps/2;
-        LEDoutput=LEDoutput+10; % add same val to each pin
+        
         
     else
-        LEDoutput=repmat(10,(dpy.nLEDsToUse),1)'; % add same val to each pin
+        stimNonTarget.stimLMS=stim.stimLMS; %we don't want to overide anything in stim.stimLMS
+        stimNonTarget.stimLMS.dir=[1 1 1 1]; %make the dir of the non-target a low level lum value
+        %stimNonTarget.stimLMS.scale=0.1; %override the contrast?
+        stim.LEDvals=tetra_led_arduinoConeIsolationLMS(dpy,stimNonTarget.stimLMS);
+        
+        LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
+        LEDoutput=LEDoutputAmps/2;
+        %LEDoutput=repmat(10,(dpy.nLEDsToUse),1)'; % add same val to each pin
     end
     
     
@@ -44,10 +51,12 @@ for thisInterval= 1:2
             
             
             %disp(serialObject.ValuesSent);
-            fprintf('\nfirst 5bytes sent %d',LEDoutput+dpy.LEDbaseLevel)
+            fprintf('\nfirst 5bytes sent:\n');
+            disp(LEDoutput+dpy.LEDbaseLevel);
             %disp(LEDoutput);
-            fprintf('\nsecond set of 5 bytes %d',dpy.LEDbaseLevel);
-            fprintf('\nmodulation rate %d',dpy.modulationRateHz);
+            fprintf('second set of 5 bytes:\n');
+            disp(dpy.LEDbaseLevel);
+            fprintf('modulation rate: %d\n',dpy.modulationRateHz);
             
             
             if thisInterval==1;
