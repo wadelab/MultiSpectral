@@ -25,7 +25,7 @@ int nPins = 5;
  
 void setup() {
 
-       //    analogWriteResolution(8);
+   analogWriteResolution(12); // Because this is the Due and we want high precision
 
   // initialize serial communication:
       Serial.begin(9600);
@@ -58,22 +58,23 @@ void loop() {
       if (Serial.available() > 0) {
           Serial.readBytes(LEDampInputArray,nPins*2); // First nPins bytes are the modulation amps. We read in 2 bytes per pin
           Serial.readBytes(LEDampBaseInputArray,nPins*2); // Second 2 bytes per nPins bytes are the baselines.
-          Serial.readBytes(modulationRateHz16Bit,2); // Last 2 bytes are the frequency of the flicker in Hz multiplied by 128; 
+          Serial.readBytes(modulationRateHz16Bit,2); // Last 2 bytes are the frequency of the flicker in Hz multiplied by 256. We do this to allow fractional flicker rates.
+          
           
           // We've read in 2 bytes per output pin (these correspond to LEDs on the output) . We convert these into proper ints by assuming that the first
-          // byte is the high end and the second byte is the low end. So we can construct a 16 bit number as FB*256+LB. Note that we use <<8 
+          // byte is the low end and the second byte is the high end. So we can construct a 16 bit number as SB*256+FB. Note that we use <<8 
           // (shift left by 8 bits) to multiply by 256
           // On the Due the unsigned ints are 4 bytes long
           
-          for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { // Loop (very quickly) over all pins
+          for (int thisPinIndex = 1; thisPinIndex <= nPins; thisPinIndex++) { // Loop (very quickly) over all pins
               LEDamps[thisPinIndex]=(int(LEDampInputArray[thisPinIndex*2-1]))+((int(LEDampInputArray[thisPinIndex*2]))<<8);
               LEDbaseLevel[thisPinIndex]=(int(LEDampBaseInputArray[thisPinIndex*2-1]))+((int(LEDampBaseInputArray[thisPinIndex*2]))<<8);
           } // next pin data
           
-          modulationRateHz= double(int(modulationRateHz16Bit[1])+(int(modulationRateHz16Bit[2])));
+          modulationRateHz= double(int(modulationRateHz16Bit[1])+(int(modulationRateHz16Bit[2]))<<8)/256;
           
 
-          bytesRead=1; // Tell the loop we've read something
+          bytesRead=1; // Tell the loop we've read something - go ahead and run the flicker that's been asked for
       }  // End while statement - we will stop when we have 7 pins worth of inputs
   }
   
@@ -83,17 +84,17 @@ void loop() {
                 /* We now have amplitudes - one for each of the LEDs. We will modulate them with these amplitudes
                 for one second (or pulseDuration) - then go back to the start of the loop
                 */
-             for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { 
-                   analogWrite(ledPins[thisPinIndex], 0);   // To add in a quick black flicker
-              }
+   for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { 
+       analogWrite(ledPins[thisPinIndex], 0);   // To add in a quick black pulse and reset the LEDs. Mostly you do this as a cue to the subject so they know something's coming.
+   }
               
-             delay(100);
+   delay(100);
             
-       // Here we loop for one second
-     startTime=millis(); // Log the current time in ms
-     elapsedTimeMilliSecs=0; // This will count up until it reaches the pulseDuration
+       // Here we loop for one pulseDuration
+   startTime=millis(); // Log the current time in ms
+   elapsedTimeMilliSecs=0; // This will count up until it reaches the pulseDuration
 
-    while (elapsedTimeMilliSecs < pulseDuration) { // Keep checking to see how long we've been in this loop (in ms)
+   while (elapsedTimeMilliSecs < pulseDuration) { // Keep checking to see how long we've been in this loop (in ms)
        elapsedTimeMilliSecs=(millis()-startTime); // Compute how long it's been in this loop in ms. We will terminate
       // when the elapsed time is greater than the pulse width that we asked for.
        
@@ -101,21 +102,18 @@ void loop() {
                  int val = sin(double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz))*double(LEDamps[thisPinIndex])+double(LEDbaseLevel[thisPinIndex]);
                  // int val = sin( double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz))*(double(LEDamps[thisPinIndex]))+LEDbaseLevel[thisPinIndex];
         
-                      analogWrite(ledPins[thisPinIndex], val); // Write value to the pin
+                      analogWrite(ledPins[thisPinIndex], val); // Write value to the pin. These are ints... so in the case of a  12 bit value they are 0-4095. This is taken care of on the matlab side
+               // So, to be clear. To get a 10% modulation on a pin about the half max point, matlab will send a base level of 2048 as a 2-byte number (low end first: 0, 8)
+               // and a modulation of 205 (205,0). The error here is about 1 part in 1000.
         } // Next pin
     } // end while loop;
     
     
     // Set everything to mean level  afterwards. 
-      for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { 
-           analogWrite(ledPins[thisPinIndex], int(LEDbaseLevel[thisPinIndex]));   // To add in a quick black flicker
-      }
-     // delay(100);
-      
-    //  for (int thisPinIndex = 0; thisPinIndex < 5; thisPinIndex++) { 
-
-        //            analogWrite(ledPins[thisPinIndex], LEDbaseLevel[thisPinIndex]);
-    //  } // next pin to zero 
+    for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { 
+           analogWrite(ledPins[thisPinIndex], int(LEDbaseLevel[thisPinIndex]));   // To reset to mean level
+    }
+     
       
 
 } // end function
