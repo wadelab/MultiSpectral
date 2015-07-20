@@ -15,7 +15,7 @@ unsigned long startTime;
 byte modulationRateHz16Bit[2]; // Flicker rate of the LEDs when they're on - default 0, overridden when serial port receives the value
 unsigned int LEDamps[] = {0,0,0,0,0}; // How much each LED flickers (from 0 to 256) about the baseline. Obviously if the baseline is 128, the flicker amplitude must be no more than 128.
 unsigned int LEDbaseLevel[] = {0,0,0,0,0}; //{32,144,192,128}; // These are the baseline levels of the LEDs. They are set through Matlab inputs so these values here are just examples
-byte LEDampInputArray[10] ; // Explicitly set to the number of LEDs * 2
+byte LEDampInputArray[10]; // Explicitly set to the number of LEDs * 2
 byte LEDampBaseInputArray[10]; // Explicitly set to the number of LEDs * 2
 double modulationRateHz;
 long pulseDuration = 1000; // How long each pulse lasts in ms
@@ -47,7 +47,7 @@ void loop() {
 // This runs forever  
   int bytesRead=0; // Have we read from the serial port recently? 0 for no, 1 for yes
   
-    Serial.flush(); // Not sure if we need this but it can't hurt
+  Serial.flush(); // Not sure if we need this but it can't hurt
 
   while (bytesRead<1) { // Keep looping until there's something available to read
   
@@ -56,20 +56,25 @@ void loop() {
   // Initially we read everything into byte arrays, then do the maths at the end.
   
       if (Serial.available() > 0) {
-          Serial.readBytes(LEDampInputArray,nPins*2); // First nPins bytes are the modulation amps
-          Serial.readBytes(LEDampBaseInputArray,nPins*2); // Second nPins bytes are the baselines.
-          Serial.readBytes(modulationRateHz16Bit,2); // Last 2 bytes are the frequency in Hz multiplied by 128; 
-
-          for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { // Loop (very quickly) over all pins
-              LEDamps[thisPinIndex]=unsigned int(LEDampInputArray[thisPinIndex*2-1])+(unsigned int(LEDampInputArray[thisPinIndex*2])<<8);
-              LEDbaseLevel[thisPinIndex]=unsigned int(LEDampBaseInputArray[thisPinIndex*2-1]+(unsigned int(LEDampBaseInputArray[thisPinIndex*2])<<8);
-          }
+          Serial.readBytes(LEDampInputArray,nPins*2); // First nPins bytes are the modulation amps. We read in 2 bytes per pin
+          Serial.readBytes(LEDampBaseInputArray,nPins*2); // Second 2 bytes per nPins bytes are the baselines.
+          Serial.readBytes(modulationRateHz16Bit,2); // Last 2 bytes are the frequency of the flicker in Hz multiplied by 128; 
           
-          modulationRateHz= double(modulationRateHz16Bit[1]+(uint16(modulationRateHz16Bit[2])));
+          // We've read in 2 bytes per output pin (these correspond to LEDs on the output) . We convert these into proper ints by assuming that the first
+          // byte is the high end and the second byte is the low end. So we can construct a 16 bit number as FB*256+LB. Note that we use <<8 
+          // (shift left by 8 bits) to multiply by 256
+          // On the Due the unsigned ints are 4 bytes long
+          
+          for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { // Loop (very quickly) over all pins
+              LEDamps[thisPinIndex]=(int(LEDampInputArray[thisPinIndex*2-1]))+((int(LEDampInputArray[thisPinIndex*2]))<<8);
+              LEDbaseLevel[thisPinIndex]=(int(LEDampBaseInputArray[thisPinIndex*2-1]))+((int(LEDampBaseInputArray[thisPinIndex*2]))<<8);
+          } // next pin data
+          
+          modulationRateHz= double(int(modulationRateHz16Bit[1])+(int(modulationRateHz16Bit[2])));
           
 
           bytesRead=1; // Tell the loop we've read something
-      }  // End while statement - we will stop when we have 7 bytes
+      }  // End while statement - we will stop when we have 7 pins worth of inputs
   }
   
   
@@ -93,7 +98,7 @@ void loop() {
       // when the elapsed time is greater than the pulse width that we asked for.
        
         for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { // Loop (very quickly) over all pins
-                 int val = sin(double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz[1]))*double(LEDamps[thisPinIndex])+double(LEDbaseLevel[thisPinIndex]);
+                 int val = sin(double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz))*double(LEDamps[thisPinIndex])+double(LEDbaseLevel[thisPinIndex]);
                  // int val = sin( double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz))*(double(LEDamps[thisPinIndex]))+LEDbaseLevel[thisPinIndex];
         
                       analogWrite(ledPins[thisPinIndex], val); // Write value to the pin
