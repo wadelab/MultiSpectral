@@ -37,9 +37,9 @@ for thisInterval= 1:2
     
     if (isobject(serialObject))
 
-            fwrite(serialObject,uint16(LEDoutput),'uint16');
-            fwrite(serialObject,uint16(dpy.LEDbaseLevel),'uint16');
-            fwrite(serialObject,uint16(dpy.modulationRateHz*128),'uint16'); % Because this is now 16 bit we can specify it more precisely
+            fwrite(serialObject,uint16(LEDoutput),'uint16','le'); % The 'le' says 'little endian'.. In other words, we send the least significant byte first and the most significant byte second.
+            fwrite(serialObject,uint16(dpy.LEDbaseLevel),'uint16','le');
+            fwrite(serialObject,uint16(dpy.modulationRateHz*256),'uint16','le'); % Because this is now 16 bit we can specify it more precisely
             %pause(.1)
             sound(sin(linspace(1,650*2*pi,1000))/4,8000);
             
