@@ -29,7 +29,7 @@ for thisInterval= 1:2
         
         
         LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
-        LEDoutput=LEDoutputAmps/2; % Because we modulate about a mean.
+        LEDoutput=LEDoutputAmps; % Because we modulate about a mean.
         
     else
         LEDoutput=zeros((dpy.nLEDsToUse),1)'; % Just zero
@@ -38,6 +38,8 @@ for thisInterval= 1:2
     
     if (isobject(serialObject))
 
+        disp('Sending data');
+        
             % The following part is very important. So we send int16 values
             % to the Aruino in LE format. The arduino reads these as two
             % bytes at a time and reconstructs the correct number. We need
@@ -48,9 +50,9 @@ for thisInterval= 1:2
             % +-2048
             
             
-            fwrite(serialObject,int16(LEDoutput),'int16','le'); % The 'le' says 'little endian'.. In other words, we send the least significant byte first and the most significant byte second.
-            fwrite(serialObject,int16(dpy.LEDbaseLevel),'int16','le');
-            fwrite(serialObject,int16(dpy.modulationRateHz*256),'int16','le'); % Because this is now 16 bit we can specify it more precisely
+            fwrite(serialObject,int16(LEDoutput),'int16'); % The 'le' says 'little endian'.. In other words, we send the least significant byte first and the most significant byte second.
+            fwrite(serialObject,int16(dpy.LEDbaseLevel),'int16');
+            fwrite(serialObject,int16(dpy.modulationRateHz*256),'int16'); % Because this is now 16 bit we can specify it more precisely
             %pause(.1)
             sound(sin(linspace(1,650*2*pi,1000))/4,8000);
             
@@ -67,7 +69,10 @@ for thisInterval= 1:2
                 sound(sin(linspace(1,800*2*pi,1000))/4,4000); % Do a slightly different beep to indicate a response is required
             end
        
+    else
+        warning('No serial output found');
     end
+    
     
 end
 % Now poll the keybaord and get a response (1 or 2)

@@ -13,14 +13,14 @@ const int ledPins[] = {8,9,10,11,12};       // the pin that the LED is attached 
 // Variables will change:
 unsigned long startTime;
 byte modulationRateHz16Bit[2]; // Flicker rate of the LEDs when they're on - default 0, overridden when serial port receives the value
-unsigned int LEDamps[] = {0,0,0,0,0}; // How much each LED flickers (from 0 to 256) about the baseline. Obviously if the baseline is 128, the flicker amplitude must be no more than 128.
-unsigned int LEDbaseLevel[] = {0,0,0,0,0}; //{32,144,192,128}; // These are the baseline levels of the LEDs. They are set through Matlab inputs so these values here are just examples
+ int LEDamps[] = {0,0,0,0,0}; // How much each LED flickers (from 0 to 256) about the baseline. Obviously if the baseline is 128, the flicker amplitude must be no more than 128.
+ int LEDbaseLevel[] = {0,0,0,0,0}; //{32,144,192,128}; // These are the baseline levels of the LEDs. They are set through Matlab inputs so these values here are just examples
 byte LEDampInputArray[10]; // Explicitly set to the number of LEDs * 2
 byte LEDampBaseInputArray[10]; // Explicitly set to the number of LEDs * 2
 double modulationRateHz;
 long pulseDuration = 1000; // How long each pulse lasts in ms
 long elapsedTimeMilliSecs = 0; 
-int halfAmp = 128; // Half the maximum amplitude. It will be bigger if we use 12 bit precision
+int halfAmp = 2048; // Half the maximum amplitude. It will be bigger if we use 12 bit precision
 int nPins = 5;
  
 void setup() {
@@ -34,9 +34,10 @@ void setup() {
          pinMode(ledPins[thisPinIndex], OUTPUT);
 
          // turn the pin off:
-         analogWrite(ledPins[thisPinIndex], LEDbaseLevel[thisPinIndex]);   
+         analogWrite(ledPins[thisPinIndex], halfAmp);   
          delay(100); // To make it look fancy
          
+         analogWrite(ledPins[thisPinIndex], LEDbaseLevel[thisPinIndex]);   
          
   } // Next pin
   delay(1000);
@@ -68,16 +69,16 @@ void loop() {
           // (shift left by 8 bits) to multiply by 256
           // On the Due the unsigned ints are 4 bytes long
           
-          for (int thisPinIndex = 1; thisPinIndex <= nPins; thisPinIndex++) { // Loop (very quickly) over all pins
-              LEDamps[thisPinIndex]=((int(LEDampInputArray[thisPinIndex*2-1]))+((int(127 & LEDampInputArray[thisPinIndex*2]))<<8));
+          for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { // Loop (very quickly) over all pins
+              LEDamps[thisPinIndex]=((int(LEDampInputArray[thisPinIndex*2]))+((int(127 & LEDampInputArray[thisPinIndex*2+1]))<<8));
               if (128 & LEDampInputArray[thisPinIndex*2]) {
                 LEDamps[thisPinIndex]=-LEDamps[thisPinIndex]; // Negate it if it's a negative 16 bit int on the input
                 
               }
-              LEDbaseLevel[thisPinIndex]=(int(LEDampBaseInputArray[thisPinIndex*2-1]))+((int(LEDampBaseInputArray[thisPinIndex*2]))<<8);
+              LEDbaseLevel[thisPinIndex]=(int(LEDampBaseInputArray[thisPinIndex*2]))+((int(LEDampBaseInputArray[thisPinIndex*2+1]))<<8);
           } // next pin data
           
-          modulationRateHz= double(int(modulationRateHz16Bit[1])+(int(modulationRateHz16Bit[2]))<<8)/256;
+          modulationRateHz= double(int(modulationRateHz16Bit[0])+(int(modulationRateHz16Bit[1]))<<8)/256;
           
 
           bytesRead=1; // Tell the loop we've read something - go ahead and run the flicker that's been asked for
