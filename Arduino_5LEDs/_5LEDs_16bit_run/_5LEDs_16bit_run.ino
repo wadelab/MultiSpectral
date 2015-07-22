@@ -61,13 +61,19 @@ void loop() {
           Serial.readBytes(modulationRateHz16Bit,2); // Last 2 bytes are the frequency of the flicker in Hz multiplied by 256. We do this to allow fractional flicker rates.
           
           
-          // We've read in 2 bytes per output pin (these correspond to LEDs on the output) . We convert these into proper ints by assuming that the first
-          // byte is the low end and the second byte is the high end. So we can construct a 16 bit number as SB*256+FB. Note that we use <<8 
+          // We've read in 2 bytes per output pin (these correspond to LEDs on the output) . We convert these into proper signed ints by assuming that the first
+          // byte is the low end and the second byte is the high end. So we can construct a 16 bit number as SB*256+FB more or less
+          // We have to account for the highest bit of the high byte as this will contain a sign (0 for positive, 1 for -ve)
+          // . Note that we use <<8 
           // (shift left by 8 bits) to multiply by 256
           // On the Due the unsigned ints are 4 bytes long
           
           for (int thisPinIndex = 1; thisPinIndex <= nPins; thisPinIndex++) { // Loop (very quickly) over all pins
-              LEDamps[thisPinIndex]=(int(LEDampInputArray[thisPinIndex*2-1]))+((int(LEDampInputArray[thisPinIndex*2]))<<8);
+              LEDamps[thisPinIndex]=((int(LEDampInputArray[thisPinIndex*2-1]))+((int(127 & LEDampInputArray[thisPinIndex*2]))<<8));
+              if (128 & LEDampInputArray[thisPinIndex*2]) {
+                LEDamps[thisPinIndex]=-LEDamps[thisPinIndex]; // Negate it if it's a negative 16 bit int on the input
+                
+              }
               LEDbaseLevel[thisPinIndex]=(int(LEDampBaseInputArray[thisPinIndex*2-1]))+((int(LEDampBaseInputArray[thisPinIndex*2]))<<8);
           } // next pin data
           

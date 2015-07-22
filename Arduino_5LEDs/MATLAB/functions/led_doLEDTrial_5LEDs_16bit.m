@@ -1,9 +1,10 @@
-function response=led_doLEDTrial_5LEDs(dpy,stim, q,serialObject,dummyFlag)
+function response=led_doLEDTrial_5LEDs_16bit(dpy,stim, q,serialObject,dummyFlag)
 % function response=led_doLEDTrial(dpy,stimLMS, q,serialObject)
 % Returns 0 or 1 for wrong/right
 % Example of how to call:
 %     response=led_doLEDTrial_5LEDs(dpy,stim,q,s); % This should return 0 for an incorrect answer and 1 for correct
 % 05/2015: LEW and ARW Wrote it.
+% Issues to do with bit depth and int/uint are fixed.
 
 
 if (nargin < 5)
@@ -37,9 +38,19 @@ for thisInterval= 1:2
     
     if (isobject(serialObject))
 
-            fwrite(serialObject,uint16(LEDoutput),'uint16','le'); % The 'le' says 'little endian'.. In other words, we send the least significant byte first and the most significant byte second.
-            fwrite(serialObject,uint16(dpy.LEDbaseLevel),'uint16','le');
-            fwrite(serialObject,uint16(dpy.modulationRateHz*256),'uint16','le'); % Because this is now 16 bit we can specify it more precisely
+            % The following part is very important. So we send int16 values
+            % to the Aruino in LE format. The arduino reads these as two
+            % bytes at a time and reconstructs the correct number. We need
+            % to pay particular attention to the topmost bit that will
+            % indicate the sign of the number.
+            % For the 12-bit precision Arduinos (the 'Due') we send values
+            % baseline values up to 4096 and modulation values between
+            % +-2048
+            
+            
+            fwrite(serialObject,int16(LEDoutput),'int16','le'); % The 'le' says 'little endian'.. In other words, we send the least significant byte first and the most significant byte second.
+            fwrite(serialObject,int16(dpy.LEDbaseLevel),'int16','le');
+            fwrite(serialObject,int16(dpy.modulationRateHz*256),'int16','le'); % Because this is now 16 bit we can specify it more precisely
             %pause(.1)
             sound(sin(linspace(1,650*2*pi,1000))/4,8000);
             
