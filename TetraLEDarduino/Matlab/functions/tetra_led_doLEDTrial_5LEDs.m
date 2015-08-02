@@ -26,7 +26,7 @@ for thisInterval= 1:2
         
         
         LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
-        LEDoutput=LEDoutputAmps/2;
+        LEDoutput=LEDoutputAmps;
         
     else
         LEDoutput=zeros((dpy.nLEDsToUse),1)'; % Just zero
@@ -35,24 +35,29 @@ for thisInterval= 1:2
     
     if (isobject(serialObject))
 
+            sound(sin(linspace(1,650*2*pi,1000))/4,8000);
             
             fwrite(serialObject,int16(LEDoutput),'int16');
             fwrite(serialObject,int16(dpy.LEDbaseLevel),'int16');
             fwrite(serialObject,int16(dpy.modulationRateHz*256),'int16');
             %pause(.1)
-            sound(sin(linspace(1,650*2*pi,1000))/4,8000);
+            
 
             
-            %disp(serialObject.ValuesSent);
-            fprintf('\nfirst 5bytes sent %d',LEDoutput)
-            %disp(LEDoutput);
-            fprintf('\nsecond set of 5 bytes %d',dpy.LEDbaseLevel);
-            fprintf('\nmodulation rate %d',dpy.modulationRateHz*256);
-            
-            pause(.8)
+%             %disp(serialObject.ValuesSent);
+%             fprintf('\nfirst 5bytes sent %d',LEDoutput)
+%             %disp(LEDoutput);
+%             fprintf('\nsecond set of 5 bytes %d',dpy.LEDbaseLevel);
+%             fprintf('\nmodulation rate %d',dpy.modulationRateHz*256);
+%             
+            disp(serialObject.ValuesSent);
+            disp(LEDoutput);
+            disp(dpy.LEDbaseLevel);
+            disp(dpy.modulationRateHz);
+                        
             
             if thisInterval==1;
-                pause(.25)
+                pause(.5)
             else continue
                 %no pause if end of stim presentation and awaiting response
                 %sound(sin(linspace(1,800*2*pi,1000))/4,4000); % Do a slightly different beep to indicate a response is required
@@ -75,11 +80,11 @@ if (~dummyFlag) % If this was a dummy trial then don't require a key press
     
     if (response==1)
         disp('Right!')
-        sound(sin(linspace(1,400*2*pi,1000))/5,4000); % Do a slightly different beep to indicate a response is required
+        sound(sin(linspace(1,400*2*pi,1000))/5,5000); % Do a slightly different beep to indicate a response is required
         
     else
         disp('Wrong');
-        sound(sin(linspace(1,900*2*pi,1000))/6,4000); % Do a slightly different beep to indicate a response is required
+        sound(sin(linspace(1,200*2*pi,1000))/5,3000); % Do a slightly different beep to indicate a response is required
         
     end
     

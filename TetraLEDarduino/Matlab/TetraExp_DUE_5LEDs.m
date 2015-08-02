@@ -110,7 +110,7 @@ LEDcalib(LEDcalib<0)=0;
 clear LEDspectra
 %resample to specified wavelength range (LEDspectra will now only contain
 %the LED calibs, without the column for wavelengths)
-dpy.WLrange=(400:1:720)'; %using range from 390 min because the stockman CFs range from 390 to 720+
+dpy.WLrange=(400:1:720)'; %using range from 400 min to 720+
 dpy.bitDepth=BITDEPTH;
 
 spectrumIndex=0;
@@ -191,7 +191,7 @@ end
 tGuessSd=2; % This is roughly the same for all values.
 
 % Print out what we are starting with:
-fprintf('\nExpt %d - tGuess is %.2f, SD is %.2f\n',experimentType,tGuess,tGuessSd); % Those weird \n things mean 'new line'
+fprintf('\nExpt %s - tGuess is %.2f, SD is %.2f\n',thisExp,tGuess,tGuessSd); % Those weird \n things mean 'new line'
 
 pThreshold=0.82;
 beta=3.5;delta=0.01;gamma=0.5;
