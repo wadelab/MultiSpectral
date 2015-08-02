@@ -70,6 +70,7 @@ void loop() {
           // On the Due the unsigned ints are 4 bytes long
           
           for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { // Loop (very quickly) over all pins
+<<<<<<< Updated upstream
               LEDamps[thisPinIndex]=((int(LEDampInputArray[thisPinIndex*2]))+((int(127 & LEDampInputArray[thisPinIndex*2+1]))<<8));
               if (128 & LEDampInputArray[thisPinIndex*2]) {
                 LEDamps[thisPinIndex]=-LEDamps[thisPinIndex]; // Negate it if it's a negative 16 bit int on the input
@@ -77,6 +78,11 @@ void loop() {
               }
               LEDbaseLevel[thisPinIndex]=(int(LEDampBaseInputArray[thisPinIndex*2]))+((int(LEDampBaseInputArray[thisPinIndex*2+1]))<<8);
           } // next pin data
+=======
+              LEDamps[thisPinIndex]=unsigned int(LEDampInputArray[thisPinIndex*2-1])+(unsigned int(LEDampInputArray[thisPinIndex*2])<<8);
+              LEDbaseLevel[thisPinIndex]=unsigned int(LEDampBaseInputArray[thisPinIndex*2-1])+(unsigned int(LEDampBaseInputArray[thisPinIndex*2])<<8);
+          }
+>>>>>>> Stashed changes
           
           modulationRateHz= double(int(modulationRateHz16Bit[0])+(int(modulationRateHz16Bit[1]))<<8)/256;
           

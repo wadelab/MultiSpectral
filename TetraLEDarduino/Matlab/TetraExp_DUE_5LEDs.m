@@ -1,11 +1,11 @@
 clear all
 close all
-%function Exp_ledDUE_5LEDs
-% Exp_ledDUE_5LEDs
+%function TetraExp_DUE_5LEDs
+% TetraExp_DUE_5LEDs
 % 
 % Runs the experiment and prompts for subject ID, Experiment condition and
 % session number.  Data is then saved out in the 'DATA' folder within:
-% /Users/wadelab/Github_MultiSpectral/LEDarduino/Arduino_Project/
+% /Users/wadelab/Github_MultiSpectral/TetraLEDarduino/Data_tetraStim
 %
 % File saved in the following format using the inputed session details:
 %
@@ -21,9 +21,11 @@ close all
 % ARW 021515
 % edited by LEW 170215 to be used with GUI and save out the contrast
 % threshold obtained.
+% Now edited to work at 16bit
 
 addpath(genpath('/Users/wadelab/Github_MultiSpectral'))
 CONNECT_TO_ARDUINO = 1; % For testing on any computer
+BITDEPTH=12;
 if(~isempty(instrfind))
    fclose(instrfind);
 end
@@ -42,8 +44,8 @@ end
 %InitializePsychSound; % Initialize the Psychtoolbox sounds
 pause(2);
 fprintf('\n****** Experiment Running ******\n \n');
-LEDamps=uint8([0,0,0,0,0]);
-LEDbaseLevel=uint8([35,90,65,150,90]); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
+LEDamps=uint16([0,0,0,0,0]);
+LEDbaseLevel=uint16(([35,90,65,150,90]/256)*(2^BITDEPTH)); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
 
 system('say Enter experiment parameters');
@@ -109,6 +111,8 @@ clear LEDspectra
 %resample to specified wavelength range (LEDspectra will now only contain
 %the LED calibs, without the column for wavelengths)
 dpy.WLrange=(400:1:720)'; %using range from 390 min because the stockman CFs range from 390 to 720+
+dpy.bitDepth=BITDEPTH;
+
 spectrumIndex=0;
 for thisLED=LEDsToUse
     spectrumIndex=spectrumIndex+1;
@@ -127,7 +131,7 @@ actualLEDScale=LEDscale./max(LEDscale);
 
 dpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LEDs to use out of the 7
 dpy.LEDsToUse=LEDsToUse;
-dpy.bitDepth=8; % Can be 12 on new arduinos
+%dpy.bitDepth=8; % Can be 12 on new arduinos
 %dpy.backLED.dir=double(LEDbaseLevel(LEDsToUse))./max(double(LEDbaseLevel(LEDsToUse)))
 dpy.backLED.dir=double(LEDbaseLevel)/double(max(LEDbaseLevel));
 
@@ -275,9 +279,9 @@ end
 
 if (isobject(s)) % This is shorthand for ' if s>0 '
     % Shut down arduino to save the LEDs
-      fwrite(s,zeros(5,1),'uint8');
-      fwrite(s,zeros(5,1),'uint8');
-      fwrite(s,zeros(1,1),'uint8');
+      fwrite(s,zeros(5,1),'uint16');
+      fwrite(s,zeros(5,1),'uint16');
+      fwrite(s,zeros(1,1),'uint16');
       disp('Turning off LEDs');
       pause(1)
       fclose(s);
@@ -298,7 +302,7 @@ fprintf('Final threshold in actual contrast units is %.2f%% SD is + %.2f%% -%.2f
 %cd to the data folder
 Date=datestr(now,30); %current date with time
 
-cd('/Users/wadelab/Github_MultiSpectral/Arduino_5LEDs/MATLAB/Data_tetraStim')
+cd('/Users/wadelab/Github_MultiSpectral/TetraLEDarduino/Data_tetraStim')
 
 Data.rawThresh=t;
 Data.rawStDev=sd;
