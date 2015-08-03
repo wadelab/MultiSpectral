@@ -51,7 +51,7 @@ nLEDsTotal=length(LEDamps);
 system('say Enter experiment parameters');
 % This version of the code shows how to do two things:
 % Ask Lauren's code for a set of LED amplitudes corresponding to a
-% particula2r direction and contrast in LMS space
+% particular direction and contrast in LMS space
 % 2: Present two flicker intervals with a random sequence
 % ********************************************************
 
@@ -129,7 +129,7 @@ LEDscale=1./maxLED;
 actualLEDScale=LEDscale./max(LEDscale);
 
 
-dpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LEDs to use out of the 7
+dpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LEDs to use
 dpy.LEDsToUse=LEDsToUse;
 %dpy.bitDepth=8; % Can be 12 on new arduinos
 %dpy.backLED.dir=double(LEDbaseLevel(LEDsToUse))./max(double(LEDbaseLevel(LEDsToUse)))
@@ -150,8 +150,8 @@ dpy.modulationRateHz=modulationRateHz;
 switch experimentTypeS % 1=L-M, 2=(L+M+S), 3=S cone isolating
     case {'L','l'}  
         stim.stimLMS.dir=[1 0 0 0]; % L cone isolating
-        tGuess=log10(.012); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.02);
+        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.01);
         thisExp='L';
         
     case {'Lp','lp','LP'}  
@@ -162,14 +162,14 @@ switch experimentTypeS % 1=L-M, 2=(L+M+S), 3=S cone isolating
     
     case {'M','m'}    
         stim.stimLMS.dir=[0 0 1 0]; % M cone isolating
-        tGuess=log10(.012); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.02);
+        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.01);
         thisExp='M';
         
     case {'LM','lm'}    
         stim.stimLMS.dir=[.5 0 -1 0]; % L-M isolating
         tGuess=log10(.019); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.02);
+        stim.stimLMS.maxLogCont= log10(.01);
         thisExp='LM';
         
     case {'LMS','lms'}

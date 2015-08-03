@@ -63,8 +63,8 @@ LEDStim=led_makeStimArduino(dpy,stimLMS); % This returns a structure with dir an
 %error if negative numbers are produced - we will eventually build in code
 %that indicates when contrast is too high/low and causes this problem.
 if (sum(LEDStim.dir(:)<0))
-   % disp(LEDStim.dir);
-   % warning('Found negative numbers in scaled stim!');
+   disp(LEDStim.dir);
+   warning('Found negative numbers in scaled stim! Contrast too high');
    % LEDStim.dir(LEDStim.dir<0)=0;
 end
 
