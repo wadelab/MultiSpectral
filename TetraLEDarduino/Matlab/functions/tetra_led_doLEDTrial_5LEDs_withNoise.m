@@ -20,7 +20,7 @@ for thisInterval= 1:2
     if (thisInterval == signalInterval) % Is this is the interval with the modulation
        
         % Compute the LED levels we want
-        stim.stimLMS.dir=stim.stimLMS.dir+1; %add a value to all cones for a lum element
+        stim.stimLMS.dir=stim.stimLMS.dir+0.1; %add a value to all cones for a lum element
         stim.LEDvals=tetra_led_arduinoConeIsolationLMS(dpy,stim.stimLMS);
         
         
