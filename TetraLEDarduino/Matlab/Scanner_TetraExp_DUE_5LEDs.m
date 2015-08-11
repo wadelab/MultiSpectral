@@ -1,18 +1,19 @@
 clear all
 close all
-%function TetraExp_DUE_5LEDs
-% TetraExp_DUE_5LEDs
+%function Scanner_TetraExp_DUE_5LEDs
+% Scanner_TetraExp_DUE_5LEDs
 % 
-% Runs the experiment and prompts for subject ID, Experiment condition and
-% session number.  Data is then saved out in the 'DATA' folder within:
-% /Users/wadelab/Github_MultiSpectral/TetraLEDarduino/Data_tetraStim
+% Runs an event-related experiment designed for you in the scanner.
+% prompts for subject ID,  for threshold info, and the
+% session number.  Data is then saved out in the 'ScanData_tetraStim' folder within:
+% /Users/wadelab/Github_MultiSpectral/TetraLEDarduino/ScanData_tetraStim/
 %
 % File saved in the following format using the inputed session details:
 %
-% SubID001_Cond1_Freq1_Rep1_17-Feb-2015
+% SubID001_Scan1_20150805T101530.mat
 %
 % where the '001' and '1's are replaced with the relevant values for that
-% repitition, subject and experiment condition and date.
+% subject and scan number, with date and time.
 %
 %
 % This version of the code incorporates the Quest algorithm from
@@ -22,6 +23,8 @@ close all
 % edited by LEW 170215 to be used with GUI and save out the contrast
 % threshold obtained.
 % Now edited to work at 16bit
+% Edited by LEW 050815 - altered to be an event related design experiment
+% for use in fMRI experiment.
 
 addpath(genpath('/Users/wadelab/Github_MultiSpectral'))
 CONNECT_TO_ARDUINO = 1; % For testing on any computer
