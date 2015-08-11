@@ -14,6 +14,7 @@ const int ledPins[] = {8,9,10,11,12};       // the pin that the LED is attached 
 unsigned long startTime;
 byte modulationRateHz16Bit[2]; // Flicker rate of the LEDs when they're on - default 0, overridden when serial port receives the value
  int LEDamps[] = {0,0,0,0,0}; // How much each LED flickers (from 0 to 256) about the baseline. Obviously if the baseline is 128, the flicker amplitude must be no more than 128.
+byte LEDampSign[] = {0,0,0,0,0}; // indicate the sign of the amp, here 0 is positive and 1 is a negative
  int LEDbaseLevel[] = {0,0,0,0,0}; //{32,144,192,128}; // These are the baseline levels of the LEDs. They are set through Matlab inputs so these values here are just examples
 byte LEDampInputArray[10]; // Explicitly set to the number of LEDs * 2
 byte LEDampBaseInputArray[10]; // Explicitly set to the number of LEDs * 2
@@ -58,7 +59,8 @@ void loop() {
   
       if (Serial.available() > 0) {
           Serial.readBytes(LEDampInputArray,nPins*2); // First nPins bytes are the modulation amps. We read in 2 bytes per pin
-          Serial.readBytes(LEDampBaseInputArray,nPins*2); // Second 2 bytes per nPins bytes are the baselines.
+          Serial.readBytes(LEDampSign,nPins); // next nPins indicate the sign of the amps. 1 byte per pin
+          Serial.readBytes(LEDampBaseInputArray,nPins*2); // following 2 bytes per nPins bytes are the baselines.
           Serial.readBytes(modulationRateHz16Bit,2); // Last 2 bytes are the frequency of the flicker in Hz multiplied by 256. We do this to allow fractional flicker rates.
           
           
@@ -71,7 +73,8 @@ void loop() {
           
           for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { // Loop (very quickly) over all pins
               LEDamps[thisPinIndex]=((int(LEDampInputArray[thisPinIndex*2]))+((int(127 & LEDampInputArray[thisPinIndex*2+1]))<<8));
-              if (128 & LEDampInputArray[thisPinIndex*2+1]) {
+
+              if (LEDampSign[thisPinIndex] = 1) {
                LEDamps[thisPinIndex]=-LEDamps[thisPinIndex]; // Negate it if it's a negative 16 bit int on the input
                 
               }

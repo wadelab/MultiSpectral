@@ -45,7 +45,7 @@ end
 pause(2);
 fprintf('\n****** Experiment Running ******\n \n');
 LEDamps=uint16([0,0,0,0,0]);
-LEDbaseLevel=uint16(([35,90,65,150,90]/256)*(2^BITDEPTH)); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
+LEDbaseLevel=uint16(([.5,.5,.5,.5,.5])*(2^BITDEPTH)); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
 
 system('say Enter experiment parameters');
@@ -164,14 +164,14 @@ switch experimentTypeS % 1=L-M, 2=(L+M+S), 3=S cone isolating
     
     case {'M','m'}    
         stim.stimLMS.dir=[0 0 1 0]; % M cone isolating
-        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.01);
+        tGuess=log10(.03); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.05);
         thisExp='M';
         
     case {'LM','lm'}    
         stim.stimLMS.dir=[.5 0 -1 0]; % L-M isolating
-        tGuess=log10(.019); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.02);
+        tGuess=log10(.02); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.05);
         thisExp='LM';
         
     case {'LMS','lms'}

@@ -43,17 +43,23 @@ for thisInterval= 1:2
                 % high and low end. Send the signed high and low bit
                 % separately.
                 inputVal=int16(LEDoutput(thisLed));
+                %record the sign of the output
+                if (sign(LEDoutput(thisLed))==-1) 
+                    LEDampSign(thisLed)=1;
+                else
+                    LEDampSign(thisLed)=0;
+                end
+                %save out two bytes from the 16-bit integer (using absolute
+                %unsigned value - it will get converted in arduino if
+                %necessary)
                 [thisLowVal,thisHighVal]=led_convertToBytes(inputVal);
                 
-                %output some info on the values being sent
-                recombined=typecast([thisLowVal,thisHighVal],'int16'); %recombine bytes so can check against the intended number
-                 fprintf('the low val = %d\nthe high val = %d\nrecombined = %d\n\n',...
-                     thisLowVal,thisHighVal,recombined);
-                      
+                     
                  fwrite(serialObject,int8(thisLowVal),'int8');
                  fwrite(serialObject,int8(thisHighVal),'int8');
             end % Next LED value for modulation
             
+            fwrite(serialObject,int8(LEDampSign),'int8'); %indicates whether number is pos (0) or neg (1)
             fwrite(serialObject,int16(dpy.LEDbaseLevel),'int16');
             fwrite(serialObject,int16(dpy.modulationRateHz*256),'int16');
             %pause(.1)
