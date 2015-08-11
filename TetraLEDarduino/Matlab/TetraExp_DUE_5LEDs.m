@@ -33,7 +33,7 @@ end
 if (CONNECT_TO_ARDUINO)  
         system('say connecting to arduino');
 
-    s=serial('/dev/tty.usbmodem5d11');%,'BaudRate',9600);
+    s=serial('/dev/tty.usbmodem5d11');%,'BaudRate',9600);q
     fopen(s);
     disp('*** Connecting to Arduino');
     
@@ -68,7 +68,7 @@ end
 experimentType=-1; % Ask the user to enter a valid experiment type probing a particuar direction in LMS space
 while((experimentType<1) || (experimentType>3))
     experimentTypeS=input ('Experiment condition code (L, Lp, M, S, LMS, LM): ','s'); %
-    
+    experimentTypeS=upper(experimentTypeS);
     %experimentType=str2num(experimentTypeS);
     if(isempty(experimentTypeS))
         experimentType=-1;
@@ -152,8 +152,8 @@ dpy.modulationRateHz=modulationRateHz;
 switch experimentTypeS % 1=L-M, 2=(L+M+S), 3=S cone isolating
     case {'L','l'}  
         stim.stimLMS.dir=[1 0 0 0]; % L cone isolating
-        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.01);
+        tGuess=log10(.02); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.05);
         thisExp='L';
         
     case {'Lp','lp','LP'}  
@@ -171,7 +171,7 @@ switch experimentTypeS % 1=L-M, 2=(L+M+S), 3=S cone isolating
     case {'LM','lm'}    
         stim.stimLMS.dir=[.5 0 -1 0]; % L-M isolating
         tGuess=log10(.019); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.01);
+        stim.stimLMS.maxLogCont= log10(.02);
         thisExp='LM';
         
     case {'LMS','lms'}

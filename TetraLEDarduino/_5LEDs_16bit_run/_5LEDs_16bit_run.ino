@@ -71,14 +71,14 @@ void loop() {
           
           for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { // Loop (very quickly) over all pins
               LEDamps[thisPinIndex]=((int(LEDampInputArray[thisPinIndex*2]))+((int(127 & LEDampInputArray[thisPinIndex*2+1]))<<8));
-              if (128 & LEDampInputArray[thisPinIndex*2]) {
-                LEDamps[thisPinIndex]=-LEDamps[thisPinIndex]; // Negate it if it's a negative 16 bit int on the input
+              if (128 & LEDampInputArray[thisPinIndex*2+1]) {
+               LEDamps[thisPinIndex]=-LEDamps[thisPinIndex]; // Negate it if it's a negative 16 bit int on the input
                 
               }
+             
               LEDbaseLevel[thisPinIndex]=(int(LEDampBaseInputArray[thisPinIndex*2]))+((int(LEDampBaseInputArray[thisPinIndex*2+1]))<<8);
           } // next pin data
 
-         
          
           modulationRateHz= double(int(modulationRateHz16Bit[0])+(int(modulationRateHz16Bit[1]))<<8)/256;
           

@@ -26,7 +26,7 @@ for thisInterval= 1:2
         
         
         LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
-        LEDoutput=LEDoutputAmps;
+        LEDoutput=LEDoutputAmps/2;
         
     else
         LEDoutput=zeros((dpy.nLEDsToUse),1)'; % Just zero
@@ -36,8 +36,24 @@ for thisInterval= 1:2
     if (isobject(serialObject))
 
             sound(sin(linspace(1,650*2*pi,1000))/4,8000);
+            % We are going to send data out byte by byte to avoid any
+            % issues with endianness
+            for thisLed=1:dpy.nLEDsToUse
+                % break each value in LEDoutput into a 16 bit int with a
+                % high and low end. Send the signed high and low bit
+                % separately.
+                inputVal=int16(LEDoutput(thisLed));
+                [thisLowVal,thisHighVal]=led_convertToBytes(inputVal);
+                
+                %output some info on the values being sent
+                recombined=typecast([thisLowVal,thisHighVal],'int16'); %recombine bytes so can check against the intended number
+                 fprintf('the low val = %d\nthe high val = %d\nrecombined = %d\n\n',...
+                     thisLowVal,thisHighVal,recombined);
+                      
+                 fwrite(serialObject,int8(thisLowVal),'int8');
+                 fwrite(serialObject,int8(thisHighVal),'int8');
+            end % Next LED value for modulation
             
-            fwrite(serialObject,int16(LEDoutput),'int16');
             fwrite(serialObject,int16(dpy.LEDbaseLevel),'int16');
             fwrite(serialObject,int16(dpy.modulationRateHz*256),'int16');
             %pause(.1)
