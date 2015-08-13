@@ -13,8 +13,8 @@ LEDsToUse=dpy.LEDsToUse;
 
 %% create cone fundamentals using stockman cone fundamentals
 
-LprimePos=0.5; %position of peak between the L and M cones, 0.5 is half way
-coneSpectra=creatingLprime(LprimePos);
+LprimePos=dpy.LprimePosition; %position of peak between the L and M cones, 0.5 is half way
+coneSpectra=creatingLprime(LprimePos); %outputs the L L' M S spectra, with first column containing wavelengths
 %check WL match in coneSpectra and dpy.WLrange
 try 
     if dpy.WLrange==coneSpectra(:,1)
@@ -23,18 +23,8 @@ try
 catch 
     error('Wavelength ranges used for dpy.WLrange do not match the dpy.coneSpectra wavelengths. Edit dpy.WLranges to match')
 end
-
-% wavelengths=dpy.WLrange;
-% load('stockman01nmCF.mat');
-% stockmanData=cat(2,stockman.wavelength,stockman.Lcone,stockman.Mcone,stockman.Scone);
-% 
-% %reduce and resample
-% for thiscone=1:size(stockmanData,2)-1;
-%     coneSpectra(:,thiscone)=interp1(stockmanData(:,1),stockmanData(:,1+thiscone),wavelengths);
-% end
-% 
-% %% set parameters of the trials so the stimulus can be built
-
+ 
+% specify the coneSpectra so that the stimulus can be built
 dpy.coneSpectra=coneSpectra(:,2:end); %remove the wavelengths column
 
 %replace NaNs with 0
@@ -60,12 +50,11 @@ LEDStim=led_makeStimArduino(dpy,stimLMS); % This returns a structure with dir an
 
 
 
-%error if negative numbers are produced - we will eventually build in code
-%that indicates when contrast is too high/low and causes this problem.
-if (sum(LEDStim.dir(:)<0))
-   disp(LEDStim.dir);
-   warning('Found negative numbers in scaled stim! Contrast too high');
-   % LEDStim.dir(LEDStim.dir<0)=0;
-end
+%%code can take negative values now, so no need to error 
+% if (sum(LEDStim.dir(:)<0))
+%    disp(LEDStim.dir);
+%    %warning('Found negative numbers in scaled stim! Contrast too high');
+%    % LEDStim.dir(LEDStim.dir<0)=0;
+% end
 
 
