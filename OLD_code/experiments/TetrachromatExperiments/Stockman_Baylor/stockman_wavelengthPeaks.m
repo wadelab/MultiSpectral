@@ -1,23 +1,22 @@
-% Outputs the cone peaks used in the stockmanData file
+% Outputs the cone peaks used in the stockman01nmCF.mat file
 %
 % written by LW on 230713
 
 
-stock=load('stockmanData.mat');
-A=stock.stockmanData;
-
+load('stockman01nmCF.mat');
+LMS=[stockman.Lcone';stockman.Mcone';stockman.Scone'];
+wavelengths=stockman.wavelength';
 
 %Plot the Data
-wavelengths=400:2:700;
-figure(11)
-plot(wavelengths(:),A)
+figure()
+plot(wavelengths(:),LMS)
 
 
 %find the location of the max value, i.e. the peak, for each cone provided
 %in the data file
 location_column=zeros(3,1);
-for f=1:size(A(:,2));
-[val,location]=max(A(f,:));
+for f=1:size(LMS(:,2));
+[val,location]=max(LMS(f,:));
 location_column(f,:)=location;
 end
 
