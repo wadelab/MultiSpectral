@@ -23,7 +23,7 @@ close all
 % threshold obtained.
 % Now edited to work at 16bit
 
-addpath(genpath('/Users/wadelab/Github_MultiSpectral'))
+addpath(genpath('/Users/wadelab/Github_MultiSpectral/TetraLEDarduino'))
 CONNECT_TO_ARDUINO = 1; % For testing on any computer
 BITDEPTH=12;
 if(~isempty(instrfind))
@@ -110,10 +110,10 @@ LEDcalib(LEDcalib<0)=0;
 clear LEDspectra
 %resample to specified wavelength range (LEDspectra will now only contain
 %the LED calibs, without the column for wavelengths)
-dpy.WLrange=(400:1:720)'; %using range from 400 min to 720+
+dpy.WLrange=(400:1:720)'; %must use range from 400 to 720 
 dpy.bitDepth=BITDEPTH;
 dpy.noiseLevel=0.1; %amount of noise to add to intervals - added to the direction of stim, so [1 0 0 0] becomes [1.1 .1 .1 .1]
-
+dpy.LprimePosition=0.5; %position of the Lprime peak in relation to L and M cone peaks: 0.5 is half way between, 0 is M cone and 1 is L cone
 spectrumIndex=0;
 for thisLED=LEDsToUse
     spectrumIndex=spectrumIndex+1;
