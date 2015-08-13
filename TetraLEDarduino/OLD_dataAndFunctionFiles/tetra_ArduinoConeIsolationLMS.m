@@ -1,5 +1,5 @@
-function [LEDvals] = ArduinoConeIsolationLMS(contrast, dir, LEDsToUse)
-% [LEDvals] = ArduinoConeIsolationLMS(contrast, dir, LEDsToUse) 
+function [LEDvals] = tetra_ArduinoConeIsolationLMS(contrast, dir, LEDsToUse)
+% [LEDvals] = tetra_ßArduinoConeIsolationLMS(contrast, dir, LEDsToUse) 
 % Uses the given contrast and direction to output the values for each LED.  
 % LED values will be sent to the Arduino in a separate script.
 %
