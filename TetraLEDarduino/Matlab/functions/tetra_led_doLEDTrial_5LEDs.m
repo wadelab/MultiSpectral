@@ -8,31 +8,22 @@ if (nargin < 5)
     dummyFlag=0;
 end
 
-%randomly select the interval containing target. N.B. interval 1 always
-%contains a burst of stim for PR adaptation
-signalInterval=fix(rand(1,1)*2)+2; % 2 or 3
+signalInterval=fix(rand(1,1)*2)+1; % 1 or 2
 fprintf('\nCorrect response is %d\n',signalInterval);
 
 
-for thisInterval= 1:3
+for thisInterval= 1:2
     pause(.5);
     %sound(sin(linspace(1,650*2*pi,1000))/4,8000); % Do a beep
     %pause(.4); %pause after beep
-        
-    if thisInterval == 1 
-        %if first interval, set to the adapting stim
-        % Compute the LED levels we want
-        stim.stimLMS.dir=[1,0,1,0]; % set adaptation to L and M isolating stim
-        stim.stimLMS.scale=
-        stim.LEDvals=tetra_led_arduinoConeIsolationLMS(dpy,stim.stimLMS);
-        LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
-        LEDoutput=LEDoutputAmps/2;
-        
-    elseif (thisInterval == signalInterval) % Is this is the interval with the modulation
+    
+    if (thisInterval == signalInterval) % Is this is the interval with the modulation
        
         % Compute the LED levels we want
         stim.stimLMS.dir=stim.stimLMS.dir+dpy.noiseLevel; %add a value to all cones for a lum element
         stim.LEDvals=tetra_led_arduinoConeIsolationLMS(dpy,stim.stimLMS);
+        
+        
         
         LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
         LEDoutput=LEDoutputAmps/2;
@@ -78,8 +69,6 @@ for thisInterval= 1:3
             fwrite(serialObject,int8(LEDampSign),'int8'); %indicates whether number is pos (0) or neg (1)
             fwrite(serialObject,int16(dpy.LEDbaseLevel),'int16');
             fwrite(serialObject,int16(dpy.modulationRateHz*256),'int16');
-            fwrite(serialObject,int8(dpy.PulseDuration),'int8');
-
             %pause(.1)
             
 
