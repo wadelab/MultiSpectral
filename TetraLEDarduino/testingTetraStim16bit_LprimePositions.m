@@ -1,6 +1,7 @@
 addpath(genpath('/Users/wadelab/Github_MultiSpectral/TetraLEDarduino'))
 
 lPrimePositions=[0.1,0.25,0.5,0.75,0.9];
+lPrimePositions=Shuffle(lPrimePositions);
 for thisPrimePos = 1:length(lPrimePositions);
 dpy.LprimePosition=lPrimePositions(thisPrimePos); %position of the Lprime peak in relation to L and M cone peaks: 0.5 is half way between, 0 is M cone and 1 is L cone
 

@@ -1,7 +1,29 @@
+clear all
+close all
+%function TetraExp_DUE_5LEDs
+% TetraExp_DUE_5LEDs
+% 
+% Runs the experiment and prompts for subject ID, Experiment condition and
+% session number.  Data is then saved out in the 'DATA' folder within:
+% /Users/wadelab/Github_MultiSpectral/TetraLEDarduino/Data_tetraStim
+%
+% File saved in the following format using the inputed session details:
+%
+% SubID001_Cond1_Freq1_Rep1_17-Feb-2015
+%
+% where the '001' and '1's are replaced with the relevant values for that
+% repitition, subject and experiment condition and date.
+%
+%
+% This version of the code incorporates the Quest algorithm from
+% Psychtoolbox to estimate the detection threshold.
+% Obviously, it needs PTB in the path.
+% ARW 021515
+% edited by LEW 170215 to be used with GUI and save out the contrast
+% threshold obtained.
+% Now edited to work at 16bit
+
 addpath(genpath('/Users/wadelab/Github_MultiSpectral/TetraLEDarduino'))
-
-dpy.LprimePosition=0.5;
-
 CONNECT_TO_ARDUINO = 1; % For testing on any computer
 BITDEPTH=12;
 if(~isempty(instrfind))
@@ -9,6 +31,7 @@ if(~isempty(instrfind))
 end
 
 if (CONNECT_TO_ARDUINO)  
+        system('say connecting to arduino');
 
     s=serial('/dev/tty.usbmodem5d11');%,'BaudRate',9600);q
     fopen(s);
@@ -22,16 +45,60 @@ end
 pause(2);
 fprintf('\n****** Experiment Running ******\n \n');
 LEDamps=uint16([0,0,0,0,0]);
-LEDbaseLevel=int16(([.5,.5,.5,.5,.5])*(2^BITDEPTH)); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
+LEDbaseLevel=uint16(([.5,.5,.5,.5,.5])*(2^BITDEPTH)); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
 
+system('say Enter experiment parameters');
+% This version of the code shows how to do two things:
+% Ask Lauren's code for a set of LED amplitudes corresponding to a
+% particular direction and contrast in LMS space
+% 2: Present two flicker intervals with a random sequence
+% ********************************************************
 
-SubID=999;
-experimentTypeS='LandM';
-modulationRateHz=2;
-Repeat=1;
+SubID=-1; % Ask the user to enter a Subject ID number
+while(SubID<1)
+    SubID=input ('Enter Subject ID, e.g. 001: ','s'); %prompts to enter a subject ID
+    if(isempty(SubID))
+        SubID=-1;
+    end
+    
+    % ***** ****************************************************
+end
 
+experimentType=-1; % Ask the user to enter a valid experiment type probing a particuar direction in LMS space
+while((experimentType<1) || (experimentType>3))
+    experimentTypeS=input ('Experiment condition code (L, Lp, M, S, LMS, LM): ','s'); %
+    experimentTypeS=upper(experimentTypeS);
+    %experimentType=str2num(experimentTypeS);
+    if(isempty(experimentTypeS))
+        experimentType=-1;
+    else experimentType=1;
+    end
+    
+    % *********************************************************
+end
 
+modulationRateHz=-1; % Ask the user to enter a valid experiment type probing a particuar direction in LMS space
+while((modulationRateHz<0) || (modulationRateHz>65))
+    modulationRateHzString=input ('Frequency in Hz e.g. 0.5, 1, 2, 4, etc: ','s'); %enter the Hz for exp
+    modulationRateHz=str2num(modulationRateHzString);
+    if(isempty(modulationRateHz))
+        modulationRateHz=-1;
+    end
+    
+    % *********************************************************
+end
+
+Repeat=-1; % Ask the user to enter a session number
+while(Repeat<1)
+    RepeatString=input ('Enter the session number for this condition: ','s'); %=2;% 1=L-M, 2=(L+M+S), 3=S cone isolating
+    Repeat=str2num(RepeatString);
+    if(isempty(Repeat))
+        Repeat=-1;
+    end
+    
+    % *********************************************************
+end
 
 LEDsToUse=find(LEDbaseLevel);% Which LEDs we want to be active in this expt?
 nLEDs=length(LEDsToUse);
@@ -46,6 +113,7 @@ clear LEDspectra
 dpy.WLrange=(400:1:720)'; %must use range from 400 to 720 
 dpy.bitDepth=BITDEPTH;
 dpy.noiseLevel=0.1; %amount of noise to add to intervals - added to the direction of stim, so [1 0 0 0] becomes [1.1 .1 .1 .1]
+dpy.LprimePosition=0.5; %position of the Lprime peak in relation to L and M cone peaks: 0.5 is half way between, 0 is M cone and 1 is L cone
 spectrumIndex=0;
 for thisLED=LEDsToUse
     spectrumIndex=spectrumIndex+1;
@@ -75,6 +143,7 @@ dpy.LEDbaseLevel=round(dpy.backLED.dir*dpy.backLED.scale*(2.^dpy.bitDepth-1)); %
 dpy.nLEDsTotal=nLEDsTotal;
 dpy.nLEDsToUse=length(dpy.LEDsToUse);
 dpy.modulationRateHz=modulationRateHz;
+dpy.PulseDuration=1000; %ms length of each trial pulse
 
 % Set up the parameters for the quest
 % The thresholds for different opponent channels will be different. We
@@ -88,12 +157,6 @@ switch experimentTypeS % 1=L-M, 2=(L+M+S), 3=S cone isolating
         tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
         stim.stimLMS.maxLogCont= log10(.03);
         thisExp='L';
-        
-    case {'LandM','landm'}  
-        stim.stimLMS.dir=[1 0 1 0]; % L cone isolating
-        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.03);
-        thisExp='LandM';
         
     case {'Lp','lp','LP'}  
         stim.stimLMS.dir=[0 1 0 0]; % L cone isolating
@@ -153,7 +216,7 @@ system('say booting arduino');
 
 dummyStim.stimLMS.dir=[1 1 1 1];
 dummyStim.stimLMS.scale=.1;
-dummyResponse=tetra_led_doLEDTrial_5LEDs(dpy,dummyStim,q,s,1); % This should return 0 for an incorrect answer and 1 for correct
+dummyResponse=tetra_led_doLEDTrial_5LEDs_PRadaptation(dpy,dummyStim,q,s,1); % This should return 0 for an incorrect answer and 1 for correct
 
 %prompt to press 1 to start
 toStart=-1;
@@ -195,7 +258,7 @@ while ((k<trialsDesired) && (response ~= -1))
     
     stim.stimLMS.scale=10^tTest; % Because it's log scaled
     
-    response=tetra_led_doLEDTrial_5LEDs(dpy,stim,q,s); % This should return 0 for an incorrect answer and 1 for correct
+    response=tetra_led_doLEDTrial_5LEDs_PRadaptation(dpy,stim,q,s); % This should return 0 for an incorrect answer and 1 for correct
     %disp(response)
     
    	%response=QuestSimulate(q,tTest,tActual);
@@ -260,11 +323,13 @@ Data.Date=Date;
 %save out a file containing the contrastThresh, SubID, experimentType, freq and
 %Session num
 
-save(sprintf('SubID%d_Cond%s_Freq%.1f_Rep%d_%s.mat',...
+save(sprintf('SubID%s_Cond%s_Freq%.1f_Rep%d_%s.mat',...
     SubID,thisExp,modulationRateHz,Repeat,Date),'Data');
 
 %save figure
-%savefig(sprintf('SubID%s_Cond%s_Freq%.1f_Rep%d_%s.fig',...
-   % SubID,thisExp,modulationRateHz,Repeat,Date));
-fprintf('\nSubject %d data saved\n',SubID);
+savefig(sprintf('SubID%s_Cond%s_Freq%.1f_Rep%d_%s.fig',...
+    SubID,thisExp,modulationRateHz,Repeat,Date));
+fprintf('\nSubject %s data saved\n',SubID);
 fprintf('\n******** End of Experiment ********\n');
+
+

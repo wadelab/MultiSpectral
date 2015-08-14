@@ -1,6 +1,45 @@
 addpath(genpath('/Users/wadelab/Github_MultiSpectral/TetraLEDarduino'))
+%% Ask the user to enter a Subject ID number
+SubID=-1; 
+while(SubID<1)
+    SubID=input ('Enter Subject ID, e.g. 001: ','s'); %prompts to enter a subject ID
+    SubID=str2num(SubID);
+    if(isempty(SubID))
+        SubID=-1;
+    end
+end
 
-dpy.LprimePosition=0.5;
+%% Ask the user to enter the frequency for the stimulus
+modulationRateHz=-1; 
+while((modulationRateHz<0) || (modulationRateHz>65))
+    modulationRateHzString=input ('Frequency in Hz e.g. 2, 4, etc: ','s'); %enter the Hz for exp
+    modulationRateHz=str2num(modulationRateHzString);
+    if(isempty(modulationRateHz))
+        modulationRateHz=-1;
+    end
+end
+
+%% Ask the user to enter a session/Repeat number
+Repeat=-1; 
+while(Repeat<1)
+    RepeatString=input ('Enter the session number for this condition: ','s'); %=2;% 1=L-M, 2=(L+M+S), 3=S cone isolating
+    Repeat=str2num(RepeatString);
+    if(isempty(Repeat))
+        Repeat=-1;
+    end
+    
+    % *********************************************************
+end
+
+%% Set the details of the stimulus and then loop through each condition one at a time
+
+%specify the range of Lprime positions to use
+lPrimePositions=[0.1,0.25,0.5,0.75,0.9];
+%shuffle the order they are presented in (so randomised for each repeat)
+lPrimePositions=Shuffle(lPrimePositions);
+for thisPrimePos = 1:length(lPrimePositions);
+dpy.LprimePosition=lPrimePositions(thisPrimePos); %position of the Lprime peak in relation to L and M cone peaks: 0.5 is half way between, 0 is M cone and 1 is L cone
+
 
 CONNECT_TO_ARDUINO = 1; % For testing on any computer
 BITDEPTH=12;
@@ -8,69 +47,61 @@ if(~isempty(instrfind))
    fclose(instrfind);
 end
 
+%connect to arduino
 if (CONNECT_TO_ARDUINO)  
-
     s=serial('/dev/tty.usbmodem5d11');%,'BaudRate',9600);q
     fopen(s);
     disp('*** Connecting to Arduino');
-    
 else
     s=0;
 end
 
-%InitializePsychSound; % Initialize the Psychtoolbox sounds
 pause(2);
 fprintf('\n****** Experiment Running ******\n \n');
 LEDamps=uint16([0,0,0,0,0]);
 LEDbaseLevel=int16(([.5,.5,.5,.5,.5])*(2^BITDEPTH)); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
 
-
-SubID=999;
-experimentTypeS='LandM';
-modulationRateHz=2;
-Repeat=1;
-
-
+experimentTypeS='Lp';
 
 LEDsToUse=find(LEDbaseLevel);% Which LEDs we want to be active in this expt?
-nLEDs=length(LEDsToUse);
+nLEDs=length(LEDsToUse); %number of LEDs
+dpy.bitDepth=BITDEPTH;
+
+%amount of noise to add to the stimulus intervals - to be added to the direction of stim, so [1 0 0 0] becomes [1.1 .1 .1 .1]
+dpy.noiseLevel=0.1; 
+
 % Iinitialize the display system
 % Load LEDspectra calib contains 1 column with wavelengths, then the LED calibs
 load('LEDspectra_070515.mat'); %load in calib for the prizmatix
 LEDcalib=LEDspectra; %if update the file loaded, the name only has to be updated here for use in rest of code
-LEDcalib(LEDcalib<0)=0;
-clear LEDspectra
+LEDcalib(LEDcalib<0)=0; %replace any negatives with 0
+clear LEDspectra %clear this variable now renamed, as this name gets used later in script
+
 %resample to specified wavelength range (LEDspectra will now only contain
 %the LED calibs, without the column for wavelengths)
 dpy.WLrange=(400:1:720)'; %must use range from 400 to 720 
-dpy.bitDepth=BITDEPTH;
-dpy.noiseLevel=0.1; %amount of noise to add to intervals - added to the direction of stim, so [1 0 0 0] becomes [1.1 .1 .1 .1]
 spectrumIndex=0;
 for thisLED=LEDsToUse
     spectrumIndex=spectrumIndex+1;
     LEDspectra(:,thisLED)=interp1(LEDcalib(:,1),LEDcalib(:,1+thisLED),dpy.WLrange);
 end
-LEDspectra(LEDspectra<0)=0;
+LEDspectra(LEDspectra<0)=0; %double check there are no negative values, replace any with 0
 
-%LEDspectra=LEDspectra-repmat(min(LEDspectra),size(LEDspectra,1),1);
-%sumLED=sum(LEDspectra);
+% *********** this isn't currently used anywhere else in the code....should it be?!
 maxLED=max(LEDspectra);
 LEDscale=1./maxLED;
-%LEDscale=[128 128 128 128 128];
-
-
-% ********** this isn't currently used anywhere else... should it be?!
 actualLEDScale=LEDscale./max(LEDscale);
+% ***********
 
 
 dpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LEDs to use
 dpy.LEDsToUse=LEDsToUse;
-%dpy.bitDepth=8; % Can be 12 on new arduinos
-%dpy.backLED.dir=double(LEDbaseLevel(LEDsToUse))./max(double(LEDbaseLevel(LEDsToUse)))
-dpy.backLED.dir=double(LEDbaseLevel)/double(max(LEDbaseLevel));
 
+%set direction of background LED level, and the scale (default at half i.e. 0.5)
+dpy.backLED.dir=double(LEDbaseLevel)/double(max(LEDbaseLevel));
 dpy.backLED.scale=.5;
+
 dpy.LEDbaseLevel=round(dpy.backLED.dir*dpy.backLED.scale*(2.^dpy.bitDepth-1)); % Set just the LEDs we're using to be on a 50%
 dpy.nLEDsTotal=nLEDsTotal;
 dpy.nLEDsToUse=length(dpy.LEDsToUse);
@@ -78,33 +109,28 @@ dpy.modulationRateHz=modulationRateHz;
 
 % Set up the parameters for the quest
 % The thresholds for different opponent channels will be different. We
-% estimate that they are .01 .02 and .1 for (L-M), L+M+S and s-(L+M)
-% respectively (r/g, luminance, s-cone)
+% estimate that they are approx .01 .02 and .1 for (L-M), L+M+S and s-(L+M)
+% respectively (r/g, luminance, s-cone). We also set single cone isolating
+% threshold estimates
 
 % Here we use the same variables that QuestDemo does for consistency
 switch experimentTypeS % 1=L-M, 2=(L+M+S), 3=S cone isolating
     case {'L','l'}  
         stim.stimLMS.dir=[1 0 0 0]; % L cone isolating
-        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.03);
+        tGuess=log10(.005); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.02);
         thisExp='L';
-        
-    case {'LandM','landm'}  
-        stim.stimLMS.dir=[1 0 1 0]; % L cone isolating
-        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.03);
-        thisExp='LandM';
         
     case {'Lp','lp','LP'}  
         stim.stimLMS.dir=[0 1 0 0]; % L cone isolating
-        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.03);
+        tGuess=log10(.004); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.01);
         thisExp='Lp';
     
     case {'M','m'}    
         stim.stimLMS.dir=[0 0 1 0]; % M cone isolating
-        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.03);
+        tGuess=log10(.005); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.02);
         thisExp='M';
         
     case {'LM','lm'}    
@@ -115,13 +141,13 @@ switch experimentTypeS % 1=L-M, 2=(L+M+S), 3=S cone isolating
         
     case {'LMS','lms'}
         stim.stimLMS.dir=[1 1 1 1]; % [1 1 1] is a pure achromatic luminance modulation
-        tGuess=log10(.08);
+        tGuess=log10(.1);
         stim.stimLMS.maxLogCont=log10(.2);
         thisExp='LMS';
         
     case {'S','s'}
         stim.stimLMS.dir=[0 0 0 1]; % S cone isolating
-        tGuess=log10(.3);
+        tGuess=log10(.2);
         stim.stimLMS.maxLogCont=log10(.30);
         thisExp='S';
         
@@ -132,14 +158,14 @@ end
 tGuessSd=2; % This is roughly the same for all values.
 
 % Print out what we are starting with:
-fprintf('\nExpt %s - tGuess is %.2f, SD is %.2f\n',thisExp,tGuess,tGuessSd); % Those weird \n things mean 'new line'
+%fprintf('\nExpt %s - tGuess is %.2f, SD is %.2f\n',thisExp,tGuess,tGuessSd); % Those weird \n things mean 'new line'
 
-pThreshold=0.82;
+pThreshold=0.75; % 75% threshold
 beta=3.5;delta=0.01;gamma=0.5;
 q=QuestCreate(tGuess,tGuessSd,pThreshold,beta,delta,gamma);
 q.normalizePdf=1; % This adds a few ms per call to QuestUpdate, but otherwise the pdf will underflow after about 1000 trials.
 
-fprintf('Quest''s initial threshold estimate is %g +- %g\n',QuestMean(q),QuestSd(q));
+%fprintf('Quest''s initial threshold estimate is %g +- %g\n',QuestMean(q),QuestSd(q));
 
 % Run a series of trials. 
 % On each trial we ask Quest to recommend an intensity and we call QuestUpdate to save the result in q.
@@ -156,20 +182,14 @@ dummyStim.stimLMS.scale=.1;
 dummyResponse=tetra_led_doLEDTrial_5LEDs(dpy,dummyStim,q,s,1); % This should return 0 for an incorrect answer and 1 for correct
 
 %prompt to press 1 to start
-toStart=-1;
 pause(1);
 system('say Press 1 to start')
+toStart=-1;
 while(toStart<0)    
     startString=GetChar; %awaiting 1
     toStart=str2double(startString);
-    if(isempty(Repeat))
-        toStart=-1;
-    end
-    disp(toStart)
-    
-    % *********************************************************
 end
-    
+pause(1)
 system('say Experiment beginning');
 
 while ((k<trialsDesired) && (response ~= -1))
@@ -253,6 +273,7 @@ Data.contrastStDevPos=contrastStDevPos;
 Data.contrastStDevNeg=contrastStDevNeg;
 Data.SubID=SubID;
 Data.thisExp=thisExp;
+Data.LprimePosition=dpy.LprimePosition;
 Data.modulationRateHz=modulationRateHz;
 Data.Repeat=Repeat;
 Data.Date=Date;
@@ -260,11 +281,15 @@ Data.Date=Date;
 %save out a file containing the contrastThresh, SubID, experimentType, freq and
 %Session num
 
-save(sprintf('SubID%d_Cond%s_Freq%.1f_Rep%d_%s.mat',...
-    SubID,thisExp,modulationRateHz,Repeat,Date),'Data');
+save(sprintf('SubID%d_Cond%s_lPrimePos%d_Freq%.1f_Rep%d_%s.mat',...
+    SubID,thisExp,dpy.LprimePosition,modulationRateHz,Repeat,Date),'Data');
 
 %save figure
 %savefig(sprintf('SubID%s_Cond%s_Freq%.1f_Rep%d_%s.fig',...
    % SubID,thisExp,modulationRateHz,Repeat,Date));
-fprintf('\nSubject %d data saved\n',SubID);
+fprintf('\nSubject %s data saved\n',SubID);
 fprintf('\n******** End of Experiment ********\n');
+
+end
+
+system('say All conditions complete')
