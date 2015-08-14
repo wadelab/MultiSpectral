@@ -88,20 +88,20 @@ dpy.modulationRateHz=modulationRateHz;
 switch experimentTypeS % 1=L-M, 2=(L+M+S), 3=S cone isolating
     case {'L','l'}  
         stim.stimLMS.dir=[1 0 0 0]; % L cone isolating
-        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.03);
+        tGuess=log10(.008); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.02);
         thisExp='L';
         
     case {'Lp','lp','LP'}  
         stim.stimLMS.dir=[0 1 0 0]; % L cone isolating
-        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.03);
+        tGuess=log10(.008); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.015);
         thisExp='Lp';
     
     case {'M','m'}    
         stim.stimLMS.dir=[0 0 1 0]; % M cone isolating
-        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.03);
+        tGuess=log10(.008); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.02);
         thisExp='M';
         
     case {'LM','lm'}    
@@ -118,7 +118,7 @@ switch experimentTypeS % 1=L-M, 2=(L+M+S), 3=S cone isolating
         
     case {'S','s'}
         stim.stimLMS.dir=[0 0 0 1]; % S cone isolating
-        tGuess=log10(.3);
+        tGuess=log10(.2);
         stim.stimLMS.maxLogCont=log10(.30);
         thisExp='S';
         
@@ -250,6 +250,7 @@ Data.contrastStDevPos=contrastStDevPos;
 Data.contrastStDevNeg=contrastStDevNeg;
 Data.SubID=SubID;
 Data.thisExp=thisExp;
+Data.LprimePosition=dpy.LprimePosition;
 Data.modulationRateHz=modulationRateHz;
 Data.Repeat=Repeat;
 Data.Date=Date;
@@ -257,8 +258,8 @@ Data.Date=Date;
 %save out a file containing the contrastThresh, SubID, experimentType, freq and
 %Session num
 
-save(sprintf('SubID%s_Cond%s_Freq%.1f_Rep%d_%s.mat',...
-    SubID,thisExp,modulationRateHz,Repeat,Date),'Data');
+save(sprintf('SubID%d_Cond%s_lPrimePos%d_Freq%.1f_Rep%d_%s.mat',...
+    SubID,thisExp,dpy.LprimePosition,modulationRateHz,Repeat,Date),'Data');
 
 %save figure
 %savefig(sprintf('SubID%s_Cond%s_Freq%.1f_Rep%d_%s.fig',...
