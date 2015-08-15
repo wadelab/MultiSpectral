@@ -106,7 +106,7 @@ void loop() {
    startTime=millis(); // Log the current time in ms
    elapsedTimeMilliSecs=0; // This will count up until it reaches the pulseDuration
 
-   while (elapsedTimeMilliSecs < int(pulseDuration)) { // Keep checking to see how long we've been in this loop (in ms)
+   while (elapsedTimeMilliSecs < (int(pulseDuration[0])*1000)) { // Keep checking to see how long we've been in this loop (in ms)
        elapsedTimeMilliSecs=(millis()-startTime); // Compute how long it's been in this loop in ms. We will terminate
       // when the elapsed time is greater than the pulse width that we asked for.
        

@@ -22,10 +22,11 @@ for thisInterval= 1:3
     if thisInterval == 1 
         %if first interval, set to the adapting stim
         % Compute the LED levels we want
-        stim.stimLMS.dir=[1,0,1,0]; % set adaptation to L and M isolating stim
-        stim.stimLMS.scale=0.02; % 2% contrast for now
-        dpy.PulseDuration=3000; %3seconds of adapt stim
-        stim.LEDvals=tetra_led_arduinoConeIsolationLMS(dpy,stim.stimLMS);
+        adaptStim.stimLMS=stim.stimLMS; %we don't want to override the stimLMS values
+        adaptStim.stimLMS.dir=[1,0,1,0]; % set adaptation to L and M isolating stim
+        adaptStim.stimLMS.scale=0.015; % 2% contrast for now
+        dpy.PulseDuration=3; %3seconds of adapt stim
+        stim.LEDvals=tetra_led_arduinoConeIsolationLMS(dpy,adaptStim.stimLMS);
         LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
         LEDoutput=LEDoutputAmps/2;
         
@@ -36,8 +37,8 @@ for thisInterval= 1:3
        
         % Compute the LED levels we want
         stim.stimLMS.dir=stim.stimLMS.dir+dpy.noiseLevel; %add a value to all cones for a lum element
-        dpy.PulseDuration=1000; %1second of adapt stim
-
+        dpy.PulseDuration=1; %1second of adapt stim
+        stim.stimLMS.scale=stim.stimLMS.scale;
         stim.LEDvals=tetra_led_arduinoConeIsolationLMS(dpy,stim.stimLMS);
         
         LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
@@ -47,11 +48,11 @@ for thisInterval= 1:3
         
     else
         %for non-target interval add noise
-        dpy.PulseDuration=1000; %1second of adapt stim
+        dpy.PulseDuration=1; %1second of adapt stim
 
         stimNonTarget.stimLMS=stim.stimLMS; %we don't want to overide anything in stim.stimLMS
         stimNonTarget.stimLMS.dir=[0 0 0 0]+dpy.noiseLevel; %make the dir of the non-target a low level lum value
-        stimNonTarget.stimLMS.scale=0.1; %use same as for target
+        stimNonTarget.stimLMS.scale=dpy.noiseScale; %use same as for target
         stim.LEDvals=tetra_led_arduinoConeIsolationLMS(dpy,stimNonTarget.stimLMS);
         
         LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
@@ -64,7 +65,6 @@ for thisInterval= 1:3
     
     if (isobject(serialObject))
 
-            sound(sin(linspace(1,650*2*pi,1000))/4,8000);
             % We are going to send data out byte by byte to avoid any
             % issues with endianness
             for thisLed=1:dpy.nLEDsToUse
@@ -110,7 +110,7 @@ for thisInterval= 1:3
                         
             
             if thisInterval==1;
-                pause(.2)
+                pause(2)
             elseif thisInterval==2;
                 pause(0.5)
             else continue
@@ -130,7 +130,7 @@ if (~dummyFlag) % If this was a dummy trial then don't require a key press
         response=-1;
     else
         
-        response=(str2num(a) == signalInterval);
+        response=(str2num(a) == signalInterval-1);
     end
     
     if (response==1)

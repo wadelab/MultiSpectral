@@ -112,7 +112,8 @@ clear LEDspectra
 %the LED calibs, without the column for wavelengths)
 dpy.WLrange=(400:1:720)'; %must use range from 400 to 720 
 dpy.bitDepth=BITDEPTH;
-dpy.noiseLevel=0.1; %amount of noise to add to intervals - added to the direction of stim, so [1 0 0 0] becomes [1.1 .1 .1 .1]
+dpy.noiseLevel=0.2; %amount of noise to add to intervals - added to the direction of stim, so [1 0 0 0] becomes [1.1 .1 .1 .1]
+dpy.noiseScale=0.02;
 dpy.LprimePosition=0.5; %position of the Lprime peak in relation to L and M cone peaks: 0.5 is half way between, 0 is M cone and 1 is L cone
 spectrumIndex=0;
 for thisLED=LEDsToUse
@@ -155,19 +156,19 @@ switch experimentTypeS % 1=L-M, 2=(L+M+S), 3=S cone isolating
     case {'L','l'}  
         stim.stimLMS.dir=[1 0 0 0]; % L cone isolating
         tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.03);
+        stim.stimLMS.maxLogCont= log10(.02);
         thisExp='L';
         
     case {'Lp','lp','LP'}  
         stim.stimLMS.dir=[0 1 0 0]; % L cone isolating
         tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.03);
+        stim.stimLMS.maxLogCont= log10(.016);
         thisExp='Lp';
     
     case {'M','m'}    
         stim.stimLMS.dir=[0 0 1 0]; % M cone isolating
         tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.03);
+        stim.stimLMS.maxLogCont= log10(.02);
         thisExp='M';
         
     case {'LM','lm'}    
@@ -287,6 +288,7 @@ if (isobject(s)) % This is shorthand for ' if s>0 '
       fwrite(s,zeros(5,1),'int8');
       fwrite(s,zeros(5,1),'uint16');
       fwrite(s,zeros(1,1),'uint16');
+      fwrite(s,zeros(1,1),'int8');
       disp('Turning off LEDs');
       pause(1)
       fclose(s);
