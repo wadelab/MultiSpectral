@@ -23,8 +23,8 @@ for thisInterval= 1:3
         %if first interval, set to the adapting stim
         % Compute the LED levels we want
         adaptStim.stimLMS=stim.stimLMS; %we don't want to override the stimLMS values
-        adaptStim.stimLMS.dir=[1,0,1,0]; % set adaptation to L and M isolating stim
-        adaptStim.stimLMS.scale=0.015; % 2% contrast for now
+        adaptStim.stimLMS.dir=stim.adaptStim.dir; % set adaptation direction
+        adaptStim.stimLMS.scale=stim.adaptStim.scale; %  set adaptation contrast
         dpy.PulseDuration=3; %3seconds of adapt stim
         stim.LEDvals=tetra_led_arduinoConeIsolationLMS(dpy,adaptStim.stimLMS);
         LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
@@ -92,17 +92,7 @@ for thisInterval= 1:3
             fwrite(serialObject,int16(dpy.LEDbaseLevel),'int16');
             fwrite(serialObject,int16(dpy.modulationRateHz*256),'int16');
             fwrite(serialObject,int8(dpy.PulseDuration),'int8');
-
-            %pause(.1)
-            
-
-            
-%             %disp(serialObject.ValuesSent);
-%             fprintf('\nfirst 5bytes sent %d',LEDoutput)
-%             %disp(LEDoutput);
-%             fprintf('\nsecond set of 5 bytes %d',dpy.LEDbaseLevel);
-%             fprintf('\nmodulation rate %d',dpy.modulationRateHz*256);
-%             
+             
             disp(serialObject.ValuesSent);
             disp(LEDoutput);
             disp(dpy.LEDbaseLevel);
@@ -110,9 +100,9 @@ for thisInterval= 1:3
                         
             
             if thisInterval==1;
-                pause(2)
+                pause(3)
             elseif thisInterval==2;
-                pause(0.5)
+                pause(1)
             else continue
                 %no pause if end of stim presentation and awaiting response
                 %sound(sin(linspace(1,800*2*pi,1000))/4,4000); % Do a slightly different beep to indicate a response is required

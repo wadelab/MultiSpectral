@@ -21,6 +21,7 @@ for thisInterval= 1:2
        
         % Compute the LED levels we want
         stim.stimLMS.dir=stim.stimLMS.dir+dpy.noiseLevel; %add a value to all cones for a lum element
+        stim.stimLMS.scale=stim.stimLMS.scale;
         stim.LEDvals=tetra_led_arduinoConeIsolationLMS(dpy,stim.stimLMS);
         
         
@@ -32,7 +33,7 @@ for thisInterval= 1:2
         %for non-target interval add noise
         stimNonTarget.stimLMS=stim.stimLMS; %we don't want to overide anything in stim.stimLMS
         stimNonTarget.stimLMS.dir=[0 0 0 0]+dpy.noiseLevel; %make the dir of the non-target a low level lum value
-        stimNonTarget.stimLMS.scale=0.1; %use same as for target
+        stimNonTarget.stimLMS.scale=dpy.noiseScale; 
         stim.LEDvals=tetra_led_arduinoConeIsolationLMS(dpy,stimNonTarget.stimLMS);
         
         LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
