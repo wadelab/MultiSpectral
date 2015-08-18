@@ -263,8 +263,8 @@ save(sprintf('SubID%d_Cond%s_lPrimePos%.1f_Freq%.1f_Rep%d_%s.mat',...
     SubID,thisExp,dpy.LprimePosition,modulationRateHz,Repeat,Date),'Data');
 
 %save figure
-%savefig(sprintf('SubID%s_Cond%s_Freq%.1f_Rep%d_%s.fig',...
-   % SubID,thisExp,modulationRateHz,Repeat,Date));
+savefig(sprintf('SubID%s_Cond%s_Freq%.1f_Rep%d_%s.fig',...
+   SubID,thisExp,modulationRateHz,Repeat,Date));
 fprintf('\nSubject %d data saved\n',SubID);
 fprintf('\n******** End of Experiment ********\n');
 

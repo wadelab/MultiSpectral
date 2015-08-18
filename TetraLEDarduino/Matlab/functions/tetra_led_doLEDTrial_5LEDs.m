@@ -20,7 +20,7 @@ for thisInterval= 1:2
     if (thisInterval == signalInterval) % Is this is the interval with the modulation
        
         % Compute the LED levels we want
-        stim.stimLMS.dir=stim.stimLMS.dir+dpy.noiseLevel; %add a value to all cones for a lum element
+        stim.stimLMS.dir=stim.stimLMS.dir; %add a value to all cones for a lum element
         stim.stimLMS.scale=stim.stimLMS.scale;
         stim.LEDvals=tetra_led_arduinoConeIsolationLMS(dpy,stim.stimLMS);
         
@@ -30,14 +30,8 @@ for thisInterval= 1:2
         LEDoutput=LEDoutputAmps/2;
         
     else
-        %for non-target interval add noise
-        stimNonTarget.stimLMS=stim.stimLMS; %we don't want to overide anything in stim.stimLMS
-        stimNonTarget.stimLMS.dir=[0 0 0 0]+dpy.noiseLevel; %make the dir of the non-target a low level lum value
-        stimNonTarget.stimLMS.scale=dpy.noiseScale; 
-        stim.LEDvals=tetra_led_arduinoConeIsolationLMS(dpy,stimNonTarget.stimLMS);
-        
-        LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
-        LEDoutput=LEDoutputAmps/2;
+
+        LEDoutput=zeros((dpy.nLEDsToUse),1)'; % Just zero
     end
     
     

@@ -291,8 +291,9 @@ if (isobject(s)) % This is shorthand for ' if s>0 '
       pause(1)
       fclose(s);
 end
-
+figure()
 plot(q.intensity(1:q.trialCount));
+Data.qIntensity(1:q.trialCount,1)=q.intensity(1:q.trialCount)'; %save out the intensity estimates (log(contrast) per trial)
 title(sprintf('%s cone at %.1f Hz Trial %d',thisExp,modulationRateHz,Repeat))
 t=QuestMean(q);		% Recommended by Pelli (1989) and King-Smith et al. (1994). Still our favorite.
 sd=QuestSd(q);
