@@ -45,7 +45,7 @@ end
 pause(2);
 fprintf('\n****** Experiment Running ******\n \n');
 LEDamps=uint16([0,0,0,0,0]);
-LEDbaseLevel=uint16(([.5,.5,.5,.5,.5])*(2^BITDEPTH)); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
+LEDbaseLevel=uint16(([.125,0.5,0.17,0.47,0.39])*(2^BITDEPTH)); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
 
 system('say Enter experiment parameters');
@@ -99,7 +99,7 @@ while(Repeat<1)
     
     % *********************************************************
 end
-
+tic
 LEDsToUse=find(LEDbaseLevel);% Which LEDs we want to be active in this expt?
 nLEDs=length(LEDsToUse);
 % Iinitialize the display system
@@ -154,38 +154,56 @@ dpy.modulationRateHz=modulationRateHz;
 switch experimentTypeS % 1=L-M, 2=(L+M+S), 3=S cone isolating
     case {'L','l'}  
         stim.stimLMS.dir=[1 0 0 0]; % L cone isolating
-        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.03);
+        tGuess=log10(.005); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.008);
         thisExp='L';
         
     case {'Lp','lp','LP'}  
         stim.stimLMS.dir=[0 1 0 0]; % L cone isolating
-        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.03);
+        tGuess=log10(.005); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.008);
         thisExp='Lp';
     
     case {'M','m'}    
         stim.stimLMS.dir=[0 0 1 0]; % M cone isolating
-        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.03);
+        tGuess=log10(.005); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.008);
         thisExp='M';
         
     case {'LM','lm'}    
         stim.stimLMS.dir=[.5 0 -1 0]; % L-M isolating
-        tGuess=log10(.02); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.04);
+        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.015);
         thisExp='LM';
+    
+    case {'LandM','landm','LANDM'}    
+        stim.stimLMS.dir=[1 0 1 0]; % L-M isolating
+        tGuess=log10(.005); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.008);
+        thisExp='LM';    
+        
+    case {'LandLp','landlp','LANDLP'}    
+        stim.stimLMS.dir=[1 1 0 0]; % L-M isolating
+        tGuess=log10(.005); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.008);
+        thisExp='LM';  
+    
+    case {'LpandM','lpandm','LPANDM'}    
+        stim.stimLMS.dir=[0 1 1 0]; % L-M isolating
+        tGuess=log10(.005); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.008);
+        thisExp='LM'; 
         
     case {'LMS','lms'}
         stim.stimLMS.dir=[1 1 1 1]; % [1 1 1] is a pure achromatic luminance modulation
-        tGuess=log10(.08);
-        stim.stimLMS.maxLogCont=log10(.2);
+        tGuess=log10(.005);
+        stim.stimLMS.maxLogCont=log10(.008);
         thisExp='LMS';
         
     case {'S','s'}
         stim.stimLMS.dir=[0 0 0 1]; % S cone isolating
-        tGuess=log10(.3);
-        stim.stimLMS.maxLogCont=log10(.30);
+        tGuess=log10(.4);
+        stim.stimLMS.maxLogCont=log10(.45);
         thisExp='S';
         
     otherwise
@@ -286,13 +304,14 @@ if (isobject(s)) % This is shorthand for ' if s>0 '
       fwrite(s,zeros(5,1),'uint16');
       fwrite(s,zeros(5,1),'int8');
       fwrite(s,zeros(5,1),'uint16');
-      fwrite(s,zeros(1,1),'uint16');
+      fwrite(s,zeros(2,1),'uint16');
       disp('Turning off LEDs');
-      pause(1)
+%       pause(0.5)
       fclose(s);
 end
 figure()
 plot(q.intensity(1:q.trialCount));
+Data.qInfo=q;
 Data.qIntensity(1:q.trialCount,1)=q.intensity(1:q.trialCount)'; %save out the intensity estimates (log(contrast) per trial)
 title(sprintf('%s cone at %.1f Hz Trial %d',thisExp,modulationRateHz,Repeat))
 t=QuestMean(q);		% Recommended by Pelli (1989) and King-Smith et al. (1994). Still our favorite.
@@ -334,3 +353,5 @@ fprintf('\nSubject %s data saved\n',SubID);
 fprintf('\n******** End of Experiment ********\n');
 
 
+timeElapsed=toc/60;
+fprintf('Experiment complete in %.3f minutes\n',timeElapsed);

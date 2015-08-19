@@ -12,9 +12,12 @@ LEDsToUse=dpy.LEDsToUse;
 
 
 %% create cone fundamentals using stockman cone fundamentals
-
+if length(stimLMS.dir)==4 %if tetra stim
 LprimePos=dpy.LprimePosition; %position of peak between the L and M cones, 0.5 is half way
 coneSpectra=creatingLprime(LprimePos); %outputs the L L' M S spectra, with first column containing wavelengths
+elseif length(stimLMS.dir)==3; %if LMS stim
+coneSpectra=creatingLMSspectra(dpy.WLrange);
+end
 %check WL match in coneSpectra and dpy.WLrange
 try 
     if dpy.WLrange==coneSpectra(:,1)
@@ -38,7 +41,7 @@ end
             
 %% Make the Stimulus
 
-LEDStim=led_makeStimArduino(dpy,stimLMS); % This returns a structure with dir and scale that applies to the LEDs
+LEDStim=tetra_led_makeStimArduino(dpy,stimLMS); % This returns a structure with dir and scale that applies to the LEDs
  
 % The returned structure gives values in dir and scale ranging betweek 0
 % and 1. They are contrasts

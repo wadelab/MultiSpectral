@@ -81,7 +81,7 @@ for thisInterval= 1:2
                         
             
             if thisInterval==1;
-                pause(.5)
+                pause(1)
             else continue
                 %no pause if end of stim presentation and awaiting response
                 %sound(sin(linspace(1,800*2*pi,1000))/4,4000); % Do a slightly different beep to indicate a response is required

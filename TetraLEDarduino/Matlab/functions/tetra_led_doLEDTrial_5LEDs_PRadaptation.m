@@ -25,7 +25,7 @@ for thisInterval= 1:3
         adaptStim.stimLMS=stim.stimLMS; %we don't want to override the stimLMS values
         adaptStim.stimLMS.dir=stim.adaptStim.dir; % set adaptation direction
         adaptStim.stimLMS.scale=stim.adaptStim.scale; %  set adaptation contrast
-        dpy.PulseDuration=3; %3seconds of adapt stim
+        dpy.PulseDuration=40; %4seconds of adapt stim
         stim.LEDvals=tetra_led_arduinoConeIsolationLMS(dpy,adaptStim.stimLMS);
         LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
         LEDoutput=LEDoutputAmps/2;
@@ -36,8 +36,8 @@ for thisInterval= 1:3
     elseif (thisInterval == signalInterval) % Is this is the interval with the modulation
        
         % Compute the LED levels we want
-        stim.stimLMS.dir=stim.stimLMS.dir+dpy.noiseLevel; %add a value to all cones for a lum element
-        dpy.PulseDuration=1; %1second of adapt stim
+        stim.stimLMS.dir=stim.stimLMS.dir; %add a value to all cones for a lum element
+        dpy.PulseDuration=2; %200ms of stim
         stim.stimLMS.scale=stim.stimLMS.scale;
         stim.LEDvals=tetra_led_arduinoConeIsolationLMS(dpy,stim.stimLMS);
         
@@ -47,17 +47,10 @@ for thisInterval= 1:3
 
         
     else
-        %for non-target interval add noise
-        dpy.PulseDuration=1; %1second of adapt stim
+       
+        LEDoutput=zeros((dpy.nLEDsToUse),1)'; % Just zero
+        dpy.PulseDuration=2; 
 
-        stimNonTarget.stimLMS=stim.stimLMS; %we don't want to overide anything in stim.stimLMS
-        stimNonTarget.stimLMS.dir=[0 0 0 0]+dpy.noiseLevel; %make the dir of the non-target a low level lum value
-        stimNonTarget.stimLMS.scale=dpy.noiseScale; %use same as for target
-        stim.LEDvals=tetra_led_arduinoConeIsolationLMS(dpy,stimNonTarget.stimLMS);
-        
-        LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
-        LEDoutput=LEDoutputAmps/2;
-        
         sound(sin(linspace(1,650*2*pi,1000))/4,8000);
 
     end
@@ -100,9 +93,9 @@ for thisInterval= 1:3
                         
             
             if thisInterval==1;
-                pause(3)
+                pause((dpy.PulseDuration/10)+0.1)
             elseif thisInterval==2;
-                pause(1)
+                pause((dpy.PulseDuration/10)+0.1)
             else continue
                 %no pause if end of stim presentation and awaiting response
                 %sound(sin(linspace(1,800*2*pi,1000))/4,4000); % Do a slightly different beep to indicate a response is required

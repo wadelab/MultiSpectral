@@ -99,7 +99,7 @@ while(Repeat<1)
     
     % *********************************************************
 end
-
+tic;
 LEDsToUse=find(LEDbaseLevel);% Which LEDs we want to be active in this expt?
 nLEDs=length(LEDsToUse);
 % Iinitialize the display system
@@ -112,8 +112,8 @@ clear LEDspectra
 %the LED calibs, without the column for wavelengths)
 dpy.WLrange=(400:1:720)'; %must use range from 400 to 720 
 dpy.bitDepth=BITDEPTH;
-dpy.noiseLevel=1; %amount of noise to add to intervals - added to the direction of stim, so [1 0 0 0] becomes [1.1 .1 .1 .1]
-dpy.noiseScale=0.06;
+%dpy.noiseLevel=1; %amount of noise to add to intervals - added to the direction of stim, so [1 0 0 0] becomes [1.1 .1 .1 .1]
+%dpy.noiseScale=0.06;
 dpy.LprimePosition=0.5; %position of the Lprime peak in relation to L and M cone peaks: 0.5 is half way between, 0 is M cone and 1 is L cone
 spectrumIndex=0;
 for thisLED=LEDsToUse
@@ -164,7 +164,7 @@ switch experimentTypeS % 1=L-M, 2=(L+M+S), 3=S cone isolating
     case {'Lp','lp','LP'}  
         stim.stimLMS.dir=[0 1 0 0]; % L cone isolating
         stim.adaptStim.dir=[1 0 1 0]; %adapt L and M
-        stim.adaptStim.scale=0.015;
+        stim.adaptStim.scale=0.02;
         tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
         stim.stimLMS.maxLogCont= log10(.016);
         thisExp='Lp';
@@ -219,7 +219,7 @@ fprintf('Quest''s initial threshold estimate is %g +- %g\n',QuestMean(q),QuestSd
 
 % Run a series of trials. 
 % On each trial we ask Quest to recommend an intensity and we call QuestUpdate to save the result in q.
-trialsDesired=50;
+trialsDesired=30;
 wrongRight={'wrong','right'};
 timeZero=GetSecs; % We >force< you to have PTB in the path for this so we know that GetSecs is present
  k=0; response=0;
@@ -346,4 +346,6 @@ savefig(sprintf('SubID%s_Cond%s_Freq%.1f_Rep%d_%s.fig',...
 fprintf('\nSubject %s data saved\n',SubID);
 fprintf('\n******** End of Experiment ********\n');
 
+timeElapsed=toc/60;
+fprintf('Experiment complete in %.3f minutes\n',timeElapsed);
 

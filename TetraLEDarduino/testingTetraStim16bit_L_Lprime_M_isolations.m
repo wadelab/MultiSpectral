@@ -47,20 +47,20 @@ else
     s=0;
 end
 tic;
-Conditions={'L','M','Lp'};
+Conditions={'L','M','Lp','LandM'};
 Conditions=Shuffle(Conditions);
 
 %% loop through the conditions
 
 for thisCond = 1:size(Conditions,2);
-experimentTypeS=Conditions{thisCond};
+experimentTypeS=upper(Conditions{thisCond});
 dpy.LprimePosition=0.5; %default. position of the Lprime peak in relation to L and M cone peaks: 0.5 is half way between, 0 is M cone and 1 is L cone
 
 %InitializePsychSound; % Initialize the Psychtoolbox sounds
 pause(2);
 fprintf('\n****** Experiment Running ******\n \n');
 LEDamps=uint16([0,0,0,0,0]);
-LEDbaseLevel=int16(([.5,.5,.5,.5,.5])*(2^BITDEPTH)); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
+LEDbaseLevel=int16(([.125,0.5,0.17,0.47,0.39])*(2^BITDEPTH)); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
 
 LEDsToUse=find(LEDbaseLevel);% Which LEDs we want to be active in this expt?
@@ -116,21 +116,27 @@ dpy.modulationRateHz=modulationRateHz;
 switch experimentTypeS % 1=L-M, 2=(L+M+S), 3=S cone isolating
     case {'L','l'}  
         stim.stimLMS.dir=[1 0 0 0]; % L cone isolating
-        tGuess=log10(.015); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.03);
+        tGuess=log10(.004); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.005);
         thisExp='L';
         
     case {'Lp','lp','LP'}
         stim.stimLMS.dir=[0 1 0 0]; % L cone isolating
-        tGuess=log10(.015); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.03);
+        tGuess=log10(.004); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.005);
         thisExp='Lp';
           
     case {'M','m'}    
         stim.stimLMS.dir=[0 0 1 0]; % M cone isolating
-        tGuess=log10(.015); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.03);
+        tGuess=log10(.004); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.005);
         thisExp='M';
+        
+    case {'LandM','landm','LANDM'}    
+        stim.stimLMS.dir=[1 0 1 0]; % M cone isolating
+        tGuess=log10(.004); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.005);
+        thisExp='LandM';
         
     otherwise
         error ('Incorrect experiment type');
@@ -244,6 +250,9 @@ Date=datestr(now,30); %current date with time
 
 cd('/Users/wadelab/Github_MultiSpectral/TetraLEDarduino/Data_tetraStim')
 
+Data.qInfo=q; %save out everything in q
+Data.qIntensity(1:q.trialCount,1)=q.intensity(1:q.trialCount)'; %save out the intensity estimates (log(contrast) per trial)
+
 Data.rawThresh=t;
 Data.rawStDev=sd;
 Data.contrastThresh=contrastThresh;
@@ -275,8 +284,9 @@ timeElapsed=toc/60;
 fprintf('Experiment complete in %.3f minutes',timeElapsed);
 
 system('say All conditions complete')
-fprintf('\nContrast Threshold for %s:  %.3f\nContrast Threshold for %s:  %.3f\nContrast Threshold for %s:  %.3f\n',...
-    Conditions{1},TempDataThresh.(Conditions{1}),Conditions{2},TempDataThresh.(Conditions{2}),Conditions{3},TempDataThresh.(Conditions{3}));
+for thisCond=1:size(Conditions,2)
+    fprintf('\nContrast Threshold for %s:  %.3f\n',Conditions{thisCond},TempDataThresh.(Conditions{thisCond}));
+end
 if (isobject(s)) % This is shorthand for ' if s>0 '
     % Shut down arduino to save the LEDs
       fwrite(s,zeros(5,1),'uint16');

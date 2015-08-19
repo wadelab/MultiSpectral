@@ -101,17 +101,24 @@ void loop() {
    }
               
    delay(100);
+   
+       // Set everything to mean level for 100ms before stim starts. 
+    for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { 
+           analogWrite(ledPins[thisPinIndex], int(LEDbaseLevel[thisPinIndex]));   // To reset to mean level
+    }         
+    
+    delay(100);
             
        // Here we loop for one pulseDuration
    startTime=millis(); // Log the current time in ms
    elapsedTimeMilliSecs=0; // This will count up until it reaches the pulseDuration
 
-   while (elapsedTimeMilliSecs < (int(pulseDuration[0])*1000)) { // Keep checking to see how long we've been in this loop (in ms)
+   while (elapsedTimeMilliSecs < (int(pulseDuration[0])*100)) { // Keep checking to see how long we've been in this loop (in ms)
        elapsedTimeMilliSecs=(millis()-startTime); // Compute how long it's been in this loop in ms. We will terminate
       // when the elapsed time is greater than the pulse width that we asked for.
-       
+       long rNum = random(-50,50);
         for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { // Loop (very quickly) over all pins
-                 int val = sin(double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz))*double(LEDamps[thisPinIndex])+double(LEDbaseLevel[thisPinIndex]);
+                 int val = sin(double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz))*double(LEDamps[thisPinIndex])+double(LEDbaseLevel[thisPinIndex])+rNum;
                  // int val = sin( double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz))*(double(LEDamps[thisPinIndex]))+LEDbaseLevel[thisPinIndex];
         
                       analogWrite(ledPins[thisPinIndex], val); // Write value to the pin. These are ints... so in the case of a  12 bit value they are 0-4095. This is taken care of on the matlab side
