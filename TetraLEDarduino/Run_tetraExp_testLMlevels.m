@@ -21,7 +21,7 @@ s=ConnectToArduino;
 
 
 % Prompt for details
-
+dpy.NumTrials=50;
 % Ask the user to enter a Subject ID number
 SubID=-1; 
 while(SubID<1)
@@ -48,9 +48,9 @@ end
 dpy.Repeat=Repeat;
 
 
-
-peakLevels=[580,570,560,550,540];
-peakLevels=shuffle(peakLevels);
+tic;
+peakLevels=[575,570,560,555,545,540];
+peakLevels=Shuffle(peakLevels);
 for thisPeak=1:length(peakLevels)
     dpy.LMpeak=peakLevels(thisPeak);
  
@@ -65,22 +65,27 @@ Data=Run_TetraExp_DUE_5LEDs(dpy,s);
 %go to wherever you want to save it
 cd('/Users/wadelab/Github_MultiSpectral/TetraLEDarduino/Data_tetraStim')
 
-save(sprintf('SubID%d_numSpec%d_Cond%s_Freq%.1f_Rep%d_%s.mat',...
-    dpy.SubID,dpy.NumSpec,dpy.ExptID,dpy.Freq,dpy.Repeat,Data.Date),'Data');
-
 %save figure
-savefig(sprintf('SubID%s_Cond%s_Freq%.1f_Rep%d_%s.fig',...
-    SubID,thisExp,modulationRateHz,Repeat,Date));
-fprintf('\nSubject %s data saved\n',SubID);
+savefig(sprintf('SubID%s_numSpec%d_Cond%s_Freq%.1f_Rep%d_%s.fig',...
+    dpy.SubID,dpy.NumSpec,dpy.ExptID,dpy.Freq,dpy.Repeat,Data.Date));
+fprintf('\nSubject %s data saved\n',dpy.SubID);
 fprintf('\n******** End of Experiment ********\n');
 system ('say All trials complete for this condition');
-TempDataThresh.(thisPeak)=Data.contrastThresh;
-
+peakname=sprintf('peak%d',peakLevels(thisPeak));
+allPeaks{thisPeak}=peakname;
+TempDataThresh.(peakname)=Data.contrastThresh;
+AllData.(peakname)=Data;
 end
 system ('say All conditions complete')
-
+save(sprintf('SubID%d_Cond%s_multipleLevels_Freq%.1f_Rep%d_%s.mat',...
+    dpy.SubID,dpy.ExptID,dpy.Freq,dpy.Repeat,Data.Date),'AllData');
 %turn off LEDs and close connection to ardunio
 CloseArduino(s)
 for thisPeak=1:size(peakLevels,2)
-    fprintf('\nContrast Threshold for %d:  %.3f\n',peakLevels{thisPeak},TempDataThresh.(peakLevels{thisPeak}));
+    thename=allPeaks{thisPeak};
+    fprintf('\nContrast Threshold for %d:  %.3f\n',peakLevels(thisPeak),TempDataThresh.(thename));
 end
+
+
+timeElapsed=toc/60;
+fprintf('Experiment complete in %.3f minutes\n',timeElapsed);

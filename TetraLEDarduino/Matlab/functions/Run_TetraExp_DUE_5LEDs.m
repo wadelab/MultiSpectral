@@ -34,7 +34,7 @@ nLEDsTotal=length(LEDamps);
 % 2: Present two flicker intervals with a random sequence
 % ********************************************************
 
-tic
+
 LEDsToUse=find(LEDbaseLevel);% Which LEDs we want to be active in this expt?
 nLEDs=length(LEDsToUse);
 % Iinitialize the display system
@@ -160,9 +160,9 @@ switch dpy.ExptID
         
     case {'TESTLM'}
         if dpy.NumSpec==2
-        stim.stimLMS.dir=[1 0]; % L cone isolating
-        tGuess=log10(.02); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.05);   
+        stim.stimLMS.dir=[1 0]; % testLM cone isolating
+        tGuess=log10(.04); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.6);   
         else
             error('Incorrect NumSpec for this condition')
         end
@@ -186,7 +186,11 @@ fprintf('Quest''s initial threshold estimate is %g +- %g\n',QuestMean(q),QuestSd
 
 % Run a series of trials. 
 % On each trial we ask Quest to recommend an intensity and we call QuestUpdate to save the result in q.
-trialsDesired=50;
+try
+    trialsDesired=dpy.NumTrials;
+catch
+trialsDesired=50; %default 50 trials
+end
 wrongRight={'wrong','right'};
 timeZero=GetSecs; % We >force< you to have PTB in the path for this so we know that GetSecs is present
  k=0; response=0;
@@ -257,16 +261,20 @@ while ((k<trialsDesired) && (response ~= -1))
         
     end
 end
-
-if (k == trialsDesired)
-            system('say all trials complete');
-end
+% 
+% if (k == trialsDesired)
+%             system('say all trials complete');
+% end
 
 figure()
 plot(q.intensity(1:q.trialCount));
 Data.qInfo=q;
 Data.qIntensity(1:q.trialCount,1)=q.intensity(1:q.trialCount)'; %save out the intensity estimates (log(contrast) per trial)
-title(sprintf('%s cone at %.1f Hz Trial %d',dpy.ExptID,dpy.Freq,dpy.Repeat))
+try
+    title(sprintf('LMpeak %d at %.1f Hz Trial %d',dpy.LMpeak,dpy.Freq,dpy.Repeat))
+catch
+    title(sprintf('%s cone at %.1f Hz Trial %d',dpy.ExptID,dpy.Freq,dpy.Repeat))
+end
 t=QuestMean(q);		% Recommended by Pelli (1989) and King-Smith et al. (1994). Still our favorite.
 sd=QuestSd(q);
 contrastThresh=10^(t)*100;
@@ -291,5 +299,3 @@ Data.contrastStDevNeg=contrastStDevNeg;
 Data.dpy=dpy;
 
 
-timeElapsed=toc/60;
-fprintf('Experiment complete in %.3f minutes\n',timeElapsed);
