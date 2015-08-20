@@ -47,7 +47,7 @@ else
     s=0;
 end
 tic;
-Conditions={'L','M','Lp','LandM'};
+Conditions={'L','M','Lp','S'};
 Conditions=Shuffle(Conditions);
 
 %% loop through the conditions
@@ -137,6 +137,12 @@ switch experimentTypeS % 1=L-M, 2=(L+M+S), 3=S cone isolating
         tGuess=log10(.004); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
         stim.stimLMS.maxLogCont= log10(.005);
         thisExp='LandM';
+        
+    case {'S','s'}    
+        stim.stimLMS.dir=[0 0 0 1]; % M cone isolating
+        tGuess=log10(.4); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.45);
+        thisExp='S';
         
     otherwise
         error ('Incorrect experiment type');

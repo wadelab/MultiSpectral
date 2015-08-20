@@ -1,4 +1,4 @@
-function [LEDStim] = tetra_led_arduinoConeIsolationLMS(dpy,stimLMS)
+function [LEDStim,dpy] = tetra_led_arduinoConeIsolationLMS(dpy,stimLMS)
 % [LEDStim] = tetra_led_arduinoConeIsolationLMS(dpy,stimLMS)
 % Uses the variables in dpy and stimLMS to output the values for each LED.  
 % LED values will be sent to the Arduino in a separate script.
@@ -17,6 +17,8 @@ LprimePos=dpy.LprimePosition; %position of peak between the L and M cones, 0.5 i
 coneSpectra=creatingLprime(LprimePos); %outputs the L L' M S spectra, with first column containing wavelengths
 elseif length(stimLMS.dir)==3; %if LMS stim
 coneSpectra=creatingLMSspectra(dpy.WLrange);
+elseif length(stimLMS.dir)==2;
+[coneSpectra,dpy]=creating2coneSpectra(dpy); %where 'LMpeak' is lambdaMax of the cone in longwavelength region
 end
 %check WL match in coneSpectra and dpy.WLrange
 try 
