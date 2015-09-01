@@ -97,8 +97,8 @@ save(sprintf('SubID%d_numSpec%d_Cond%s_Freq%.1f_Rep%d_%s.mat',...
 %save figure
 savefig(sprintf('SubID%s_numSpec%d_Cond%s_Freq%.1f_Rep%d_%s.fig',...
     dpy.SubID,dpy.NumSpec,dpy.ExptID,dpy.Freq,dpy.Repeat,Data.Date));
-fprintf('\nSubject %s data saved\n',dpy.SubID);
+fprintf('\nSubject %d data saved\n',dpy.SubID);
 fprintf('\n******** End of Experiment ********\n');
-
+system('say All trials complete');
 %turn off LEDs and close ardunio
-CloseArduino(s)
+CloseArduino(s);

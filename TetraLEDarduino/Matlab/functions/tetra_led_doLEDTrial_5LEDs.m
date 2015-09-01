@@ -64,6 +64,7 @@ for thisInterval= 1:2
             fwrite(serialObject,int8(LEDampSign),'int8'); %indicates whether number is pos (0) or neg (1)
             fwrite(serialObject,int16(dpy.LEDbaseLevel),'int16');
             fwrite(serialObject,int16(dpy.modulationRateHz*256),'int16');
+            fwrite(serialObject,int8(dpy.baselevelsLEDS),'int8'); %send the scaling info
             %pause(.1)
             
 

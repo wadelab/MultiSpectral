@@ -42,13 +42,12 @@ LEDcalib=LEDspectra; %if update the file loaded, the name only has to be updated
 LEDcalib(LEDcalib<0)=0;
 clear LEDspectra
 
-%get baselines for each LED using dimmest LED as 1, and scaling rest with
-%minLED/maxVal for each LED
-maxValsLEDS=max(LEDcalib(:,2:end)); %find maxval for each LED
-minLED=min(maxValsLEDS); %find the min of the maxvals, i.e. dimmest LED
+%get baselines for each LED using dimmest LED as 1, and scaling rest 
+maxLED=max(LEDcalib(:,2:end));
+LEDscale=1./maxLED;
+actualLEDScale=LEDscale./max(LEDscale);
 
-baselevelsLEDS=minLED./maxValsLEDS; %divide the minLED by each maxVal
-
+baselevelsLEDS=actualLEDScale;
 LEDbaseLevel=uint16((baselevelsLEDS)*(2^BITDEPTH)); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 
 
@@ -66,16 +65,6 @@ for thisLED=LEDsToUse
     LEDspectra(:,thisLED)=interp1(LEDcalib(:,1),LEDcalib(:,1+thisLED),dpy.WLrange);
 end
 LEDspectra(LEDspectra<0)=0;
-
-%LEDspectra=LEDspectra-repmat(min(LEDspectra),size(LEDspectra,1),1);
-%sumLED=sum(LEDspectra);
-maxLED=max(LEDspectra);
-LEDscale=1./maxLED;
-%LEDscale=[128 128 128 128 128];
-
-
-% ********** this isn't currently used anywhere else... should it be?!
-actualLEDScale=LEDscale./max(LEDscale);
 
 
 dpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LEDs to use
@@ -172,7 +161,7 @@ switch dpy.ExptID
         if dpy.NumSpec==2
         stim.stimLMS.dir=[1 0]; % testLM cone isolating
         tGuess=log10(.04); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.06);   
+        stim.stimLMS.maxLogCont= log10(.08);   
         else
             error('Incorrect NumSpec for this condition')
         end

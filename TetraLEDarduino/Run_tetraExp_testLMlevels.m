@@ -25,11 +25,11 @@ addpath(genpath('/Users/wadelab/Github_MultiSpectral/TetraLEDarduino'))
 s=ConnectToArduino;
 
 %set the peak levels here:
-peakLevels=[530,540,550,560,570,580];
+peakLevels=[540,541,542,543];
 %peakLevels=[585,580,575,570,565,560,555,550,545,540,535,530];
 
 % set number of trials in staircase
-dpy.NumTrials=50;
+dpy.NumTrials=40;
 % Ask the user to enter a Subject ID number
 SubID=-1; 
 while(SubID<1)
@@ -79,7 +79,7 @@ save(sprintf('SubID%d_Cond%s_peak%d_Freq%.1f_Rep%d_%s.mat',...
 %save figure
 savefig(sprintf('SubID%s_numSpec%d_Cond%s_Freq%.1f_Rep%d_%s.fig',...
     dpy.SubID,dpy.NumSpec,dpy.ExptID,dpy.Freq,dpy.Repeat,Data.Date));
-fprintf('\nSubject %s data saved\n',dpy.SubID);
+fprintf('\nSubject %d data saved\n',dpy.SubID);
 fprintf('\n******** End of Experiment ********\n');
 system ('say All trials complete for this condition');
 peakname=sprintf('peak%d',peakLevels(thisPeak));
@@ -91,11 +91,11 @@ TempData.stDevNeg.(peakname)=Data.contrastStDevNeg;
 
 AllData.(peakname)=Data;
 end
-system ('say All conditions complete')
+system ('say All conditions complete');
 save(sprintf('SubID%d_Cond%s_multipleLevels_Freq%.1f_Rep%d_%s.mat',...
     dpy.SubID,dpy.ExptID,dpy.Freq,dpy.Repeat,Data.Date),'AllData');
 %turn off LEDs and close connection to ardunio
-CloseArduino(s)
+CloseArduino(s);
 for thisPeak=1:size(peakLevels,2)
     thename=allPeaks{thisPeak};
     fprintf('\nContrast Threshold for peak %d: %.3f   StDev +%.3f -%.3f\n',...
