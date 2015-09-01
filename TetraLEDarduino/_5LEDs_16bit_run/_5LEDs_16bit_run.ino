@@ -23,6 +23,7 @@ long pulseDuration = 1000; // How long each pulse lasts in ms
 long elapsedTimeMilliSecs = 0; 
 int halfAmp = 2048; // Half the maximum amplitude. It will be bigger if we use 12 bit precision
 int nPins = 5;
+int LEDscaling[] = {0.25,1,0.34,0.94,0.78}; //this is the relative scaling of each LED based on the differences in brightness.  Use this to scale the noise N.B. update this so input
  
 void setup() {
 
@@ -116,10 +117,10 @@ void loop() {
    while (elapsedTimeMilliSecs < pulseDuration) { // Keep checking to see how long we've been in this loop (in ms)
        elapsedTimeMilliSecs=(millis()-startTime); // Compute how long it's been in this loop in ms. We will terminate
       // when the elapsed time is greater than the pulse width that we asked for.
-       long rNum = random(-10,10);
+       long rNum = random(-80,80); //this number will get scaled for each LED based on the background level for each LED
        
         for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { // Loop (very quickly) over all pins
-                 int val = sin(double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz))*double(LEDamps[thisPinIndex])+double(LEDbaseLevel[thisPinIndex])+rNum;
+                 int val = sin(double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz))*double(LEDamps[thisPinIndex])+double(LEDbaseLevel[thisPinIndex])+(rNum+LEDscaling[thisPinIndex]);
                  // int val = sin( double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz))*(double(LEDamps[thisPinIndex]))+LEDbaseLevel[thisPinIndex];
                       
                       analogWrite(ledPins[thisPinIndex], val); // Write value to the pin. These are ints... so in the case of a  12 bit value they are 0-4095. This is taken care of on the matlab side

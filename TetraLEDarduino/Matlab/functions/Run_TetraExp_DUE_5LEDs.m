@@ -26,7 +26,6 @@ pause(2);
 fprintf('\n****** Experiment Running ******\n \n');
 BITDEPTH=12;
 LEDamps=uint16([0,0,0,0,0]);
-LEDbaseLevel=uint16(([.125,0.5,0.17,0.47,0.39])*(2^BITDEPTH)); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 nLEDsTotal=length(LEDamps);
 % This version of the code shows how to do two things:
 % Ask Lauren's code for a set of LED amplitudes corresponding to a
@@ -35,20 +34,31 @@ nLEDsTotal=length(LEDamps);
 % ********************************************************
 
 
-LEDsToUse=find(LEDbaseLevel);% Which LEDs we want to be active in this expt?
-nLEDs=length(LEDsToUse);
+
 % Iinitialize the display system
 % Load LEDspectra calib contains 1 column with wavelengths, then the LED calibs
 load('LEDspectra_070515.mat'); %load in calib for the prizmatix
 LEDcalib=LEDspectra; %if update the file loaded, the name only has to be updated here for use in rest of code
 LEDcalib(LEDcalib<0)=0;
 clear LEDspectra
+
+%get baselines for each LED using dimmest LED as 1, and scaling rest with
+%minLED/maxVal for each LED
+maxValsLEDS=max(LEDcalib(:,2:end)); %find maxval for each LED
+minLED=min(maxValsLEDS); %find the min of the maxvals, i.e. dimmest LED
+
+baselevelsLEDS=minLED./maxValsLEDS; %divide the minLED by each maxVal
+
+LEDbaseLevel=uint16((baselevelsLEDS)*(2^BITDEPTH)); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
+
+
+LEDsToUse=find(LEDbaseLevel);% Which LEDs we want to be active in this expt?
+nLEDs=length(LEDsToUse);
 %resample to specified wavelength range (LEDspectra will now only contain
 %the LED calibs, without the column for wavelengths)
+dpy.baselevelsLEDS=baselevelsLEDS;
 dpy.WLrange=(400:1:720)'; %must use range from 400 to 720 
 dpy.bitDepth=BITDEPTH;
-dpy.noiseLevel=1; %amount of noise to add to intervals - added to the direction of stim, so [1 0 0 0] becomes [1.1 .1 .1 .1]
-dpy.noiseScale=0.0;
 dpy.LprimePosition=0.5; %position of the Lprime peak in relation to L and M cone peaks: 0.5 is half way between, 0 is M cone and 1 is L cone
 spectrumIndex=0;
 for thisLED=LEDsToUse
@@ -162,7 +172,7 @@ switch dpy.ExptID
         if dpy.NumSpec==2
         stim.stimLMS.dir=[1 0]; % testLM cone isolating
         tGuess=log10(.04); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.6);   
+        stim.stimLMS.maxLogCont= log10(.06);   
         else
             error('Incorrect NumSpec for this condition')
         end
