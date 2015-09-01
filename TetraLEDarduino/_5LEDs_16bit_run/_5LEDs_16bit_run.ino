@@ -118,7 +118,7 @@ void loop() {
    while (elapsedTimeMilliSecs < pulseDuration) { // Keep checking to see how long we've been in this loop (in ms)
        elapsedTimeMilliSecs=(millis()-startTime); // Compute how long it's been in this loop in ms. We will terminate
       // when the elapsed time is greater than the pulse width that we asked for.
-       long rNum = random(-30,30); //this number will get scaled for each LED based on the background level for each LED
+       long rNum = random(-300,300); //this number will get scaled for each LED based on the background level for each LED
        
         for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { // Loop (very quickly) over all pins
                  int val = sin(double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz))*double(LEDamps[thisPinIndex])+double(LEDbaseLevel[thisPinIndex])+(rNum*LEDscaling[thisPinIndex]);
