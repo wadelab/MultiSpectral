@@ -96,7 +96,7 @@ switch dpy.ExptID
         tGuess=log10(.005); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
         stim.stimLMS.maxLogCont= log10(.008);
         thisExp='Lp';
-    
+               
     case {'M'}    
         if dpy.NumSpec==4
         stim.stimLMS.dir=[0 0 1 0]; % L cone isolating
@@ -113,13 +113,25 @@ switch dpy.ExptID
         if dpy.NumSpec==4
         stim.stimLMS.dir=[0.5 0 -1 0]; % L cone isolating
         tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.015);        
+        stim.stimLMS.maxLogCont= log10(.04);        
         elseif dpy.NumSpec==3
         stim.stimLMS.dir=[0.5 -1 0]; % L cone isolating
         tGuess=log10(.04); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
         stim.stimLMS.maxLogCont= log10(.05);
         end;
         thisExp='LM';
+        
+    case {'LLP'}  
+        stim.stimLMS.dir=[0.5 -1 0 0]; % L cone isolating
+        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.04);
+        thisExp='LLp';
+        
+    case {'LPM'}  
+        stim.stimLMS.dir=[0 0.5 -1 0]; % L cone isolating
+        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.04);
+        thisExp='LpM';
         
     case {'LMS'}
         if dpy.NumSpec==4
