@@ -121,7 +121,7 @@ void loop() {
        long rNum = random(-300,300); //this number will get scaled for each LED based on the background level for each LED
        
         for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { // Loop (very quickly) over all pins
-                 int val = sin(double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz))*double(LEDamps[thisPinIndex])+double(LEDbaseLevel[thisPinIndex])+(rNum*LEDscaling[thisPinIndex]);
+                 int val = sin(double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz))*double(LEDamps[thisPinIndex])+double(LEDbaseLevel[thisPinIndex])+(rNum*(LEDscaling[thisPinIndex]*2));
                  // int val = sin( double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz))*(double(LEDamps[thisPinIndex]))+LEDbaseLevel[thisPinIndex];
                       
                       analogWrite(ledPins[thisPinIndex], val); // Write value to the pin. These are ints... so in the case of a  12 bit value they are 0-4095. This is taken care of on the matlab side

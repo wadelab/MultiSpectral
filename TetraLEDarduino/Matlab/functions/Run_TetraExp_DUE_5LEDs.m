@@ -47,10 +47,11 @@ dpy.WLrange=(400:1:720)'; %must use range from 400 to 720
 % use illuminant C to get baselevels for each LED (so white light as
 % background), and resample the LEDcalib spectra to the desired WL range
 
-[baselevels, LEDspectra] = LED2illumC(LEDcalib,dpy); % send the LED spectra and dpy with WL values
+[baselevels, LEDspectra] = LED2white(LEDcalib,dpy); % send the LED spectra and dpy with WL values
 baselevelsLEDS=baselevels/2; %we want them at half their scaled levels
 LEDbaseLevel=uint16((baselevelsLEDS)*(2^BITDEPTH)); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
-
+fprintf('Baselevels:\n%d\n',baselevelsLEDS);
+fprintf('converted baselevels:\n%d\n',LEDbaseLevel);
 
 LEDsToUse=find(LEDbaseLevel);% Which LEDs we want to be active in this expt?
 
@@ -112,8 +113,8 @@ switch dpy.ExptID
     case {'LM'}    
         if dpy.NumSpec==4
         stim.stimLMS.dir=[0.5 0 -1 0]; % L cone isolating
-        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.04);        
+        tGuess=log10(.005); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.008);        
         elseif dpy.NumSpec==3
         stim.stimLMS.dir=[0.5 -1 0]; % L cone isolating
         tGuess=log10(.04); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
@@ -123,14 +124,14 @@ switch dpy.ExptID
         
     case {'LLP'}  
         stim.stimLMS.dir=[0.5 -1 0 0]; % L cone isolating
-        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.04);
+        tGuess=log10(.005); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.008);
         thisExp='LLp';
         
     case {'LPM'}  
         stim.stimLMS.dir=[0 0.5 -1 0]; % L cone isolating
-        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.04);
+        tGuess=log10(.005); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.008);
         thisExp='LpM';
         
     case {'LMS'}

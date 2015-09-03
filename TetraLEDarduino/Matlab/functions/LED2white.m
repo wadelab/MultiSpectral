@@ -1,8 +1,8 @@
-function [relativeLEDlevels, LEDspectra] = LED2illumC(LEDcalib,dpy)
-% [relativeLEDlevels, LEDspectra] = LED2illumC
+function [relativeLEDlevels, LEDspectra] = LED2white(LEDcalib,dpy)
+% [relativeLEDlevels, LEDspectra] = white
 % 
-% Calculate necessary LED values needed to produce a white light (based on
-% CIE illuminant C), which can be used as a baseline value in LED stimulus
+% Calculate necessary LED values needed to produce a white light
+% , which can be used as a baseline value in LED stimulus
 %
 % Input:
 %       LEDspectra = the LED calibration spectra
@@ -10,7 +10,7 @@ function [relativeLEDlevels, LEDspectra] = LED2illumC(LEDcalib,dpy)
 %
 % Output:
 %       relativeLEDlevels = the relative intensity for each LED needed to
-%                           produce the illuminant C
+%                           produce the white light
 %       LEDspectra        = resampled LED calibration spectra
 %
 % Psychotoolbox should be in path, along with the folder containing
@@ -22,7 +22,7 @@ function [relativeLEDlevels, LEDspectra] = LED2illumC(LEDcalib,dpy)
 WL = dpy.WLrange;
 
 % resample the CIE illuminant C spectra to match desired wavelength range
-[illumC,~] = resampleCIEillumC(WL);
+[illumC,~] = resampleWhite(WL);
 
 % resample the LED spectra using wavelength range
 for thisLED = 1:size(LEDcalib,2)-1 % column1 is wavelengths
