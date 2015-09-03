@@ -42,35 +42,28 @@ LEDcalib=LEDspectra; %if update the file loaded, the name only has to be updated
 LEDcalib(LEDcalib<0)=0;
 clear LEDspectra
 
-%get baselines for each LED using dimmest LED as 1, and scaling rest 
-maxLED=max(LEDcalib(:,2:end));
-LEDscale=1./maxLED;
-actualLEDScale=LEDscale./max(LEDscale);
+dpy.WLrange=(400:1:720)'; %must use range from 400 to 720 
 
-baselevelsLEDS=actualLEDScale/2; %we want them at half their scaled levels
+% use illuminant C to get baselevels for each LED (so white light as
+% background), and resample the LEDcalib spectra to the desired WL range
+
+[baselevels, LEDspectra] = LED2illumC(LEDcalib,dpy); % send the LED spectra and dpy with WL values
+baselevelsLEDS=baselevels/2; %we want them at half their scaled levels
 LEDbaseLevel=uint16((baselevelsLEDS)*(2^BITDEPTH)); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 
 
 LEDsToUse=find(LEDbaseLevel);% Which LEDs we want to be active in this expt?
-%resample to specified wavelength range (LEDspectra will now only contain
-%the LED calibs, without the column for wavelengths)
+
 dpy.baselevelsLEDS=baselevelsLEDS;
-dpy.WLrange=(400:1:720)'; %must use range from 400 to 720 
+
 dpy.bitDepth=BITDEPTH;
 dpy.LprimePosition=0.5; %position of the Lprime peak in relation to L and M cone peaks: 0.5 is half way between, 0 is M cone and 1 is L cone
-spectrumIndex=0;
-for thisLED=LEDsToUse
-    spectrumIndex=spectrumIndex+1;
-    LEDspectra(:,thisLED)=interp1(LEDcalib(:,1),LEDcalib(:,1+thisLED),dpy.WLrange);
-end
-LEDspectra(LEDspectra<0)=0;
+
 
 
 dpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LEDs to use
 dpy.LEDsToUse=LEDsToUse;
-%dpy.bitDepth=8; % Can be 12 on new arduinos
-%dpy.backLED.dir=double(LEDbaseLevel(LEDsToUse))./max(double(LEDbaseLevel(LEDsToUse)))
-dpy.backLED.dir=double(LEDbaseLevel)/double(max(LEDbaseLevel));
+dpy.backLED.dir=baselevelsLEDS;
 
 dpy.backLED.scale=.5;
 dpy.LEDbaseLevel=round(dpy.backLED.dir*dpy.backLED.scale*(2.^dpy.bitDepth-1)); % Set just the LEDs we're using to be on a 50%
