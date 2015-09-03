@@ -40,7 +40,7 @@ while(SubID<1)
 end
 dpy.SubID=str2double(SubID);
 
-dpy.NumSpec=2;
+dpy.NumSpec=4;
 dpy.ExptID='TESTLM';
 dpy.Freq=2;
 

@@ -163,10 +163,14 @@ switch dpy.ExptID
         thisExp='S';
         
     case {'TESTLM'}
-        if dpy.NumSpec==2
+        if dpy.NumSpec==4
+        stim.stimLMS.dir=[0 1 0 0]; % testLM cone isolating
+        tGuess=log10(.005); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.008);   
+        elseif dpy.NumSpec==2
         stim.stimLMS.dir=[1 0]; % testLM cone isolating
-        tGuess=log10(.04); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.08);   
+        tGuess=log10(.2); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.4); 
         else
             error('Incorrect NumSpec for this condition')
         end
