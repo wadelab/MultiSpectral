@@ -25,8 +25,8 @@ addpath(genpath('/Users/wadelab/Github_MultiSpectral/TetraLEDarduino'))
 s=ConnectToArduino;
 
 %set the peak levels here:
-peakLevels=[540,555,570];
-%peakLevels=[585,580,575,570,565,560,555,550,545,540,535,530];
+%peakLevels=[540,555,570];
+peakLevels=[580,575,570,565,560,555,550,545,540,535,530];
 
 % set number of trials in staircase
 dpy.NumTrials=50;
@@ -38,10 +38,11 @@ while(SubID<1)
         SubID=-1;
     end
 end
-dpy.SubID=str2double(SubID);
+dpy.SubID=SubID;
 
-dpy.NumSpec=4;
+dpy.NumSpec=2;
 dpy.ExptID='TESTLM';
+dpy.ExptLabel='driftCone';
 dpy.Freq=2;
 
 % Ask the user to enter a session number
@@ -74,12 +75,12 @@ Data=Run_TetraExp_DUE_5LEDs(dpy,s);
 %go to wherever you want to save it
 cd('/Users/wadelab/Github_MultiSpectral/TetraLEDarduino/Data_tetraStim')
 
-save(sprintf('SubID%d_Cond%s_peak%d_Freq%.1f_Rep%d_%s.mat',...
-    dpy.SubID,dpy.ExptID,dpy.LMpeak,dpy.Freq,dpy.Repeat,Data.Date),'Data');
+save(sprintf('SubID%s_numSpec%d_Cond%s_peak%d_Freq%.1f_Rep%d_%s.mat',...
+    dpy.SubID,dpy.NumSpec,dpy.ExptLabel,dpy.LMpeak,dpy.Freq,dpy.Repeat,Data.Date),'Data');
 %save figure
 savefig(sprintf('SubID%s_numSpec%d_Cond%s_Freq%.1f_Rep%d_%s.fig',...
-    dpy.SubID,dpy.NumSpec,dpy.ExptID,dpy.Freq,dpy.Repeat,Data.Date));
-fprintf('\nSubject %d data saved\n',dpy.SubID);
+    dpy.SubID,dpy.NumSpec,dpy.ExptLabel,dpy.Freq,dpy.Repeat,Data.Date));
+fprintf('\nSubject %s data saved\n',dpy.SubID);
 fprintf('\n******** End of Experiment ********\n');
 system ('say All trials complete for this condition');
 peakname=sprintf('peak%d',peakLevels(thisPeak));
