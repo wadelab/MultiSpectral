@@ -1,20 +1,21 @@
 % Script to specify experiment conditions and then run the experiment.
 % (make sure arduino script is already running).
 % 
-% Edit the 'peakLevels' array to list the levels that should be tested for a
+% Edit the 'LprimePositions' array to list the levels that should be tested for a
 % cone peaking in the Long to middle wavelength region, i.e. enter a list
-% of lambdaMax values
+% of values between 0 and 1, where 0=M cone peak, and 1=L cone peak
 % e.g.
-% peakLevels = [540,545,555,560,570,575];
+% peakLevels = [0.1,0.25,0.5,0.75,0.9];
 %
 % Specify dpy structure to send to the Run_TetraExp_DUE_5LEDs script.
 % dpy should contain:
-% dpy.SubID     = the SubjectID 
-% dpy.NumSpec   = the number of cone spectra to use, either 2 3 or 4
-% dpy.ExptID    = the experiment ID
-% dpy.Repeat    = which session number is it
-% dpy.Freq      = the frequency (Hz) of the stimulus  
-%
+% dpy.SubID          = the SubjectID 
+% dpy.NumSpec        = the number of cone spectra to use, either 2 3 or 4
+% dpy.ExptID         = the experiment ID
+% dpy.Repeat         = which session number is it
+% dpy.Freq           = the frequency (Hz) of the stimulus  
+% dpy.LprimePosition = the position (0-1) between L and M cone peaks for
+%                      Lprime
 %
 % written by LEW 20/08/15
 
@@ -38,7 +39,7 @@ dpy.SubID=SubID;
 
 dpy.NumSpec=4;
 dpy.ExptID='LP';
-dpy.ExptLabel='driftCone';
+dpy.ExptLabel='DriftCone';
 dpy.Freq=2;
 
 LprimePositions=[0,0.25,0.5,0.75,1]; %the levels of Lprime to test
@@ -74,11 +75,11 @@ Data=Run_TetraExp_DUE_5LEDs(dpy,s);
 %go to wherever you want to save it
 cd('/Users/wadelab/Github_MultiSpectral/TetraLEDarduino/Pilot_Data')
 
-save(sprintf('SubID%s_%s_%_Freq%.1f_Rep%d_%s.mat',...
-    dpy.SubID,dpy.ExptLabel,dpy.LMpeak,dpy.Freq,dpy.Repeat,Data.Date),'Data');
+save(sprintf('SubID%s_Expt%s_Pos%.2f_Freq%.1f_Rep%d_%s.mat',...
+    dpy.SubID,dpy.ExptLabel,dpy.LprimePosition,dpy.Freq,dpy.Repeat,Data.Date),'Data');
 %save figure
-savefig(sprintf('SubID%s_numSpec%d_%s_Freq%.1f_Rep%d_%s.fig',...
-    dpy.SubID,dpy.NumSpec,dpy.ExptLabel,dpy.Freq,dpy.Repeat,Data.Date));
+savefig(sprintf('SubID%s_Expt%s_Pos%.2f_Freq%.1f_Rep%d_%s.fig',...
+    dpy.SubID,dpy.ExptLabel,dpy.LprimePosition,dpy.Freq,dpy.Repeat,Data.Date));
 fprintf('\nSubject %s data saved\n',dpy.SubID);
 fprintf('\n******** End of Experiment ********\n');
 system ('say All trials complete for this condition');
@@ -89,16 +90,21 @@ TempData.stDevPos.(peakname)=Data.contrastStDevPos;
 TempData.stDevNeg.(peakname)=Data.contrastStDevNeg;
 
 
+
 AllData.(peakname)=Data;
+
+clear Data
+close all
 end
 system ('say All conditions complete');
-save(sprintf('SubID%s_%s_multipleLevels_Freq%.1f_Rep%d_%s.mat',...
-    dpy.SubID,dpy.ExptLabel,dpy.F82req,dpy.Repeat,Data.Date),'AllData');
+finalDate=datestr(now,30);
+save(sprintf('SubID%s_%s_AllConditions_Freq%.1f_%s.mat',...
+    dpy.SubID,dpy.ExptLabel,dpy.Freq,finalDate),'AllData');
 %turn off LEDs and close connection to ardunio
 CloseArduino(s);
 for thisPeak=1:size(LpLevels,2)
     thename=allPeaks{thisPeak};
-    fprintf('\nContrast Threshold for peak %d: %.3f   StDev +%.3f -%.3f\n',...
+    fprintf('\nContrast Threshold for LprimePos %d: %.3f   StDev +%.3f -%.3f\n',...
         LpLevels(thisPeak),TempData.Thresh.(thename),TempData.stDevPos.(thename),...
         TempData.stDevNeg.(thename));
 end

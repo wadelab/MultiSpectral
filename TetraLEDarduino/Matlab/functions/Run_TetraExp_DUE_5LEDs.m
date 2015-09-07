@@ -101,10 +101,10 @@ switch dpy.ExptID
     case {'LP'}  
         stim.stimLMS.dir=[0 1 0 0]; % L cone isolating
         if dpy.LprimePosition<0.25 || 0.75<dpy.LprimePosition
-        tGuess=log10(.0005); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.0008);
+        tGuess=log10(.0004); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.0007);
         else
-        tGuess=log10(.003); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        tGuess=log10(.002); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
         stim.stimLMS.maxLogCont= log10(.005);
         end
         thisExp='Lp';
