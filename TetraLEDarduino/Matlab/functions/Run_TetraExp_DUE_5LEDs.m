@@ -58,8 +58,14 @@ LEDsToUse=find(LEDbaseLevel);% Which LEDs we want to be active in this expt?
 dpy.baselevelsLEDS=baselevelsLEDS;
 
 dpy.bitDepth=BITDEPTH;
-dpy.LprimePosition=0.5; %position of the Lprime peak in relation to L and M cone peaks: 0.5 is half way between, 0 is M cone and 1 is L cone
 
+try
+    dpy.LprimePosition = dpy.LprimePosition;
+    fprintf('Using specified Lprime LambdaMax: %.2f\n',dpy.LprimePosition);
+catch
+    dpy.LprimePosition=0.5; %default position of the Lprime peak in relation to L and M cone peaks: 0.5 is half way between, 0 is M cone and 1 is L cone
+    fprintf('Using default Lprime LambdaMax: %.2f\n',dpy.LprimePosition);
+end
 
 
 dpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LEDs to use
@@ -94,8 +100,13 @@ switch dpy.ExptID
         
     case {'LP'}  
         stim.stimLMS.dir=[0 1 0 0]; % L cone isolating
-        tGuess=log10(.005); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.008);
+        if dpy.LprimePosition<0.25 || 0.75<dpy.LprimePosition
+        tGuess=log10(.0005); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.0008);
+        else
+        tGuess=log10(.003); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.005);
+        end
         thisExp='Lp';
                
     case {'M'}    
@@ -228,7 +239,7 @@ while(toStart<0)
 end
     
 system('say Experiment beginning');
-
+dpy.theTrial=1;
 while ((k<trialsDesired) && (response ~= -1))
 	% Get recommended level.  Choose your favorite algorithm.
 	tTest=QuestQuantile(q);	% Recommended by Pelli (1987), and still our favorite.
@@ -257,12 +268,13 @@ while ((k<trialsDesired) && (response ~= -1))
     
    	%response=QuestSimulate(q,tTest,tActual);
     if (response ~=-1)
-        fprintf('Trial %3d at %5.2f is %s\n',k,tTest,char(wrongRight(response+1)));
+        fprintf('Trial %3d at %5.2f is %s\n',k+1,tTest,char(wrongRight(response+1)));
         timeZero=timeZero+GetSecs-timeSplit;
         
         % Update the pdf
         q=QuestUpdate(q,tTest,response); % Add the new datum (actual test intensity and observer response) to the database.
         k=k+1;
+        dpy.theTrial=dpy.theTrial+1;
     else
         disp('Quitting...');
         system('say quitting before all trials complete');

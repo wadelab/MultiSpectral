@@ -10,7 +10,10 @@ end
 
 signalInterval=fix(rand(1,1)*2)+1; % 1 or 2
 fprintf('\nCorrect response is %d\n',signalInterval);
-
+try
+dpy.TargetInterval(dpy.theTrial,1)=signalInterval; %save out the interval containing target
+catch %if dummy run don't save it - dpy.theTrial only specified after dummy
+end
 
 for thisInterval= 1:2
     pause(.5);
@@ -24,7 +27,10 @@ for thisInterval= 1:2
         stim.stimLMS.scale=stim.stimLMS.scale;
         [stim.LEDvals,dpy]=tetra_led_arduinoConeIsolationLMS(dpy,stim.stimLMS);
         
-        
+        try
+        dpy.contrastLevelTested(dpy.theTrial,1)=stim.stimLMS.scale; %don't save if just the dummy
+        catch
+        end
         
         LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
         LEDoutput=LEDoutputAmps/2;
@@ -91,7 +97,7 @@ for thisInterval= 1:2
     end
     
 end
-% Now poll the keybaord and get a response (1 or 2)
+% Now poll the keyboard and get a response (1 or 2)
 % Flush the keyboard buffer first
 if (~dummyFlag) % If this was a dummy trial then don't require a key press
     FlushEvents;
@@ -106,11 +112,13 @@ if (~dummyFlag) % If this was a dummy trial then don't require a key press
     if (response==1)
         disp('Right!')
         sound(sin(linspace(1,400*2*pi,1000))/5,5000); % Do a slightly different beep to indicate a response is required
-        
+        dpy.Response(dpy.theTrial,1)=1; %1=hit, 0=miss
+
     else
         disp('Wrong');
         sound(sin(linspace(1,200*2*pi,1000))/5,3000); % Do a slightly different beep to indicate a response is required
-        
+        dpy.Response(dpy.theTrial,1)=0; %0=miss
+
     end
     
     pause(.2)

@@ -15,6 +15,7 @@ LEDsToUse=dpy.LEDsToUse;
 if length(stimLMS.dir)==4 %if tetra stim
 LprimePos=dpy.LprimePosition; %position of peak between the L and M cones, 0.5 is half way
 coneSpectra=creatingLprime(LprimePos); %outputs the L L' M S spectra, with first column containing wavelengths
+fprintf('LprimePos is %.2f\n',LprimePos);
 elseif length(stimLMS.dir)==3; %if LMS stim
 coneSpectra=creatingLMSspectra(dpy.WLrange);
 elseif length(stimLMS.dir)==2;

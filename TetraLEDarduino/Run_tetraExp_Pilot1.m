@@ -24,10 +24,6 @@ addpath(genpath('/Users/wadelab/Github_MultiSpectral/TetraLEDarduino'))
 %connect to arduino
 s=ConnectToArduino;
 
-%set the peak levels here:
-%peakLevels=[540,555,570];
-peakLevels=[580,575,570,565,560,555,550,545,540,535,530];
-
 % set number of trials in staircase
 dpy.NumTrials=50;
 % Ask the user to enter a Subject ID number
@@ -40,10 +36,12 @@ while(SubID<1)
 end
 dpy.SubID=SubID;
 
-dpy.NumSpec=2;
-dpy.ExptID='TESTLM';
+dpy.NumSpec=4;
+dpy.ExptID='LP';
 dpy.ExptLabel='driftCone';
 dpy.Freq=2;
+
+LprimePositions=[0,0.25,0.5,0.75,1]; %the levels of Lprime to test
 
 % Ask the user to enter a session number
 Repeat=-1; 
@@ -60,10 +58,11 @@ dpy.Repeat=Repeat;
 tic;
 
 %shuffle the order of the peaklevels so conditions are run in random order
-peakLevels=Shuffle(peakLevels);
-for thisPeak=1:length(peakLevels)
-    dpy.LMpeak=peakLevels(thisPeak);
+LpLevels=Shuffle(LprimePositions);
+for thisPeak=1:length(LpLevels)
+    dpy.LprimePosition=LpLevels(thisPeak);
  
+    
 
 % Now send experiment details out and start experiment trials.
 
@@ -73,17 +72,17 @@ Data=Run_TetraExp_DUE_5LEDs(dpy,s);
 %Session num
 
 %go to wherever you want to save it
-cd('/Users/wadelab/Github_MultiSpectral/TetraLEDarduino/Data_tetraStim')
+cd('/Users/wadelab/Github_MultiSpectral/TetraLEDarduino/Pilot_Data')
 
-save(sprintf('SubID%s_numSpec%d_%s_peak%d_Freq%.1f_Rep%d_%s.mat',...
-    dpy.SubID,dpy.NumSpec,dpy.ExptLabel,dpy.LMpeak,dpy.Freq,dpy.Repeat,Data.Date),'Data');
+save(sprintf('SubID%s_%s_%_Freq%.1f_Rep%d_%s.mat',...
+    dpy.SubID,dpy.ExptLabel,dpy.LMpeak,dpy.Freq,dpy.Repeat,Data.Date),'Data');
 %save figure
 savefig(sprintf('SubID%s_numSpec%d_%s_Freq%.1f_Rep%d_%s.fig',...
     dpy.SubID,dpy.NumSpec,dpy.ExptLabel,dpy.Freq,dpy.Repeat,Data.Date));
 fprintf('\nSubject %s data saved\n',dpy.SubID);
 fprintf('\n******** End of Experiment ********\n');
 system ('say All trials complete for this condition');
-peakname=sprintf('peak%d',peakLevels(thisPeak));
+peakname=sprintf('peak%d',LpLevels(thisPeak));
 allPeaks{thisPeak}=peakname;
 TempData.Thresh.(peakname)=Data.contrastThresh;
 TempData.stDevPos.(peakname)=Data.contrastStDevPos;
@@ -97,10 +96,10 @@ save(sprintf('SubID%s_%s_multipleLevels_Freq%.1f_Rep%d_%s.mat',...
     dpy.SubID,dpy.ExptLabel,dpy.F82req,dpy.Repeat,Data.Date),'AllData');
 %turn off LEDs and close connection to ardunio
 CloseArduino(s);
-for thisPeak=1:size(peakLevels,2)
+for thisPeak=1:size(LpLevels,2)
     thename=allPeaks{thisPeak};
     fprintf('\nContrast Threshold for peak %d: %.3f   StDev +%.3f -%.3f\n',...
-        peakLevels(thisPeak),TempData.Thresh.(thename),TempData.stDevPos.(thename),...
+        LpLevels(thisPeak),TempData.Thresh.(thename),TempData.stDevPos.(thename),...
         TempData.stDevNeg.(thename));
 end
 
