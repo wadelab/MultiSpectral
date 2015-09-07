@@ -44,7 +44,7 @@ clear LEDspectra
 
 dpy.WLrange=(400:1:720)'; %must use range from 400 to 720 
 
-% use illuminant C to get baselevels for each LED (so white light as
+% use white spectra to get baselevels for each LED (so white light as
 % background), and resample the LEDcalib spectra to the desired WL range
 
 [baselevels, LEDspectra] = LED2white(LEDcalib,dpy); % send the LED spectra and dpy with WL values

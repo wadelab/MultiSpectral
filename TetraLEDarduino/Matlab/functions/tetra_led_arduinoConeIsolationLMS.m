@@ -12,6 +12,7 @@ LEDsToUse=dpy.LEDsToUse;
 
 
 %% create cone fundamentals using stockman cone fundamentals
+% TODO - edit so dir==4 also works for TESTLM condition
 if length(stimLMS.dir)==4 %if tetra stim
 LprimePos=dpy.LprimePosition; %position of peak between the L and M cones, 0.5 is half way
 coneSpectra=creatingLprime(LprimePos); %outputs the L L' M S spectra, with first column containing wavelengths

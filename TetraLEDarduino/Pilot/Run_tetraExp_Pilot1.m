@@ -42,7 +42,7 @@ dpy.ExptID='LP';
 dpy.ExptLabel='DriftCone';
 dpy.Freq=2;
 
-LprimePositions=[0,0.25,0.5,0.75,1]; %the levels of Lprime to test
+LprimePositions=[0.1,0.3,0.5,0.7,0.9]; %the levels of Lprime to test
 
 % Ask the user to enter a session number
 Repeat=-1; 
@@ -83,7 +83,7 @@ savefig(sprintf('SubID%s_Expt%s_Pos%.2f_Freq%.1f_Rep%d_%s.fig',...
 fprintf('\nSubject %s data saved\n',dpy.SubID);
 fprintf('\n******** End of Experiment ********\n');
 system ('say All trials complete for this condition');
-peakname=sprintf('peak%d',LpLevels(thisPeak));
+peakname=sprintf('peak%d',LpLevels(thisPeak)*100);
 allPeaks{thisPeak}=peakname;
 TempData.Thresh.(peakname)=Data.contrastThresh;
 TempData.stDevPos.(peakname)=Data.contrastStDevPos;
@@ -104,7 +104,7 @@ save(sprintf('SubID%s_%s_AllConditions_Freq%.1f_%s.mat',...
 CloseArduino(s);
 for thisPeak=1:size(LpLevels,2)
     thename=allPeaks{thisPeak};
-    fprintf('\nContrast Threshold for LprimePos %d: %.3f   StDev +%.3f -%.3f\n',...
+    fprintf('\nContrast Threshold for LprimePos %.2f: %.3f   StDev +%.3f -%.3f\n',...
         LpLevels(thisPeak),TempData.Thresh.(thename),TempData.stDevPos.(thename),...
         TempData.stDevNeg.(thename));
 end
