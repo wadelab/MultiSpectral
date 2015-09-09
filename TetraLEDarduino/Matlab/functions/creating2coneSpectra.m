@@ -60,15 +60,17 @@ if coneToShiftWL_indx > LMpeakWL_indx
     newLM(end+1:end+shiftDistance,1)=0; %add 0's to end rows corresponding to total number needing to shift
     finalLM=newLM;
     dpy.CreatedSpectra.ShiftDirection='ToShorterPeak';
+    disp('Shift to shorter peak')
 elseif coneToShiftWL_indx < LMpeakWL_indx
     newLM=cat(1,zeros(shiftDistance,1),newLM); %remove first rows corresponding to total number needing to shift
     finalLM=newLM(1:(length(newLM)-shiftDistance),:); %add 0's to end rows corresponding to total number needing to shift
     dpy.CreatedSpectra.ShiftDirection='ToLongerPeak';
-
+    disp('Shift to longer peak')
+elseif coneToShiftWL_indx == LMpeakWL_indx
+    finalLM=newLM;
+    dpy.CreatedSpectra.ShiftDirection='NoShiftNeeded';
+    disp('No shift needed')
 end
-
-%concatenate with the S cone for a two cone spectra
-twoConeSpectra=cat(2,WL,finalLM,Scone);
 
 %Now resample to the desired WLrange
 LMcone1nmResample=interp1(WL,finalLM,WL1nm); %l cone

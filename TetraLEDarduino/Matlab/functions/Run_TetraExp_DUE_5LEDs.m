@@ -215,7 +215,7 @@ timeZero=GetSecs; % We >force< you to have PTB in the path for this so we know t
  k=0; response=0;
  
 dummyStim=stim;
-system('say booting arduino');
+system('say Preparing experiment');
 
 if dpy.NumSpec==4
     dummyStim.stimLMS.dir=[1 1 1 1];

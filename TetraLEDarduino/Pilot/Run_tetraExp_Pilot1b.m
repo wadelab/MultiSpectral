@@ -25,7 +25,7 @@ addpath(genpath('/Users/wadelab/Github_MultiSpectral/TetraLEDarduino'))
 s=ConnectToArduino;
 
 % set number of trials in staircase
-dpy.NumTrials=50;
+dpy.NumTrials=30;
 % Ask the user to enter a Subject ID number
 SubID=-1; 
 while(SubID<1)
@@ -42,7 +42,9 @@ dpy.ExptLabel='LMCone';
 dpy.Freq=2;
 dpy.LprimePosition=0.5;
 
-peakPositions=[545.575,551.025,556.475,561.925,567.375]; %the levels of Lprime to test
+%peakPositions=[545.575,551.025,556.475,561.925,567.375]; %the levels of Lprime to test
+peakPositions=[542.85,549.66,556.48,563.29,570.10];
+
 
 % Ask the user to enter a session number
 Repeat=-1; 
@@ -82,7 +84,7 @@ savefig(sprintf('SubID%s_Expt%s_Peak%.2f_Freq%.1f_Rep%d_%s.fig',...
     dpy.SubID,dpy.ExptLabel,dpy.LMpeak,dpy.Freq,dpy.Repeat,Data.Date));
 fprintf('\nSubject %s data saved\n',dpy.SubID);
 fprintf('\n******** End of Experiment ********\n');
-system ('say All trials complete for this condition');
+system ('say Condition complete');
 peakname=sprintf('peak%d',round(Peaks(thisPeak)));
 allPeaks{thisPeak}=peakname;
 TempData.Thresh.(peakname)=Data.contrastThresh;
