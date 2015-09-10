@@ -25,7 +25,7 @@ addpath(genpath('/Users/wadelab/Github_MultiSpectral/TetraLEDarduino'))
 s=ConnectToArduino;
 
 % set number of trials in staircase
-dpy.NumTrials=30;
+dpy.NumTrials=40;
 % Ask the user to enter a Subject ID number
 SubID=-1; 
 while(SubID<1)
