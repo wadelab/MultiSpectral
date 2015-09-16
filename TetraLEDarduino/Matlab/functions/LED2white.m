@@ -5,7 +5,7 @@ function [relativeLEDlevels, LEDspectra] = LED2white(LEDcalib,dpy)
 % , which can be used as a baseline value in LED stimulus
 %
 % Input:
-%       LEDspectra = the LED calibration spectra
+%       LEDcalib   = the LED calibration spectra (WLs and each LED)
 %       dpy        = the structure containing the required WL range
 %
 % Output:
@@ -21,7 +21,7 @@ function [relativeLEDlevels, LEDspectra] = LED2white(LEDcalib,dpy)
 % Set the WL values
 WL = dpy.WLrange;
 
-% resample the CIE illuminant C spectra to match desired wavelength range
+% resample the spectra to match desired wavelength range
 [illumC,~] = resampleWhite(WL);
 
 % resample the LED spectra using wavelength range

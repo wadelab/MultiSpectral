@@ -180,8 +180,8 @@ switch dpy.ExptID
         stim.stimLMS.maxLogCont= log10(.008);   
         elseif dpy.NumSpec==2
         stim.stimLMS.dir=[1 0]; % testLM cone isolating
-        tGuess=log10(.2); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.4); 
+        tGuess=log10(.1); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.2); 
         else
             error('Incorrect NumSpec for this condition')
         end

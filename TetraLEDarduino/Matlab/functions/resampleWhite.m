@@ -30,7 +30,7 @@ originalWL = S_phillybright(1):S_phillybright(2):(S_phillybright(1)+(S_phillybri
 
 if min(originalWL)<min(WL) && max(WL)<max(originalWL)
     WLused = WL;
-    disp('WL values entered are within possible range')
+    %disp('WL values entered are within possible range')
 else
     theError=sprintf('Wavelength range entered falls outside max range (%d to %d)',min(originalWL),max(originalWL));
     error((theError));
