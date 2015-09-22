@@ -99,13 +99,17 @@ switch dpy.ExptID
         thisExp='L';
         
     case {'LP'}  
-        stim.stimLMS.dir=[0 1 0 0]; % L cone isolating
-        if dpy.LprimePosition<0.25 || 0.75<dpy.LprimePosition
-        tGuess=log10(.0004); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.0007);
+        if dpy.NumSpec==4
+            stim.stimLMS.dir=[0 1 0 0]; % L cone isolating
+            if dpy.LprimePosition<0.25 || 0.75<dpy.LprimePosition
+                tGuess=log10(.0004); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+                stim.stimLMS.maxLogCont= log10(.0007);
+            else
+                tGuess=log10(.002); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+                stim.stimLMS.maxLogCont= log10(.005);
+            end
         else
-        tGuess=log10(.002); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.005);
+            error('NumSpec must be set to 4 for this condition')
         end
         thisExp='Lp';
                
@@ -128,8 +132,8 @@ switch dpy.ExptID
         stim.stimLMS.maxLogCont= log10(.008);        
         elseif dpy.NumSpec==3
         stim.stimLMS.dir=[0.5 -1 0]; % L cone isolating
-        tGuess=log10(.04); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.05);
+        tGuess=log10(.02); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.04);
         end;
         thisExp='LM';
         
@@ -152,7 +156,7 @@ switch dpy.ExptID
         stim.stimLMS.maxLogCont= log10(.02);        
         elseif dpy.NumSpec==3
         stim.stimLMS.dir=[1 1 1]; % L cone isolating
-        tGuess=log10(.01); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        tGuess=log10(.02); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
         stim.stimLMS.maxLogCont= log10(.05);
         end
         thisExp='LMS';
@@ -164,8 +168,8 @@ switch dpy.ExptID
         stim.stimLMS.maxLogCont= log10(.45);        
         elseif dpy.NumSpec==3
         stim.stimLMS.dir=[0 0 1]; % L cone isolating
-        tGuess=log10(.4); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
-        stim.stimLMS.maxLogCont= log10(.45);
+        tGuess=log10(.25); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+        stim.stimLMS.maxLogCont= log10(.35);
         elseif dpy.NumSpec==2
         stim.stimLMS.dir=[0 1]; % L cone isolating
         tGuess=log10(.4); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
@@ -213,24 +217,25 @@ end
 wrongRight={'wrong','right'};
 timeZero=GetSecs; % We >force< you to have PTB in the path for this so we know that GetSecs is present
  k=0; response=0;
- 
-dummyStim=stim;
-system('say Preparing experiment');
 
-if dpy.NumSpec==4
-    dummyStim.stimLMS.dir=[1 1 1 1];
-elseif dpy.NumSpec==3
-    dummyStim.stimLMS.dir=[1 1 1];
-elseif dpy.NumSpec==2
-    dummyStim.stimLMS.dir=[1 1];
-end
-dummyStim.stimLMS.scale=.1;
-[dummyResponse,dpy]=tetra_led_doLEDTrial_5LEDs(dpy,dummyStim,q,s,1); % This should return 0 for an incorrect answer and 1 for correct
+% % dummyTrial now in a separate function
+% dummyStim=stim;
+% system('say Preparing experiment');
+% 
+% if dpy.NumSpec==4
+%     dummyStim.stimLMS.dir=[1 1 1 1];
+% elseif dpy.NumSpec==3
+%     dummyStim.stimLMS.dir=[1 1 1];
+% elseif dpy.NumSpec==2
+%     dummyStim.stimLMS.dir=[1 1];
+% end
+% dummyStim.stimLMS.scale=.1;
+% [dummyResponse,dpy]=tetra_led_doLEDTrial_5LEDs(dpy,dummyStim,q,s,1); % This should return 0 for an incorrect answer and 1 for correct
 
 %prompt to press 1 to start
 toStart=-1;
 pause(1);
-system('say Press 1 to start')
+Speak('Press 1 to start','Daniel');
 while(toStart<0)    
     startString=GetChar; %awaiting 1
     toStart=str2double(startString);
@@ -238,7 +243,7 @@ while(toStart<0)
     % *********************************************************
 end
     
-system('say Experiment beginning');
+Speak('Experiment beginning','Daniel');
 dpy.theTrial=1;
 while ((k<trialsDesired) && (response ~= -1))
 	% Get recommended level.  Choose your favorite algorithm.
@@ -277,7 +282,7 @@ while ((k<trialsDesired) && (response ~= -1))
         dpy.theTrial=dpy.theTrial+1;
     else
         disp('Quitting...');
-        system('say quitting before all trials complete');
+        Speak('Quitting before all trials complete','Daniel');
         
     end
 end
@@ -308,7 +313,7 @@ end
 fprintf('Final threshold estimate (mean+-sd) is %.2f +- %.2f\n',t,sd);
 fprintf('Final threshold in actual contrast units is %.2f%% SD is + %.2f%% -%.2f%%\n',contrastThresh,contrastStDevPos,contrastStDevNeg);
 % TODO HERE - ADD IN AUTO SAVE FOR DATA...
-
+Speak('Condition complete','Daniel')
 Data.Date=datestr(now,30); %current date with time
 
 Data.rawThresh=t;

@@ -8,9 +8,9 @@ if(~isempty(instrfind))
 end
 
 if (CONNECT_TO_ARDUINO)  
-        system('say connecting to arduino');
+        Speak('Connecting','Daniel');
 
-    s=serial('/dev/tty.usbmodem5d11');%,'BaudRate',9600);q
+    s=serial('/dev/cu.usbmodem411');%,'BaudRate',9600);q
     fopen(s);
     disp('*** Connecting to Arduino');
     
