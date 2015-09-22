@@ -22,7 +22,7 @@ addpath(genpath('/Users/wade/Documents/GitHub_Multispectral/TetraLEDarduino'))
 s=ConnectToArduino;
 
 % set number of trials in staircase
-dpy.NumTrials=20;
+dpy.NumTrials=40;
 % Ask the user to enter a Subject ID number
 SubID=-1; 
 while(SubID<1)
@@ -34,7 +34,7 @@ end
 dpy.SubID=SubID;
 
 dpy.NumSpec=3;
-theExptID={'LMS','LM','S'}; %the different conditions to test
+theExptID={'LM','LLp','LpM','L','M'}; %the different conditions to test
 theFreq=[2,16]; %the frequencies to test for each condition
 
 % Ask the user to enter a session number
@@ -55,15 +55,20 @@ tic;
 Cond=Shuffle(theExptID);
 Freq=Shuffle(theFreq);
 
+totalConds=length(Cond)+length(Freq);
 %run a dummy trial at start of experiment
 dummyTrial
-% for each condition
-for thisCond=1:length(Cond)
-    dpy.ExptID=Cond{thisCond};
-    % for each Frequency
-    for thisFreq=1:length(Freq)
-        dpy.Freq=Freq(thisFreq);
+
+k=1; %index for total conds
+% for each frequency
+for thisFreq=1:length(Freq)
+    dpy.Freq=Freq(thisFreq);
+    
+    % for each condition
+    for thisCond=1:length(Cond)
+        dpy.ExptID=Cond{thisCond};
         
+        fullCondName=sprintf('%s_Freq%d',dpy.ExptID,dpy.Freq);
         
         % Now send experiment details out and start experiment trials.
         
@@ -90,7 +95,8 @@ for thisCond=1:length(Cond)
         TempData.stDevPos.(CondName).(FreqName)=Data.contrastStDevPos;
         TempData.stDevNeg.(CondName).(FreqName)=Data.contrastStDevNeg;
         
-        
+        AllData.OrderOfConditions{k}=fullCondName;
+        k=k+1; %update index
         
         AllData.(CondName).(FreqName)=Data;
         

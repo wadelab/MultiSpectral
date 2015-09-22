@@ -1,7 +1,7 @@
-function Spectra=creatingLprime(LprimePos)
+function Spectra=creatingLprime(dpy)
 % Spectra=creatingLprime(LprimePos)
 % 
-% LprimePos = a value between 0 and 1 to specify location of the L prime
+% dpy.LprimePosition = a value between 0 and 1 to specify location of the L prime
 % peak between the L and M cones. Where 0 is M cone and 1 is L cone
 % For example,to set Lprime peak half way between L and M, LprimePos=0.5
 %
@@ -11,9 +11,9 @@ function Spectra=creatingLprime(LprimePos)
 % written by LW 050315
 
 %set the location of the L prime with inputted LprimePos
-locationLprime=LprimePos; %e.g. 0.5 for half way
+locationLprime=dpy.LprimePosition; %e.g. 0.5 for half way
 %desired WL range
-WL1nm=(400:1:720)'; %N.B. for now must be 400 and 720, else interp won't work - would need to edit part 1 and 2 values too if this changes
+WLrange=dpy.WLrange; %N.B. for now must be 400 and 720, else interp won't work - would need to edit part 1 and 2 values too if this changes
 %can comment this bit out on lab mac
 %addpath(genpath(' ')) enter path containing the stockman01nmCF
 
@@ -54,12 +54,12 @@ stockmanMpeak=mean(mconePeakVals); %m cone peak
 
 %resample to desired WLrange (needed to avoid duplicate values, which can't 
 %be used in the interp), and then concatenate with desired WLrange
-Lcone1nmResample=interp1(LconeWL(:,1),LconeWL(:,2),WL1nm); %l cone
-Lcone1nmWL=cat(2,WL1nm,Lcone1nmResample);
-Mcone1nmResample=interp1(MconeWL(:,1),MconeWL(:,2),WL1nm); %m cone
-Mcone1nmWL=cat(2,WL1nm,Mcone1nmResample);
-Scone1nmResample=interp1(SconeWL(:,1),SconeWL(:,2),WL1nm); %s cone
-Scone1nmWL=cat(2,WL1nm,Scone1nmResample);
+Lcone1nmResample=interp1(LconeWL(:,1),LconeWL(:,2),WLrange); %l cone
+Lcone1nmWL=cat(2,WLrange,Lcone1nmResample);
+Mcone1nmResample=interp1(MconeWL(:,1),MconeWL(:,2),WLrange); %m cone
+Mcone1nmWL=cat(2,WLrange,Mcone1nmResample);
+Scone1nmResample=interp1(SconeWL(:,1),SconeWL(:,2),WLrange); %s cone
+Scone1nmWL=cat(2,WLrange,Scone1nmResample);
 
 %split values into two halves, i.e. 0 to 1, and 1 to 0, as interp can't process
 %full curve in one go due to the increasing then decreasing values
@@ -136,13 +136,13 @@ end
 %script
 %resample to desired WLrange (needed to avoid duplicate values, which can't 
 %be used in the interp)
-finalLcone1nmResample=interp1(cones.allLconeCFWLs(:,1),cones.allLconeCFWLs(:,2),WL1nm); %l cone
-finalMcone1nmResample=interp1(cones.allMconeCFWLs(:,1),cones.allMconeCFWLs(:,2),WL1nm); %m cone
-finalScone1nmResample=interp1(cones.allSconeCFWLs(:,1),cones.allSconeCFWLs(:,2),WL1nm); %s cone
-finalLprimecone1nmResample=interp1(cones.allLprimeconeCFWLs(:,1),cones.allLprimeconeCFWLs(:,2),WL1nm); %s cone
+finalLcone1nmResample=interp1(cones.allLconeCFWLs(:,1),cones.allLconeCFWLs(:,2),WLrange); %l cone
+finalMcone1nmResample=interp1(cones.allMconeCFWLs(:,1),cones.allMconeCFWLs(:,2),WLrange); %m cone
+finalScone1nmResample=interp1(cones.allSconeCFWLs(:,1),cones.allSconeCFWLs(:,2),WLrange); %s cone
+finalLprimecone1nmResample=interp1(cones.allLprimeconeCFWLs(:,1),cones.allLprimeconeCFWLs(:,2),WLrange); %s cone
 
 %save out spectra with wavelengths (WL,L,L',M,S)
-Spectra=cat(2,WL1nm,finalLcone1nmResample,finalLprimecone1nmResample,finalMcone1nmResample,finalScone1nmResample);
+Spectra=cat(2,WLrange,finalLcone1nmResample,finalLprimecone1nmResample,finalMcone1nmResample,finalScone1nmResample);
 % 
 % %plot figure
 % figure()
