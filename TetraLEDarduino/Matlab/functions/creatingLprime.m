@@ -12,6 +12,13 @@ function Spectra=creatingLprime(dpy)
 
 %set the location of the L prime with inputted LprimePos
 locationLprime=dpy.LprimePosition; %e.g. 0.5 for half way
+
+if locationLprime<1 || 0<locationLprime
+    disp('Continue with LprimePosition values')
+else
+    error('Cannot use values outside 0 and 1 with this script.  Must use specific cone peak values. See ...')
+end
+
 %desired WL range
 WLrange=dpy.WLrange; %N.B. for now must be 400 and 720, else interp won't work - would need to edit part 1 and 2 values too if this changes
 %can comment this bit out on lab mac
@@ -30,24 +37,6 @@ LconeWL=cat(2,WL,Lcone);
 MconeWL=cat(2,WL,Mcone);
 SconeWL=cat(2,WL,Scone);
 
-% % do not use this version of stockmanCFs for now
-% % stockmansharpe nomogram L M and S peaks of 558.9 530.3 and 420.7
-% % respectively
-% Lpeak=559;
-% Mpeak=530;
-% Speak=421;
-% Lcone=StockmanSharpeNomogram(WLrange,Lpeak)';
-% Mcone=StockmanSharpeNomogram(WLrange,Mpeak)';
-% Scone=StockmanSharpeNomogram(WLrange,Speak)';
-% 
-% %concatenate with WLs
-% LconeWL=cat(2,WLrange,Lcone);
-% MconeWL=cat(2,WLrange,Mcone);
-% SconeWL=cat(2,WLrange,Scone);
-
-
-
-
 %calculate L and M cone peaks by averaging the WL values that equal 1
 l=1;
 for thisWL=1:length(LconeWL)
@@ -58,7 +47,6 @@ for thisWL=1:length(LconeWL)
     end
 end
 stockmanLpeak=mean(lconePeakVals); %l cone peak
-%stockmanLpeak=Lpeak; %what we used in nomogram
 
 m=1;
 for thisWL=1:length(MconeWL)
@@ -69,9 +57,7 @@ for thisWL=1:length(MconeWL)
     end
 end
 stockmanMpeak=mean(mconePeakVals); %m cone peak
-%stockmanMpeak=Mpeak;
-% 
-% 
+
 %resample to desired WLrange (needed to avoid duplicate values, which can't 
 %be used in the interp), and then concatenate with desired WLrange
 Lcone1nmResample=interp1(LconeWL(:,1),LconeWL(:,2),WLrange); %l cone
@@ -81,11 +67,6 @@ Mcone1nmWL=cat(2,WLrange,Mcone1nmResample);
 Scone1nmResample=interp1(SconeWL(:,1),SconeWL(:,2),WLrange); %s cone
 Scone1nmWL=cat(2,WLrange,Scone1nmResample);
 
-% %already done above, but keep same name for simplicity if revert back to
-% %old verion of code
-% Lcone1nmWL=LconeWL;
-% Mcone1nmWL=MconeWL;
-% Scone1nmWL=SconeWL;
 
 %split values into two halves, i.e. 0 to 1, and 1 to 0, as interp can't process
 %full curve in one go due to the increasing then decreasing values
@@ -134,10 +115,6 @@ fullValRange=cat(1,valRange,flipud(valRange));
 allLconeCF=cat(1,xL1,flipud(xL2));
 allMconeCF=cat(1,xM1,flipud(xM2));
 allSconeCF=cat(1,xS1,flipud(xS2));
-
-% allLconeCF=Lcone;
-% allMconeCF=Mcone;
-% allSconeCF=Scone;
 
 allLprimeconeCF=cat(1,lPrimePart1,flipud(lPrimePart2));
 cones.allLconeCFWLs=cat(2,allLconeCF,fullValRange);

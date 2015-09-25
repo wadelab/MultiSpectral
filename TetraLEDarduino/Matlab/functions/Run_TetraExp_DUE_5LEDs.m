@@ -59,13 +59,13 @@ dpy.baselevelsLEDS=baselevelsLEDS;
 
 dpy.bitDepth=BITDEPTH;
 
-try
-    dpy.LprimePosition = dpy.LprimePosition;
-    fprintf('Using specified Lprime LambdaMax: %.2f\n',dpy.LprimePosition);
-catch
-    dpy.LprimePosition=0.5; %default position of the Lprime peak in relation to L and M cone peaks: 0.5 is half way between, 0 is M cone and 1 is L cone
-    fprintf('Using default Lprime LambdaMax: %.2f\n',dpy.LprimePosition);
-end
+% try
+%     dpy.LprimePosition = dpy.LprimePosition;
+%     fprintf('Using specified Lprime LambdaMax: %.2f\n',dpy.LprimePosition);
+% catch
+%     dpy.LprimePosition=0.5; %default position of the Lprime peak in relation to L and M cone peaks: 0.5 is half way between, 0 is M cone and 1 is L cone
+%     fprintf('Using default Lprime LambdaMax: %.2f\n',dpy.LprimePosition);
+% end
 
 
 dpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LEDs to use
@@ -92,7 +92,11 @@ switch dpy.ExptID
         tGuess=log10(.005); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
         stim.stimLMS.maxLogCont= log10(.008);        
         elseif dpy.NumSpec==3
-            dpy.ConeTypes='LMS';
+            if isfield(dpy,'ConeTypes')==1
+                dpy.ConeTypes=dpy.ConeTypes;
+            else %default to setting as LMS coneTypes
+                dpy.ConeTypes='LMS';
+            end
         stim.stimLMS.dir=[1 0 0]; % L cone isolating
         tGuess=log10(.02); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
         stim.stimLMS.maxLogCont= log10(.035);
@@ -109,8 +113,17 @@ switch dpy.ExptID
                 tGuess=log10(.002); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
                 stim.stimLMS.maxLogCont= log10(.005);
             end
+        elseif dpy.NumSpec==3
+            if isfield(dpy,'ConeTypes')==1
+                disp('cone types specified')
+            else %default to setting as LpMS coneTypes
+                dpy.ConeTypes='LpMS';
+            end
+            stim.stimLMS.dir=[1 0 0]; % L cone isolating
+            tGuess=log10(.02); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
+            stim.stimLMS.maxLogCont= log10(.035);
         else
-            error('NumSpec must be set to 4 for this condition')
+            error('Check NumSpec for this condition')
         end
         thisExp='Lp';
                
@@ -120,7 +133,11 @@ switch dpy.ExptID
         tGuess=log10(.005); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
         stim.stimLMS.maxLogCont= log10(.008);        
         elseif dpy.NumSpec==3
-            dpy.ConeTypes='LMS';
+            if isfield(dpy,'ConeTypes')==1
+                disp('cone types specified') %leave it set as is
+            else %default to setting as LMS coneTypes
+                dpy.ConeTypes='LMS';
+            end
         stim.stimLMS.dir=[0 1 0]; % M cone isolating
         tGuess=log10(.02); % Note - these numbers are log10 of the actual contrast. I'm making this explicit here.
         stim.stimLMS.maxLogCont= log10(.035);

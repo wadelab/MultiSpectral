@@ -22,7 +22,7 @@ addpath(genpath('/Users/wade/Documents/GitHub_Multispectral/TetraLEDarduino'))
 s=ConnectToArduino;
 
 % set number of trials in staircase
-dpy.NumTrials=40;
+dpy.NumTrials=15;
 % Ask the user to enter a Subject ID number
 SubID=-1; 
 while(SubID<1)
@@ -34,10 +34,12 @@ end
 dpy.SubID=SubID;
 
 dpy.NumSpec=3;
-theExptID={'LM','LLP','LPM','S'};
-%theExptID={'LM','LLP','LPM','L','M'}; %the different conditions to test
-theFreq=[2,16]; %the frequencies to test for each condition
-
+dpy.ConeTypes='LpMS';
+dpy.ExptID='L';
+dpy.Freq=2; %the frequencies to test for each condition
+FreqName=sprintf('Freq%d',dpy.Freq);
+% set range of Lpeaks to try (where L mid is ~570 and M mid is ~542)
+thePeaks=[562,565,568,571,574,577];
 % Ask the user to enter a session number
 Repeat=-1; 
 while(Repeat<1)
@@ -53,24 +55,23 @@ dpy.Repeat=Repeat;
 tic;
 
 %shuffle the order of the conditions so conditions are run in random order
-Cond=Shuffle(theExptID);
-Freq=Shuffle(theFreq);
+Peak=Shuffle(thePeaks);
 
-totalConds=length(Cond)+length(Freq);
+totalConds=length(Peak);
 %run a dummy trial at start of experiment
-dummyTrial
+dummyTrial(s)
 
 k=1; %index for total conds
-% for each frequency
-for thisFreq=1:length(Freq)
-    dpy.Freq=Freq(thisFreq);
-    
     % for each condition
-    for thisCond=1:length(Cond)
-        dpy.ExptID=Cond{thisCond};
-        
-        fullCondName=sprintf('%s_Freq%d',dpy.ExptID,dpy.Freq);
-        
+for thisPeak=1:length(Peak)
+    if dpy.ExptID=='L'
+        dpy.Lpeak=Peak(thisPeak);
+        fullCondName=sprintf('%s_Freq%d_Peak%.1f',dpy.ExptID,dpy.Freq,dpy.Lpeak);
+
+    elseif dpy.ExptID=='M'
+        dpy.Mpeak=Peak(thisPeak);
+        fullCondName=sprintf('%s_Freq%d_Peak%.1f',dpy.ExptID,dpy.Freq,dpy.Mpeak);
+    end
         % Now send experiment details out and start experiment trials.
         
         Data=Run_TetraExp_DUE_5LEDs(dpy,s);
@@ -81,20 +82,21 @@ for thisFreq=1:length(Freq)
         %go to wherever you want to save it
         cd('/Users/wade/Documents/Github_MultiSpectral/TetraLEDarduino/Pilot_Data')
         
-        save(sprintf('SubID%s_Expt%s_Freq%d_Rep%d_%s.mat',...
-            dpy.SubID,dpy.ExptID,dpy.Freq,dpy.Repeat,Data.Date),'Data');
+        save(sprintf('SubID%s_Expt%s_Freq%d__Peak%.1f_Rep%d_%s.mat',...
+            dpy.SubID,dpy.ExptID,dpy.Freq,Peak(thisPeak),dpy.Repeat,Data.Date),'Data');
         %save figure
-        savefig(sprintf('SubID%s_Expt%s_Freq%d_Rep%d_%s.fig',...
-            dpy.SubID,dpy.ExptID,dpy.Freq,dpy.Repeat,Data.Date));
+        savefig(sprintf('SubID%s_Expt%s_Freq%d_Peak%.1f_Rep%d_%s.fig',...
+            dpy.SubID,dpy.ExptID,dpy.Freq,Peak(thisPeak),dpy.Repeat,Data.Date));
         fprintf('\nSubject %s data saved\n',dpy.SubID);
         fprintf('\n******** End of Condition ********\n');
-        CondName=sprintf('%s',dpy.ExptID);
-        allConds{thisCond}=CondName;
-        FreqName=sprintf('Freq%d',dpy.Freq);
-        allFreqs{thisFreq}=FreqName;
-        TempData.Thresh.(CondName).(FreqName)=Data.contrastThresh;
-        TempData.stDevPos.(CondName).(FreqName)=Data.contrastStDevPos;
-        TempData.stDevNeg.(CondName).(FreqName)=Data.contrastStDevNeg;
+        CondName=sprintf('%s%d',dpy.ExptID,(round(Peak(thisPeak))));
+        allConds{thisPeak}=CondName;
+        
+        
+        TempData.names.(CondName)=CondName;
+        TempData.Thresh.(CondName)=Data.contrastThresh;
+        TempData.stDevPos.(CondName)=Data.contrastStDevPos;
+        TempData.stDevNeg.(CondName)=Data.contrastStDevNeg;
         
         AllData.OrderOfConditions{k}=fullCondName;
         k=k+1; %update index
@@ -104,23 +106,20 @@ for thisFreq=1:length(Freq)
         clear Data
         close all
     end
-end
 Speak('All conditions complete','Daniel');
 finalDate=datestr(now,30);
-save(sprintf('SubID%s_Pilot2_Opponency_Rep%d_%s.mat',...
+save(sprintf('SubID%s_Pilot3_SettingPeaks_Rep%d_%s.mat',...
     dpy.SubID,dpy.Repeat,finalDate),'AllData');
 %turn off LEDs and close connection to ardunio
 CloseArduino(s);
-for thisCond=1:length(Cond)
-    theCondName=allConds{thisCond};
-    for thisFreq=1:length(Freq)
-        theFreqName=allFreqs{thisFreq};
-        fprintf('\nContrast Threshold for Cond %s  %s : %.2f   StDev +%.2f -%.2f\n',...
-        theCondName,theFreqName,TempData.Thresh.(theCondName).(theFreqName),...
-        TempData.stDevPos.(theCondName).(theFreqName),...
-        TempData.stDevNeg.(theCondName).(theFreqName));
+    for thisPeak=1:length(Peak)
+        currentCond=allConds{thisPeak};
+        fprintf('\nContrast Threshold for Cond %s  Peak %.1f  : %.2f   StDev Pos %.2f Neg %.2f\n',...
+        dpy.ExptID,Peak(thisPeak),TempData.Thresh.(currentCond),...
+        TempData.stDevPos.(currentCond),...
+        TempData.stDevNeg.(currentCond));
     end
-end
+
 
 
 timeElapsed=toc/60;
