@@ -12,6 +12,19 @@ function Spectra=creatingLMSspectra(dpy)
 %desired WL range
 WLrange=dpy.WLrange; 
 
+% do not use this for now, until we know which cone peaks work best
+% % stockmansharpe nomogram L M and S peaks of 558.9 530.3 and 420.7
+% % respectively
+% Lcone=StockmanSharpeNomogram(WLrange,558.9);
+% Mcone=StockmanSharpeNomogram(WLrange,530.3);
+% Scone=StockmanSharpeNomogram(WLrange,420.7);
+% 
+% %transpose (don't actually need to resample as correct sampling already
+% %used in nomogram)
+% LconeResample=Lcone'; %l cone
+% MconeResample=Mcone'; %m cone
+% SconeResample=Scone'; %s cone
+
 %load in the 0.1nm stockmanCFs
 load('stockman01nmCF.mat');
 %assign cones and WLs to variables
@@ -24,6 +37,7 @@ WL=stockman.wavelength;
 LconeResample=interp1(WL,Lcone,WLrange); %l cone
 MconeResample=interp1(WL,Mcone,WLrange); %m cone
 SconeResample=interp1(WL,Scone,WLrange); %s cone
+
 
 switch dpy.ConeTypes
     case {'LMS'}

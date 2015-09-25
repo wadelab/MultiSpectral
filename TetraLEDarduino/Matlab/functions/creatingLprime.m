@@ -24,10 +24,29 @@ Lcone=stockman.Lcone;
 Mcone=stockman.Mcone;
 Scone=stockman.Scone;
 WL=stockman.wavelength;
+
 %concatenate with WLs
 LconeWL=cat(2,WL,Lcone);
 MconeWL=cat(2,WL,Mcone);
 SconeWL=cat(2,WL,Scone);
+
+% % do not use this version of stockmanCFs for now
+% % stockmansharpe nomogram L M and S peaks of 558.9 530.3 and 420.7
+% % respectively
+% Lpeak=559;
+% Mpeak=530;
+% Speak=421;
+% Lcone=StockmanSharpeNomogram(WLrange,Lpeak)';
+% Mcone=StockmanSharpeNomogram(WLrange,Mpeak)';
+% Scone=StockmanSharpeNomogram(WLrange,Speak)';
+% 
+% %concatenate with WLs
+% LconeWL=cat(2,WLrange,Lcone);
+% MconeWL=cat(2,WLrange,Mcone);
+% SconeWL=cat(2,WLrange,Scone);
+
+
+
 
 %calculate L and M cone peaks by averaging the WL values that equal 1
 l=1;
@@ -39,19 +58,20 @@ for thisWL=1:length(LconeWL)
     end
 end
 stockmanLpeak=mean(lconePeakVals); %l cone peak
+%stockmanLpeak=Lpeak; %what we used in nomogram
 
 m=1;
 for thisWL=1:length(MconeWL)
-    if MconeWL(thisWL,2)==1
+    if MconeWL(thisWL,2)==1.0000
         mconePeakVals(m,1)=MconeWL(thisWL,1);
         m=m+1;
     else continue
     end
 end
 stockmanMpeak=mean(mconePeakVals); %m cone peak
-
-
-
+%stockmanMpeak=Mpeak;
+% 
+% 
 %resample to desired WLrange (needed to avoid duplicate values, which can't 
 %be used in the interp), and then concatenate with desired WLrange
 Lcone1nmResample=interp1(LconeWL(:,1),LconeWL(:,2),WLrange); %l cone
@@ -61,16 +81,22 @@ Mcone1nmWL=cat(2,WLrange,Mcone1nmResample);
 Scone1nmResample=interp1(SconeWL(:,1),SconeWL(:,2),WLrange); %s cone
 Scone1nmWL=cat(2,WLrange,Scone1nmResample);
 
+% %already done above, but keep same name for simplicity if revert back to
+% %old verion of code
+% Lcone1nmWL=LconeWL;
+% Mcone1nmWL=MconeWL;
+% Scone1nmWL=SconeWL;
+
 %split values into two halves, i.e. 0 to 1, and 1 to 0, as interp can't process
 %full curve in one go due to the increasing then decreasing values
 %At the moment the relevant rows are worked out manually - TODO, make it
 %automatic!
-LconePart1=Lcone1nmWL(1:170,:); %l cone
-LconePart2=Lcone1nmWL(172:end,:);
-MconePart1=Mcone1nmWL(1:143,:); %m cone
-MconePart2=Mcone1nmWL(144:end,:);
-SconePart1=Scone1nmWL(1:43,:); %s cone
-SconePart2=Scone1nmWL(44:114,:);
+LconePart1=Lcone1nmWL(1:170,:); %l cone prev 170
+LconePart2=Lcone1nmWL(172:end,:); % prev 172
+MconePart1=Mcone1nmWL(1:143,:); %m cone prev143
+MconePart2=Mcone1nmWL(144:end,:); %prev144
+SconePart1=Scone1nmWL(1:43,:); %s cone prev43
+SconePart2=Scone1nmWL(44:114,:); %prev44 to114
 
 % %use this to check that values are monotonically increasing, highlight where the error is if not
 % for thisRow=1:length(LconePart1)-1
@@ -80,9 +106,8 @@ SconePart2=Scone1nmWL(44:114,:);
 %         continue
 %     end
 % end
-
 %specify sensitivity range and desired Lprime peak
-valRange=(0.01:0.01:1)';
+valRange=(0.01:0.005:1)';
 LPrimePeak=round((stockmanLpeak-stockmanMpeak)*locationLprime); %round so integer
 
 % Interpolate Part 1 of the curves to given sensitivities
@@ -109,6 +134,11 @@ fullValRange=cat(1,valRange,flipud(valRange));
 allLconeCF=cat(1,xL1,flipud(xL2));
 allMconeCF=cat(1,xM1,flipud(xM2));
 allSconeCF=cat(1,xS1,flipud(xS2));
+
+% allLconeCF=Lcone;
+% allMconeCF=Mcone;
+% allSconeCF=Scone;
+
 allLprimeconeCF=cat(1,lPrimePart1,flipud(lPrimePart2));
 cones.allLconeCFWLs=cat(2,allLconeCF,fullValRange);
 cones.allMconeCFWLs=cat(2,allMconeCF,fullValRange);
@@ -131,18 +161,24 @@ for thisConeVar=1:size(conevariables,2)
     end
 end
     
-
-%interpolate across the desired WL range set above, so in necessary format for use in
-%script
-%resample to desired WLrange (needed to avoid duplicate values, which can't 
-%be used in the interp)
+% 
+% %interpolate across the desired WL range set above, so in necessary format for use in
+% %script
+% %resample to desired WLrange (needed to avoid duplicate values, which can't 
+% %be used in the interp)
 finalLcone1nmResample=interp1(cones.allLconeCFWLs(:,1),cones.allLconeCFWLs(:,2),WLrange); %l cone
 finalMcone1nmResample=interp1(cones.allMconeCFWLs(:,1),cones.allMconeCFWLs(:,2),WLrange); %m cone
 finalScone1nmResample=interp1(cones.allSconeCFWLs(:,1),cones.allSconeCFWLs(:,2),WLrange); %s cone
+
+% finalLcone1nmResample=Lcone; %l cone
+% finalMcone1nmResample=Mcone; %m cone
+% finalScone1nmResample=Scone; %s cone
+
 finalLprimecone1nmResample=interp1(cones.allLprimeconeCFWLs(:,1),cones.allLprimeconeCFWLs(:,2),WLrange); %s cone
 
 %save out spectra with wavelengths (WL,L,L',M,S)
 Spectra=cat(2,WLrange,finalLcone1nmResample,finalLprimecone1nmResample,finalMcone1nmResample,finalScone1nmResample);
+
 % 
 % %plot figure
 % figure()

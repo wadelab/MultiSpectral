@@ -34,8 +34,9 @@ end
 dpy.SubID=SubID;
 
 dpy.NumSpec=3;
-theExptID={'LM','LLp','LpM','L','M'}; %the different conditions to test
-theFreq=[2,16]; %the frequencies to test for each condition
+theExptID={'LM','LLP','LPM'};
+%theExptID={'LM','LLP','LPM','L','M'}; %the different conditions to test
+theFreq=[2,16,32]; %the frequencies to test for each condition
 
 % Ask the user to enter a session number
 Repeat=-1; 
