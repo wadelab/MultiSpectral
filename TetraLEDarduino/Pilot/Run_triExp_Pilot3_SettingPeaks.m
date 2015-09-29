@@ -22,7 +22,7 @@ addpath(genpath('/Users/wade/Documents/GitHub_Multispectral/TetraLEDarduino'))
 s=ConnectToArduino;
 
 % set number of trials in staircase
-dpy.NumTrials=15;
+dpy.NumTrials=30;
 % Ask the user to enter a Subject ID number
 SubID=-1; 
 while(SubID<1)
@@ -39,7 +39,7 @@ dpy.ExptID='L';
 dpy.Freq=2; %the frequencies to test for each condition
 FreqName=sprintf('Freq%d',dpy.Freq);
 % set range of Lpeaks to try (where L mid is ~570 and M mid is ~542)
-thePeaks=[562,565,568,571,574,577];
+thePeaks=[562,565,568,571,574];
 % Ask the user to enter a session number
 Repeat=-1; 
 while(Repeat<1)

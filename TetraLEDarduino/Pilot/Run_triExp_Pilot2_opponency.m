@@ -1,9 +1,8 @@
 % Script to specify experiment conditions and then run the experiment.
 % (make sure arduino script is already running).
 % 
-% Runs Lum (LMS), L-M, and S-cone isolating conditions and different
-% frequencies to check thresholds are as expected (i.e. that the stimulus
-% is properly isolating the different channels).
+% Runs specified conditions and different
+% frequencies to acquire thresholds.
 %
 % Specify dpy structure to send to the Run_TetraExp_DUE_5LEDs script.
 % dpy should contain:
@@ -35,7 +34,6 @@ dpy.SubID=SubID;
 
 dpy.NumSpec=3;
 theExptID={'LM','LLP','LPM','S'};
-%theExptID={'LM','LLP','LPM','L','M'}; %the different conditions to test
 theFreq=[2,16]; %the frequencies to test for each condition
 
 % Ask the user to enter a session number
