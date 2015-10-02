@@ -1,9 +1,8 @@
 % Script to specify experiment conditions and then run the experiment.
 % (make sure arduino script is already running).
 % 
-% Runs Lum (LMS), L-M, and S-cone isolating conditions and different
-% frequencies to check thresholds are as expected (i.e. that the stimulus
-% is properly isolating the different channels).
+% Runs specified conditions at different
+% frequencies to acquire thresholds.
 %
 % Specify dpy structure to send to the Run_TetraExp_DUE_5LEDs script.
 % dpy should contain:
@@ -12,6 +11,7 @@
 % dpy.ExptID         = the experiment ID
 % dpy.Repeat         = which session number is it
 % dpy.Freq           = the frequency (Hz) of the stimulus  
+% dpy.NumTrials      = the number of trials to run
 %
 % written by LEW 20/08/15
 
@@ -20,6 +20,7 @@ addpath(genpath('/Users/wade/Documents/GitHub_Multispectral/TetraLEDarduino'))
 
 %connect to arduino
 s=ConnectToArduino;
+dummyTrial(s)
 
 % set number of trials in staircase
 dpy.NumTrials=5;
@@ -34,9 +35,9 @@ end
 dpy.SubID=SubID;
 
 dpy.NumSpec=3;
-theExptID={'LM'};
-%theExptID={'LM','LLP','LPM','L','M'}; %the different conditions to test
-theFreq=[2,16,32]; %the frequencies to test for each condition
+dpy.LprimePosition=0.5;
+theExptID={'LM','S'};
+theFreq=[2,16]; %the frequencies to test for each condition
 
 % Ask the user to enter a session number
 Repeat=-1; 
@@ -58,7 +59,6 @@ Freq=Shuffle(theFreq);
 
 totalConds=length(Cond)+length(Freq);
 %run a dummy trial at start of experiment
-dummyTrial
 
 k=1; %index for total conds
 % for each frequency

@@ -1,7 +1,7 @@
 % Script to specify experiment conditions and then run the experiment.
 % (make sure arduino script is already running).
 % 
-% Runs specified conditions and different
+% Runs specified conditions at different
 % frequencies to acquire thresholds.
 %
 % Specify dpy structure to send to the Run_TetraExp_DUE_5LEDs script.
@@ -11,6 +11,7 @@
 % dpy.ExptID         = the experiment ID
 % dpy.Repeat         = which session number is it
 % dpy.Freq           = the frequency (Hz) of the stimulus  
+% dpy.NumTrials      = the number of trials to run
 %
 % written by LEW 20/08/15
 
@@ -19,6 +20,7 @@ addpath(genpath('/Users/wade/Documents/GitHub_Multispectral/TetraLEDarduino'))
 
 %connect to arduino
 s=ConnectToArduino;
+dummyTrial(s)
 
 % set number of trials in staircase
 dpy.NumTrials=40;
@@ -33,6 +35,7 @@ end
 dpy.SubID=SubID;
 
 dpy.NumSpec=3;
+dpy.LprimePosition=0.5;
 theExptID={'LM','LLP','LPM','S'};
 theFreq=[2,16]; %the frequencies to test for each condition
 
@@ -56,7 +59,6 @@ Freq=Shuffle(theFreq);
 
 totalConds=length(Cond)+length(Freq);
 %run a dummy trial at start of experiment
-dummyTrial
 
 k=1; %index for total conds
 % for each frequency

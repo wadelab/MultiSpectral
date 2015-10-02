@@ -30,7 +30,6 @@ try
 catch 
     error('Wavelength ranges used for dpy.WLrange do not match the dpy.coneSpectra wavelengths. Edit dpy.WLranges to match')
 end
- 
 % specify the coneSpectra so that the stimulus can be built
 dpy.coneSpectra=coneSpectra(:,2:end); %remove the wavelengths column
 

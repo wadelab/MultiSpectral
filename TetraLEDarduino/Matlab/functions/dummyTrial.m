@@ -53,7 +53,7 @@ q.normalizePdf=1; % This adds a few ms per call to QuestUpdate, but otherwise th
 
 Speak('Preparing experiment','Daniel');
 Dummydpy.NumSpec=3;
-Dummydpy.ConeTypes='LMS';
+Dummydpy.ConeTypes='LLpS';
 dummyStim.stimLMS.dir=[1 1 1];
 dummyStim.stimLMS.scale=.1;
 [dummyResponse,Dummydpy]=tetra_led_doLEDTrial_5LEDs(Dummydpy,dummyStim,q,s,1); % This should return 0 for an incorrect answer and 1 for correct

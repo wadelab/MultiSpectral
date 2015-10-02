@@ -39,11 +39,10 @@ MconeResample=interp1(WL,Mcone,WLrange); %m cone
 SconeResample=interp1(WL,Scone,WLrange); %s cone
 
 
-switch dpy.ConeTypes
-    case {'LMS'}
+if strcmp(dpy.ConeTypes,'LMS')==1;
         %save out spectra with wavelengths (WL,L,M,S)
         Spectra=cat(2,WLrange,LconeResample,MconeResample,SconeResample);
-    case {'LLpS'}
+elseif strcmp(dpy.ConeTypes,'LLpS')==1;
         %we want normal L and S spectra, and the Lprime
         %calculate the full 4cone spectra and extract the Lp value from 
         %L Lp M S range
@@ -58,7 +57,7 @@ switch dpy.ConeTypes
             Spectra=cat(2,WLrange,LconeResample,Lprime,SconeResample);            
         end
             
-    case {'LpMS'}
+elseif strcmp(dpy.ConeTypes,'LpMS')==1;
         %we want normal M and S spectra, and the Lprime
         %calculate the full 4cone spectra and extract the Lp value from 
         %L Lp M S range
@@ -72,5 +71,8 @@ switch dpy.ConeTypes
             Lprime=tempSpectra(:,2); %in second column after wl vals
             Spectra=cat(2,WLrange,Lprime,MconeResample,SconeResample);            
         end
+else 
+    disp('did not find matching conetypes')
 end
+
 end
