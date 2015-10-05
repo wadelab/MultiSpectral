@@ -34,7 +34,7 @@ while(SubID<1)
 end
 dpy.SubID=SubID;
 
-dpy.NumSpec=3;
+dpy.NumSpec=4; 
 dpy.LprimePosition=0.5;
 theExptID={'LM','S'};
 theFreq=[2,16]; %the frequencies to test for each condition

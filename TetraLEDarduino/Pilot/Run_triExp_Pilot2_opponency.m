@@ -23,7 +23,7 @@ s=ConnectToArduino;
 dummyTrial(s)
 
 % set number of trials in staircase
-dpy.NumTrials=40;
+dpy.NumTrials=50;
 % Ask the user to enter a Subject ID number
 SubID=-1; 
 while(SubID<1)
