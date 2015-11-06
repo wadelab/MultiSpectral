@@ -83,6 +83,24 @@ dpy.modulationRateHz=dpy.Freq;
 % estimate that they are .01 .02 and .1 for (L-M), L+M+S and s-(L+M)
 % respectively (r/g, luminance, s-cone)
 
+%%% Set Palamedes params
+
+UD.xCurrent=1; %trial number to start on
+
+up = 1;                     %increase after 1 wrong
+down = 2;                   %decrease after 2 right
+StepSizeDown = 0.005;  % decrease by 0.5%      
+StepSizeUp = 0.01; %increase by 1% if wrong
+stopcriterion = 'trials';  % this can be 'trials' or 'reversals', staircase will terminate after the specified number of trials/reversals - given in 'stoprule' variable 
+stoprule = 50;
+
+%First update the UD setup with the above values, and then add the startValue, xMin and
+%xMax for each specific experiment type
+UD = PAL_AMUD_setupUD('up',up,'down',down,'StepSizeDown',StepSizeDown,'StepSizeUp',...
+    StepSizeUp,'stopcriterion',stopcriterion,'stoprule',stoprule);
+
+
+
 
 % Here we use the same variables that QuestDemo does for consistency
 switch dpy.ExptID 
@@ -230,6 +248,9 @@ switch dpy.ExptID
     otherwise
         error ('Incorrect experiment type');
 end
+
+%update with the experiment specific values
+UD = PAL_AMUD_setupUD(UD,'xMin',xMin,'xMax',xMax,'startValue',startValue);
 
 tGuessSd=2; % This is roughly the same for all values.
 
