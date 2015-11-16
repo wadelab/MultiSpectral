@@ -21,7 +21,7 @@ byte LEDampBaseInputArray[10]; // Explicitly set to the number of LEDs * 2
 double modulationRateHz;
 long pulseDuration = 1000; // How long each pulse lasts in ms
 long elapsedTimeMilliSecs = 0; 
-int halfAmp = 2048; // Half the maximum amplitude. It will be bigger if we use 12 bit precision
+int halfAmp = 2048; // Half the maximum amplitude. 
 int nPins = 5;
 byte LEDscaling[5]; //this is the relative scaling of each LED based on the differences in brightness.  Use this to scale the noise N.B. update this so input
  
@@ -118,7 +118,7 @@ void loop() {
    while (elapsedTimeMilliSecs < pulseDuration) { // Keep checking to see how long we've been in this loop (in ms)
        elapsedTimeMilliSecs=(millis()-startTime); // Compute how long it's been in this loop in ms. We will terminate
       // when the elapsed time is greater than the pulse width that we asked for.
-       long rNum = random(-50,50); //this number will get scaled for each LED based on the background level for each LED
+       long rNum = random(-10,10); //this number will get scaled for each LED based on the background level for each LED
        
         for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { // Loop (very quickly) over all pins
                  int val = sin(double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz))*double(LEDamps[thisPinIndex])+double(LEDbaseLevel[thisPinIndex])+(rNum*(LEDscaling[thisPinIndex]*2));

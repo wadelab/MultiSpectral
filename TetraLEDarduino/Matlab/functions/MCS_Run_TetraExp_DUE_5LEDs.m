@@ -1,5 +1,5 @@
 function Data=MCS_Run_TetraExp_DUE_5LEDs(dpy,s)
-% Run_TetraExp_DUE_5LEDs(dpy)
+% Data = MCS_Run_TetraExp_DUE_5LEDs(dpy,s)
 %
 % Runs the experiment using details from dpy. s is the serial connection.
 %
@@ -9,43 +9,36 @@ function Data=MCS_Run_TetraExp_DUE_5LEDs(dpy,s)
 % dpy.ExptID    = the experiment ID
 % dpy.Repeat    = which session number is it
 % dpy.Freq      = the frequency (Hz) of the stimulus  
+% dpy.NumStimLevels      = the number of contrast levels to test at in MCS
+% dpy.NumTrialsPerLevel  = the number of trials to run at each contrast level
 % 
 % Outputs 'Data', containing final thresholds, etc. 
 %
 % % ARW 021515
 % edited by LEW 200815 as a function to output 'Data'
-% edited by LEW 131115 to use method of constant stimuli - parameters of
-% conditions set
+% edited by LEW 131115 to use method of constant stimuli
 
-addpath(genpath('/Users/wadelab/Github_MultiSpectral/TetraLEDarduino'))
-
-%InitializePsychSound; % Initialize the Psychtoolbox sounds
 pause(2);
 fprintf('\n****** Experiment Running ******\n \n');
 BITDEPTH=12;
 LEDamps=uint16([0,0,0,0,0]);
 nLEDsTotal=length(LEDamps);
-% This version of the code shows how to do two things:
-% Ask Lauren's code for a set of LED amplitudes corresponding to a
-% particular direction and contrast in LMS space
-% 2: Present two flicker intervals with a random sequence
-% ********************************************************
+% This code presents two flicker intervals - randomising which interval
+% contains the target
 
-
-
-% Iinitialize the display system
+% Initialize the display system
 % Load LEDspectra calib contains 1 column with wavelengths, then the LED calibs
 load('LEDspectra_070515.mat'); %load in calib for the prizmatix
 LEDcalib=LEDspectra; %if update the file loaded, the name only has to be updated here for use in rest of code
-LEDcalib(LEDcalib<0)=0;
-clear LEDspectra
+LEDcalib(LEDcalib<0)=0; %set any negative values to 0
+clear LEDspectra %we'll use this variable name later so clear it here
 
 dpy.WLrange=(400:1:720)'; %must use range from 400 to 720 
 
 % use white spectra to get baselevels for each LED (so white light as
 % background), and resample the LEDcalib spectra to the desired WL range
-
 [baselevels, LEDspectra] = LED2white(LEDcalib,dpy); % send the LED spectra and dpy with WL values
+
 baselevelsLEDS=baselevels/2; %we want them at half their scaled levels
 LEDbaseLevel=uint16((baselevelsLEDS)*(2^BITDEPTH)); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 fprintf('Baselevels:\n%d\n',baselevelsLEDS);
