@@ -22,8 +22,6 @@ addpath(genpath('/Users/wade/Documents/GitHub_Multispectral/TetraLEDarduino'))
 s=ConnectToArduino;
 dummyTrial(s)
 
-% set number of trials in staircase
-dpy.NumTrials=50;
 % Ask the user to enter a Subject ID number
 SubID=-1; 
 while(SubID<1)
@@ -37,7 +35,15 @@ dpy.SubID=SubID;
 dpy.NumSpec=3;
 dpy.LprimePosition=0.5;
 theExptID={'LM','LLP','LPM','S'};
-theFreq=[2,16]; %the frequencies to test for each condition
+theFreq=[2,16]; %,16]; %the frequencies to test for each condition
+
+
+%Set details of the constant stimuli here, i.e. num levels, num
+%trials at each level.  Details of max and min levels will be set within the 
+%Run function.  Need to make sure the values don't exceed the max available.
+
+dpy.NumStimLevels = 6; %the number of levels for the method of constant stim
+dpy.NumTrialsPerLevel = 10; %the number of trials for each level
 
 % Ask the user to enter a session number
 Repeat=-1; 
@@ -87,7 +93,7 @@ for thisCond = 1:TotalNumConds
     fullCondName=sprintf('%s_Freq%d',dpy.ExptID,dpy.Freq);
     
     % Now send experiment details out and start experiment trials.
-    Data=Pal_Run_TetraExp_DUE_5LEDs(dpy,s);
+    Data=MCS_Run_TetraExp_DUE_5LEDs(dpy,s);
     
     %save out a file containing the contrastThresh, SubID, experimentType, freq and
     %Session num
@@ -106,10 +112,7 @@ for thisCond = 1:TotalNumConds
     allConds{thisCond}=CondName;
     FreqName=sprintf('Freq%d',dpy.Freq);
     allFreqs{thisCond}=FreqName;
-    TempData.Thresh.(CondName).(FreqName)=Data.contrastThresh;
-    TempData.stDevPos.(CondName).(FreqName)=Data.contrastStDevPos;
-    TempData.stDevNeg.(CondName).(FreqName)=Data.contrastStDevNeg;
-    
+    TempData.Thresh.(CondName).(FreqName)=Data.contrastThresh;    
     AllData.OrderOfConditions{thisCond}=fullCondName;
       
     AllData.(CondName).(FreqName)=Data;
@@ -123,14 +126,12 @@ save(sprintf('SubID%s_Palamedes_Opponency_Rep%d_%s.mat',...
     dpy.SubID,dpy.Repeat,finalDate),'AllData');
 %turn off LEDs and close connection to ardunio
 CloseArduino(s);
-for thisCond=1:length(Cond)
-    theCondName=allConds{thisCond};
-    for thisFreq=1:length(Freq)
-        theFreqName=allFreqs{thisFreq};
-        fprintf('\nContrast Threshold for Cond %s  %s : %.2f   StDev +%.2f -%.2f\n',...
-        theCondName,theFreqName,TempData.Thresh.(theCondName).(theFreqName),...
-        TempData.stDevPos.(theCondName).(theFreqName),...
-        TempData.stDevNeg.(theCondName).(theFreqName));
+for thisCond=1:length(theExptID)
+    theCondName=theExptID{thisCond};
+    for thisFreq=1:length(theFreq)
+        theFreqName=sprintf('Freq%d',theFreq(thisFreq));
+        fprintf('\nContrast Threshold for Cond %s  %s : %.2f%%\n',...
+        theCondName,theFreqName,TempData.Thresh.(theCondName).(theFreqName));
     end
 end
 
