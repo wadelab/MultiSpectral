@@ -27,17 +27,17 @@ s=ConnectToArduino;
 dummyTrial(s);
 
 %set some of the experiment parameters
-dpy.NumSpec=3; %this is the number of assumed cones used to create stim (e.g. LMS, or L Lp S, etc)
+dpy.NumSpec=4; %this is the number of assumed cones used to create stim (e.g. LMS, or L Lp S, etc)
 dpy.LprimePosition=0.5; %set this if running and experiments with Lprime, 0.5 puts the peak of Lp between L and M
-theExptID={'LM','LLP','LPM','S'}; %set the experiment IDs you want to test
-theFreq=[2,16]; %the frequencies to test for each experiment ID
+theExptID={'LM','LLP','LPM'}; %set the experiment IDs you want to test
+theFreq=[16]; %the frequencies to test for each experiment ID
 
 %Set details for the method of constant stimuli here, i.e. num levels, num
 %trials at each level.  Details of max and min levels will be set within the 
 %Run function.  Need to make sure the values don't exceed the max available.
 %These values will vary depending on the experiment ID
 dpy.NumStimLevels = 6; %the number of levels for the method of constant stim
-dpy.NumTrialsPerLevel = 10; %the number of trials for each level
+dpy.NumTrialsPerLevel = 15; %the number of trials for each level
 
 % Ask the user to enter a Subject ID number
 SubID=-1; 
@@ -111,6 +111,8 @@ for thisCond = 1:TotalNumConds
     CondName=sprintf('%s',dpy.ExptID);
     FreqName=sprintf('Freq%d',dpy.Freq);
     TempData.Thresh.(CondName).(FreqName)=Data.contrastThresh;    
+    TempData.fitExit.(CondName).(FreqName)=Data.fitExit;    
+
     AllData.OrderOfConditions{thisCond}=fullCondName; %save out order the conditions were presented in
     AllData.(CondName).(FreqName)=Data; %save all the Data associated with the condition
     
@@ -130,8 +132,8 @@ for thisCond=1:length(theExptID)
     theCondName=theExptID{thisCond};
     for thisFreq=1:length(theFreq)
         theFreqName=sprintf('Freq%d',theFreq(thisFreq));
-        fprintf('\nContrast Threshold for Cond %s  %s : %.2f%%\n',...
-        theCondName,theFreqName,TempData.Thresh.(theCondName).(theFreqName));
+        fprintf('\nContrast Threshold for Cond %s  %s : %.2f%%      Fit %s\n',...
+        theCondName,theFreqName,TempData.Thresh.(theCondName).(theFreqName),TempData.fitExit.(CondName).(FreqName));
     end
 end
 

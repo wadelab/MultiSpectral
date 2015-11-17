@@ -16,7 +16,7 @@ catch %if dummy run don't save it - dpy.theTrial only specified after dummy
 end
 
 for thisInterval= 1:2
-    pause(.5);
+    %pause(.1);
     %sound(sin(linspace(1,650*2*pi,1000))/4,8000); % Do a beep
     %pause(.4); %pause after beep
     
@@ -42,8 +42,7 @@ for thisInterval= 1:2
     
     
     if (isobject(serialObject))
-
-            sound(sin(linspace(1,650*2*pi,1000))/4,8000);
+            sound(sin(linspace(1,400*2*pi,1000))/3,4000); % Do a slightly different beep to indicate a response is required
             % We are going to send data out byte by byte to avoid any
             % issues with endianness
             for thisLed=1:dpy.nLEDsToUse
@@ -88,7 +87,7 @@ for thisInterval= 1:2
                         
             
             if thisInterval==1;
-                pause(1)
+                pause(0.8)
             else continue
                 %no pause if end of stim presentation and awaiting response
                 %sound(sin(linspace(1,800*2*pi,1000))/4,4000); % Do a slightly different beep to indicate a response is required
@@ -111,19 +110,18 @@ if (~dummyFlag) % If this was a dummy trial then don't require a key press
     
     if (response==1)
         disp('Right!')
-        sound(sin(linspace(1,400*2*pi,1000))/5,5000); % Do a slightly different beep to indicate a response is required
+        sound(sin(linspace(1,650*2*pi,1000))/3,8000);
+        %sound(sin(linspace(1,400*2*pi,1000))/5,5000); % Do a slightly different beep to indicate a response is required
         dpy.Response(dpy.theTrial,1)=1; %1=hit, 0=miss
 
     else
         disp('Wrong');
-        sound(sin(linspace(1,200*2*pi,1000))/5,3000); % Do a slightly different beep to indicate a response is required
+        sound(sin(linspace(1,50*2*pi,1000))/3,8000); % Do a slightly different beep to indicate a response is required
         dpy.Response(dpy.theTrial,1)=0; %0=miss
 
     end
     
-    pause(.2)
-    % Here you can feed back answers to Quest or whatever and compute the
-    % next contrast to use
+    pause(.5)
 else % If this was a dummy trial then don't require a key press
     response = -1;
 end
