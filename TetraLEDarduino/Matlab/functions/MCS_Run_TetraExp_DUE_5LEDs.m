@@ -94,8 +94,8 @@ switch dpy.ExptID
         if dpy.NumSpec==4
             stim.stimLMS.dir=[1 0 0 0]; % L cone isolating
             stim.stimLMS.maxCont = .008;
-            stim.stimLMS.maxTestLevel = .008;
-            stim.stimLMS.minTestLevel = .0005;
+            stim.stimLMS.maxTestLevel = .01;
+            stim.stimLMS.minTestLevel = .001;
         elseif dpy.NumSpec==3
             if isfield(dpy,'ConeTypes')==1
                 dpy.ConeTypes=dpy.ConeTypes;
@@ -104,7 +104,7 @@ switch dpy.ExptID
             end
             stim.stimLMS.dir=[1 0 0]; % L cone isolating
             stim.stimLMS.maxCont= .035;
-            stim.stimLMS.maxTestLevel = .03;
+            stim.stimLMS.maxTestLevel = .05;
             stim.stimLMS.minTestLevel = .005;
         end
         thisExp='L';
@@ -114,8 +114,8 @@ switch dpy.ExptID
             stim.stimLMS.dir=[0 1 0 0]; % L' cone isolating
             if dpy.LprimePosition<0.25 || 0.75<dpy.LprimePosition
                 stim.stimLMS.maxCont= .0007;
-                stim.stimLMS.maxTestLevel = .0007;
-                stim.stimLMS.minTestLevel = .00001;
+                stim.stimLMS.maxTestLevel = .01;
+                stim.stimLMS.minTestLevel = .001;
             else
                 stim.stimLMS.maxCont= .005;
                 stim.stimLMS.maxTestLevel = .005;
@@ -129,7 +129,7 @@ switch dpy.ExptID
             end
             stim.stimLMS.dir=[1 0 0]; % L cone isolating
             stim.stimLMS.maxCont= .035;
-            stim.stimLMS.maxTestLevel = .03;
+            stim.stimLMS.maxTestLevel = .05;
             stim.stimLMS.minTestLevel = .002;
         else
             error('Check NumSpec for this condition')

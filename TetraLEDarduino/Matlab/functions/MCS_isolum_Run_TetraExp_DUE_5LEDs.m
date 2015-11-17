@@ -55,7 +55,7 @@ dpy.baselevelsLEDS=baselevelsLEDS;
 dpy.bitDepth=BITDEPTH;
 dpy.backLED.dir=baselevelsLEDS;
 
-dpy.backLED.scale=.5; % LEDs on at 50%
+dpy.backLED.scale=.3; % LEDs on at 50%
 
 %CHECK THIS *******************************
 dpy.LEDbaseLevel=round(dpy.backLED.dir*dpy.backLED.scale*(2.^dpy.bitDepth-1)); % Set just the LEDs we're using to be on a 50%
@@ -106,8 +106,8 @@ switch dpy.ExptID
             dpy.ConeTypes='LMS';
             stim.stimLMS.dir=[Lval, -Mval, 0]; %
             stim.stimLMS.maxCont= .045;
-            stim.stimLMS.maxTestLevel = .03;
-            stim.stimLMS.minTestLevel = .001;
+            stim.stimLMS.maxTestLevel = .05;
+            stim.stimLMS.minTestLevel = .005;
         end;
         thisExp='LM';
         
@@ -127,8 +127,8 @@ switch dpy.ExptID
             dpy.ConeTypes='LLpS';
             stim.stimLMS.dir=[Lval, -Mval, 0]; %
             stim.stimLMS.maxCont= .045;
-            stim.stimLMS.maxTestLevel = .03;
-            stim.stimLMS.minTestLevel = .001;
+            stim.stimLMS.maxTestLevel = .05;
+            stim.stimLMS.minTestLevel = .005;
         end
         thisExp='LLp';
         
@@ -149,8 +149,8 @@ switch dpy.ExptID
             dpy.ConeTypes='LpMS';
             stim.stimLMS.dir=[Lval, -Mval 0]; %
             stim.stimLMS.maxCont= .045;
-            stim.stimLMS.maxTestLevel = .03;
-            stim.stimLMS.minTestLevel = .001;
+            stim.stimLMS.maxTestLevel = .05;
+            stim.stimLMS.minTestLevel = .005;
         end
         thisExp='LpM';
     otherwise
