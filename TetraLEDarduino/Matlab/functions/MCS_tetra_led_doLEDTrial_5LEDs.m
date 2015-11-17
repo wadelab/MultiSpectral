@@ -61,14 +61,15 @@ for thisInterval= 1:2
                 %necessary)
                 [thisLowVal,thisHighVal]=led_convertToBytes(inputVal);
                 
-                     
+                 % write the low and high value LED amps to arduino    
                  fwrite(serialObject,int8(thisLowVal),'int8');
                  fwrite(serialObject,int8(thisHighVal),'int8');
             end % Next LED value for modulation
             
-            fwrite(serialObject,int8(LEDampSign),'int8'); %indicates whether number is pos (0) or neg (1)
-            fwrite(serialObject,int16(dpy.LEDbaseLevel),'int16');
-            fwrite(serialObject,int16(dpy.modulationRateHz*256),'int16');
+            
+            fwrite(serialObject,int8(LEDampSign),'int8'); %indicates whether each LED amp is pos (0) or neg (1)
+            fwrite(serialObject,int16(dpy.LEDbaseLevel),'int16'); %the baselevels
+            fwrite(serialObject,int16(dpy.modulationRateHz*256),'int16'); %the modulation rate
             fwrite(serialObject,int8(dpy.baselevelsLEDS),'int8'); %send the scaling info
             %pause(.1)
             

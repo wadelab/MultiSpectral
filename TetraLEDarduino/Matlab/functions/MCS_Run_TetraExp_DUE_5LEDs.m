@@ -37,8 +37,9 @@ dpy.WLrange=(400:1:720)'; %must use range from 400 to 720
 
 % use white spectra to get baselevels for each LED (so white light as
 % background), and resample the LEDcalib spectra to the desired WL range
-[baselevels, LEDspectra] = LED2white(LEDcalib,dpy); % outputs scaled baselevels and resampled LEDspectra based on WL
-baselevelsLEDS=baselevels/2; %we want the baselevels at half their scaled levels
+[dummy, LEDspectra] = LED2white(LEDcalib,dpy); % outputs scaled baselevels and resampled LEDspectra based on WL
+%baselevelsLEDS=baselevels/2; %we want the baselevels at half their scaled levels
+baselevelsLEDS=[1,1,1,1,1];
 LEDbaseLevel=uint16((baselevelsLEDS)*(2^BITDEPTH)); % convert for sending to arduino
 
 %specify the LEDs in use in this experiment (usually all 5) and keep the
@@ -162,7 +163,7 @@ switch dpy.ExptID
             stim.stimLMS.minTestLevel = .0001;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LMS';
-            stim.stimLMS.dir=[0.5 -1 0]; %
+            stim.stimLMS.dir=[0.3233 -.9463 0]; %
             stim.stimLMS.maxCont= .045;
             stim.stimLMS.maxTestLevel = .03;
             stim.stimLMS.minTestLevel = .001;
@@ -204,13 +205,13 @@ switch dpy.ExptID
             stim.stimLMS.dir=[1 0 1 1]; %
             stim.stimLMS.maxCont= .02;
             stim.stimLMS.maxTestLevel = .02;
-            stim.stimLMS.minTestLevel = .002;
+            stim.stimLMS.minTestLevel = .001;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LMS';
             stim.stimLMS.dir=[1 1 1]; %
             stim.stimLMS.maxCont= .1;
             stim.stimLMS.maxTestLevel = .07;
-            stim.stimLMS.minTestLevel = .005;
+            stim.stimLMS.minTestLevel = .002;
         end
         thisExp='LMS';
         
@@ -219,7 +220,7 @@ switch dpy.ExptID
             stim.stimLMS.dir=[1 1 1 1]; %
             stim.stimLMS.maxCont= .02;
             stim.stimLMS.maxTestLevel = .02;
-            stim.stimLMS.minTestLevel = .002;
+            stim.stimLMS.minTestLevel = .001;
         else
             error('Num spec must be set to 4 to run LLpMS')
         end
@@ -348,8 +349,7 @@ for thisLevel = 1:length(dpy.stimLevels)
     percentCorrect=(plotResponseData(:,2)/plotResponseData(:,3))*100;
     Data.PercentCorrect=cat(2,plotResponseData(:,1),percentCorrect);
 end
-scatter(plotResponseData(:,1),percentCorrect)
-set(gca,'YLim',[0,100]) 
+scatter(plotResponseData(:,1),plotResponseData(:,2))
 try
     title(sprintf('LMpeak %d at %.1f Hz Trial %d',dpy.LMpeak,dpy.Freq,dpy.Repeat))
 catch

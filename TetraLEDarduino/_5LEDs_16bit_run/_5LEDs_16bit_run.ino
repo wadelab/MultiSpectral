@@ -60,7 +60,7 @@ void loop() {
   
       if (Serial.available() > 0) {
           Serial.readBytes(LEDampInputArray,nPins*2); // First nPins bytes are the modulation amps. We read in 2 bytes per pin
-          Serial.readBytes(LEDampSign,nPins); // next nPins indicate the sign of the amps. 1 byte per pin
+          Serial.readBytes(LEDampSign,nPins); // next, nPins indicate the sign of the amps. 1 byte per pin
           Serial.readBytes(LEDampBaseInputArray,nPins*2); // following 2 bytes per nPins bytes are the baselines.
           Serial.readBytes(modulationRateHz16Bit,2); // 2 bytes are the frequency of the flicker in Hz multiplied by 256. We do this to allow fractional flicker rates.
           Serial.readBytes(LEDscaling,nPins); //the scaling needed for each LED
@@ -77,7 +77,7 @@ void loop() {
               LEDamps[thisPinIndex]=((int(LEDampInputArray[thisPinIndex*2]))+((int(127 & LEDampInputArray[thisPinIndex*2+1]))<<8));
 
               if (LEDampSign[thisPinIndex] = 1) {
-               LEDamps[thisPinIndex]=-LEDamps[thisPinIndex]; // Negate it if it's a negative 16 bit int on the input
+               LEDamps[thisPinIndex]=-LEDamps[thisPinIndex]; // check if the amp value needs to be negative (1 in the LEDampSign)
                 
               }
              
@@ -118,7 +118,7 @@ void loop() {
    while (elapsedTimeMilliSecs < pulseDuration) { // Keep checking to see how long we've been in this loop (in ms)
        elapsedTimeMilliSecs=(millis()-startTime); // Compute how long it's been in this loop in ms. We will terminate
       // when the elapsed time is greater than the pulse width that we asked for.
-       long rNum = random(-100,100); //this number will get scaled for each LED based on the background level for each LED
+       long rNum = random(0,0); //this number will get scaled for each LED based on the background level for each LED
        
         for (int thisPinIndex = 0; thisPinIndex < nPins; thisPinIndex++) { // Loop (very quickly) over all pins
                  int val = sin(double(elapsedTimeMilliSecs)*0.0062832*double(modulationRateHz))*double(LEDamps[thisPinIndex])+double(LEDbaseLevel[thisPinIndex])+(rNum*(LEDscaling[thisPinIndex]*2));
