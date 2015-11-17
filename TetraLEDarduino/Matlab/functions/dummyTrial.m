@@ -16,8 +16,9 @@ Dummydpy.WLrange=(400:1:720)'; %must use range from 400 to 720
 % use white spectra to get baselevels for each LED (so white light as
 % background), and resample the LEDcalib spectra to the desired WL range
 
-[baselevels, LEDspectra] = LED2white(LEDcalib,Dummydpy); % send the LED spectra and dpy with WL values
-baselevelsLEDS=baselevels/2; %we want them at half their scaled levels
+[dummy, LEDspectra] = LED2white(LEDcalib,Dummydpy); % send the LED spectra and dpy with WL values
+%baselevelsLEDS=baselevels/2; %we want them at half their scaled levels
+baselevelsLEDS=[1,1,1,1,1];
 LEDbaseLevel=uint16((baselevelsLEDS)*(2^BITDEPTH)); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 fprintf('Baselevels:\n%d\n',baselevelsLEDS);
 fprintf('converted baselevels:\n%d\n',LEDbaseLevel);

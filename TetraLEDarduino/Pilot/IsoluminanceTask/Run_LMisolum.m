@@ -29,15 +29,15 @@ dummyTrial(s);
 %set some of the experiment parameters
 dpy.NumSpec=3; %this is the number of assumed cones used to create stim (e.g. LMS, or L Lp S, etc)
 dpy.LprimePosition=0.5; %set this if running and experiments with Lprime, 0.5 puts the peak of Lp between L and M
-theExptID={'LM'}; %set the experiment IDs you want to test
-theFreq=[2,4,8]; %the frequencies to test for each experiment ID
+theExptID={'LLP'};%,'LLP','LPM'}; %set the experiment IDs you want to test
+theFreq=[16]; %the frequencies to test for each experiment ID
 
 %Set details for the method of constant stimuli here, i.e. num levels, num
 %trials at each level.  Details of max and min levels will be set within the 
 %Run function.  Need to make sure the values don't exceed the max available.
 %These values will vary depending on the experiment ID
 dpy.NumStimLevels = 5; %the number of levels for the method of constant stim
-dpy.NumTrialsPerLevel = 8; %the number of trials for each level
+dpy.NumTrialsPerLevel = 10; %the number of trials for each level
 
 % Ask the user to enter a Subject ID number
 SubID=-1; 
@@ -97,7 +97,7 @@ for thisCond = 1:TotalNumConds
     fullCondName=sprintf('%s_Freq%d',dpy.ExptID,dpy.Freq);
     
     % Now send experiment details out and start experiment trials.
-    Data=MCS_Run_TetraExp_DUE_5LEDs(dpy,s);
+    Data=LMisolum_Run_TetraExp_DUE_5LEDs(dpy,s);
     
     %save out a file containing the contrastThresh, SubID, experimentType, freq and
     %Session num
@@ -105,8 +105,8 @@ for thisCond = 1:TotalNumConds
     %go to wherever you want to save it
     cd('/Users/wade/Documents/Github_MultiSpectral/TetraLEDarduino/Pilot_Data')
     
-    save(sprintf('SubID%s_Expt%s_Freq%d_Rep%d_%s.mat',...
-        dpy.SubID,dpy.ExptID,dpy.Freq,dpy.Repeat,Data.Date),'Data');
+%     save(sprintf('SubID%s_Expt%s_Freq%d_Rep%d_%s.mat',...
+%         dpy.SubID,dpy.ExptID,dpy.Freq,dpy.Repeat,Data.Date),'Data');
     %save the figure
     savefig(sprintf('SubID%s_Expt%s_Freq%d_Rep%d_%s.fig',...
         dpy.SubID,dpy.ExptID,dpy.Freq,dpy.Repeat,Data.Date));
@@ -114,32 +114,21 @@ for thisCond = 1:TotalNumConds
     fprintf('\n******** End of Condition ********\n');
     CondName=sprintf('%s',dpy.ExptID);
     FreqName=sprintf('Freq%d',dpy.Freq);
-    TempData.Thresh.(CondName).(FreqName)=Data.contrastThresh;    
-    TempData.fitExit.(CondName).(FreqName)=Data.fitExit;    
+%     TempData.Thresh.(CondName).(FreqName)=Data.contrastThresh;    
+%     TempData.fitExit.(CondName).(FreqName)=Data.fitExit;    
 
     AllData.OrderOfConditions{thisCond}=fullCondName; %save out order the conditions were presented in
     AllData.(CondName).(FreqName)=Data; %save all the Data associated with the condition
     
-    %clear the Data and Figure before creating stimuli for next condition
-    clear Data; close all
+%     %clear the Data and Figure before creating stimuli for next condition
+     clear Data; %close all
 end
 Speak('All conditions complete','Daniel');
 finalDate=datestr(now,30);
-save(sprintf('SubID%s_Palamedes_Opponency_Rep%d_%s.mat',...
+save(sprintf('SubID%s_LMisolum_Rep%d_%s.mat',...
     dpy.SubID,dpy.Repeat,finalDate),'AllData');
 %turn off LEDs and close connection to ardunio
 CloseArduino(s);%close connection to arduino
-
-%output the thresholds calculated for each condition (just based on trials
-%in this session)
-for thisCond=1:length(theExptID)
-    theCondName=theExptID{thisCond};
-    for thisFreq=1:length(theFreq)
-        theFreqName=sprintf('Freq%d',theFreq(thisFreq));
-        fprintf('\nContrast Threshold for Cond %s  %s : %.2f%%      Fit %s\n',...
-        theCondName,theFreqName,TempData.Thresh.(theCondName).(theFreqName),TempData.fitExit.(CondName).(FreqName));
-    end
-end
 
 %output total time for experiment
 timeElapsed=toc/60;

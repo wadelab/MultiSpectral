@@ -1,4 +1,4 @@
-function [response,dpy]=MCS_tetra_led_doLEDTrial_5LEDs(dpy,stim,serialObject,dummyFlag)
+function [response,dpy]=LMisolum_tetra_led_doLEDTrial_5LEDs(dpy,stim,serialObject,dummyFlag)
 % function response=led_doLEDTrial(dpy,stimLMS, q,serialObject)
 % Returns 0 or 1 for wrong/right
 %
@@ -22,11 +22,11 @@ for thisInterval= 1:2
     
     if (thisInterval == signalInterval) % Is this is the interval with the modulation
         try
-        dpy.contrastLevelTested(dpy.theTrial,1)=stim.stimLMS.scale; %don't save if just the dummy
+        dpy.thetaLevelTested(dpy.theTrial,1)=dpy.theta; %don't save if just the dummy
         catch
         end
-        % Compute the LED levels we want
         stimOne=stim;
+        % Compute the LED levels we want
         stimOne.stimLMS.dir=stim.stimLMS.dir+(ones(dpy.NumSpec,1)'); %luminance plus target direction
         [stim.LEDvals,dpy]=tetra_led_arduinoConeIsolationLMS(dpy,stimOne.stimLMS);
         
@@ -38,13 +38,11 @@ for thisInterval= 1:2
     else
         stimTwo=stim;
         stimTwo.stimLMS.dir=ones(dpy.NumSpec,1)'; %just luminance
-
         [stim.LEDvals,dpy]=tetra_led_arduinoConeIsolationLMS(dpy,stimTwo.stimLMS);
               
         LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
         LEDoutput=LEDoutputAmps/2;
     end
-        
     
     
     if (isobject(serialObject))

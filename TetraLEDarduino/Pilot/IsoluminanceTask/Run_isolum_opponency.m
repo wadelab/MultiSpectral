@@ -27,10 +27,10 @@ s=ConnectToArduino;
 dummyTrial(s);
 
 %set some of the experiment parameters
-dpy.NumSpec=3; %this is the number of assumed cones used to create stim (e.g. LMS, or L Lp S, etc)
+dpy.NumSpec=4; %this is the number of assumed cones used to create stim (e.g. LMS, or L Lp S, etc)
 dpy.LprimePosition=0.5; %set this if running and experiments with Lprime, 0.5 puts the peak of Lp between L and M
-theExptID={'LM'}; %set the experiment IDs you want to test
-theFreq=[2,4,8]; %the frequencies to test for each experiment ID
+theExptID={'LM','LLP','LPM'}; %set the experiment IDs you want to test
+theFreq=[4]; %the frequencies to test for each experiment ID
 
 %Set details for the method of constant stimuli here, i.e. num levels, num
 %trials at each level.  Details of max and min levels will be set within the 
@@ -59,6 +59,39 @@ while(Repeat<1)
     end
 end
 dpy.Repeat=Repeat;
+
+%Ask user for isolum value information from LMisolum task, i.e. give the
+%theta value that made the stimulus hardest to see
+LMtheta=-1; 
+while(LMtheta<1)
+    RepeatString=input ('Enter the LM theta value, e.g 1.935 : ','s'); 
+    LMtheta=str2double(RepeatString);
+    if(isempty(LMtheta))
+        LMtheta=-1;
+    end
+end
+dpy.LMtheta=LMtheta;
+
+LpMtheta=-1; 
+while(LpMtheta<1)
+    RepeatString=input ('Enter the LpM theta value or for default enter 0: ','s'); 
+    LpMtheta=str2double(RepeatString);
+    if(isempty(LpMtheta))
+        LpMtheta=-1;
+    end
+end
+dpy.LpMtheta=LpMtheta;
+
+LLptheta=-1; 
+while(LLptheta<1)
+    RepeatString=input ('Enter the LLp theta value or for default enter 0: ','s'); 
+    LLptheta=str2double(RepeatString);
+    if(isempty(LLptheta))
+        LLptheta=-1;
+    end
+end
+dpy.LLptheta=LLptheta;
+
 tic; %start timer so can output total run time at the end of the experiment
 
 %Create a list of conditions that is properly randomised - a matrix of
@@ -97,7 +130,7 @@ for thisCond = 1:TotalNumConds
     fullCondName=sprintf('%s_Freq%d',dpy.ExptID,dpy.Freq);
     
     % Now send experiment details out and start experiment trials.
-    Data=MCS_Run_TetraExp_DUE_5LEDs(dpy,s);
+    Data=MCS_isolum_Run_TetraExp_DUE_5LEDs(dpy,s);
     
     %save out a file containing the contrastThresh, SubID, experimentType, freq and
     %Session num

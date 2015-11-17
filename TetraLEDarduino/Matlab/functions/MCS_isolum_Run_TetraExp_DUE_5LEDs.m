@@ -1,4 +1,4 @@
-function Data=MCS_Run_TetraExp_DUE_5LEDs(dpy,s)
+function Data=MCS_isolum_Run_TetraExp_DUE_5LEDs(dpy,s)
 % Data = MCS_Run_TetraExp_DUE_5LEDs(dpy,s)
 %
 % Runs the experiment using details from dpy. s is the serial connection.
@@ -55,7 +55,7 @@ dpy.baselevelsLEDS=baselevelsLEDS;
 dpy.bitDepth=BITDEPTH;
 dpy.backLED.dir=baselevelsLEDS;
 
-dpy.backLED.scale=.3; % LEDs on at 50%
+dpy.backLED.scale=.5; % LEDs on at 50%
 
 %CHECK THIS *******************************
 dpy.LEDbaseLevel=round(dpy.backLED.dir*dpy.backLED.scale*(2.^dpy.bitDepth-1)); % Set just the LEDs we're using to be on a 50%
@@ -90,179 +90,69 @@ end
 % specific for that condition and for the number of cone spectra being
 % assumed (i.e. contrast has to be much lower when accounting for 4 cones)
 switch dpy.ExptID
-    case {'L'}
-        if dpy.NumSpec==4
-            stim.stimLMS.dir=[1 0 0 0]; % L cone isolating
-            stim.stimLMS.maxCont = .008;
-            stim.stimLMS.maxTestLevel = .008;
-            stim.stimLMS.minTestLevel = .0005;
-        elseif dpy.NumSpec==3
-            if isfield(dpy,'ConeTypes')==1
-                dpy.ConeTypes=dpy.ConeTypes;
-            else %default to setting as LMS coneTypes
-                dpy.ConeTypes='LMS';
-            end
-            stim.stimLMS.dir=[1 0 0]; % L cone isolating
-            stim.stimLMS.maxCont= .035;
-            stim.stimLMS.maxTestLevel = .03;
-            stim.stimLMS.minTestLevel = .005;
-        end
-        thisExp='L';
-        
-    case {'LP'}
-        if dpy.NumSpec==4
-            stim.stimLMS.dir=[0 1 0 0]; % L' cone isolating
-            if dpy.LprimePosition<0.25 || 0.75<dpy.LprimePosition
-                stim.stimLMS.maxCont= .0007;
-                stim.stimLMS.maxTestLevel = .0007;
-                stim.stimLMS.minTestLevel = .00001;
-            else
-                stim.stimLMS.maxCont= .005;
-                stim.stimLMS.maxTestLevel = .005;
-                stim.stimLMS.minTestLevel = .0001;
-            end
-        elseif dpy.NumSpec==3
-            if isfield(dpy,'ConeTypes')==1
-                disp('cone types specified')
-            else %default to setting as LpMS coneTypes
-                dpy.ConeTypes='LpMS';
-            end
-            stim.stimLMS.dir=[1 0 0]; % L cone isolating
-            stim.stimLMS.maxCont= .035;
-            stim.stimLMS.maxTestLevel = .03;
-            stim.stimLMS.minTestLevel = .002;
-        else
-            error('Check NumSpec for this condition')
-        end
-        thisExp='Lp';
-        
-    case {'M'}
-        if dpy.NumSpec==4
-            stim.stimLMS.dir=[0 0 1 0]; % M cone isolating
-            stim.stimLMS.maxCont= .008;
-            stim.stimLMS.maxTestLevel = .008;
-            stim.stimLMS.minTestLevel = .0005;
-        elseif dpy.NumSpec==3
-            if isfield(dpy,'ConeTypes')==1
-                disp('cone types specified') %leave it set as is
-            else %default to setting as LMS coneTypes
-                dpy.ConeTypes='LMS';
-            end
-            stim.stimLMS.dir=[0 1 0]; % M cone isolating
-            stim.stimLMS.maxCont= .035;
-            stim.stimLMS.maxTestLevel = .03;
-            stim.stimLMS.minTestLevel = .002;
-        end
-        thisExp='M';
-        
     case {'LM'}
+        if dpy.LMtheta==0
+            %set to default theta of 2
+            dpy.LMtheta=2;
+        end
+        Lval=abs(cos(dpy.LMtheta));
+        Mval=abs(sin(dpy.LMtheta));
         if dpy.NumSpec==4
-            stim.stimLMS.dir=[0.5 0 -1 0]; %
+            stim.stimLMS.dir=[Lval, 0, -Mval, 0]; %
             stim.stimLMS.maxCont= .005;
-            stim.stimLMS.maxTestLevel = .005;
+            stim.stimLMS.maxTestLevel = .015;
             stim.stimLMS.minTestLevel = .0001;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LMS';
-            stim.stimLMS.dir=[0.3233 -.9463 0]; %
+            stim.stimLMS.dir=[Lval, -Mval, 0]; %
             stim.stimLMS.maxCont= .045;
-            stim.stimLMS.maxTestLevel = .05;
-            stim.stimLMS.minTestLevel = .005;
+            stim.stimLMS.maxTestLevel = .03;
+            stim.stimLMS.minTestLevel = .001;
         end;
         thisExp='LM';
         
     case {'LLP'}
+        if dpy.LLptheta==0
+            %set to default theta of 2
+            dpy.LLptheta=2;
+        end
+        Lval=abs(cos(dpy.LLptheta));
+        Mval=abs(sin(dpy.LLptheta));
         if dpy.NumSpec==4
-            stim.stimLMS.dir=[0.5 -1 0 0]; %
+            stim.stimLMS.dir=[Lval, -Mval, 0, 0]; %
             stim.stimLMS.maxCont= .005;
-            stim.stimLMS.maxTestLevel = .005;
+            stim.stimLMS.maxTestLevel = .015;
             stim.stimLMS.minTestLevel = .0001;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LLpS';
-            stim.stimLMS.dir=[0.5 -1 0]; %
+            stim.stimLMS.dir=[Lval, -Mval, 0]; %
             stim.stimLMS.maxCont= .045;
-            stim.stimLMS.maxTestLevel = .05;
-            stim.stimLMS.minTestLevel = .005;
+            stim.stimLMS.maxTestLevel = .03;
+            stim.stimLMS.minTestLevel = .001;
         end
         thisExp='LLp';
         
     case {'LPM'}
+        if dpy.LpMtheta==0
+            %set to default theta of 2
+            dpy.LpMtheta=2;
+        end
+        Lval=abs(cos(dpy.LpMtheta));
+        Mval=abs(sin(dpy.LpMtheta));
+        
         if dpy.NumSpec==4
-            stim.stimLMS.dir=[0 0.5 -1 0]; %
+            stim.stimLMS.dir=[0, Lval, -Mval, 0]; %
             stim.stimLMS.maxCont= .005;
-            stim.stimLMS.maxTestLevel = .005;
+            stim.stimLMS.maxTestLevel = .015;
             stim.stimLMS.minTestLevel = .0001;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LpMS';
-            stim.stimLMS.dir=[0.5 -1 0]; %
+            stim.stimLMS.dir=[Lval, -Mval 0]; %
             stim.stimLMS.maxCont= .045;
-            stim.stimLMS.maxTestLevel = .05;
-            stim.stimLMS.minTestLevel = .005;
+            stim.stimLMS.maxTestLevel = .03;
+            stim.stimLMS.minTestLevel = .001;
         end
         thisExp='LpM';
-        
-    case {'LMS'}
-        if dpy.NumSpec==4
-            stim.stimLMS.dir=[1 0 1 1]; %
-            stim.stimLMS.maxCont= .02;
-            stim.stimLMS.maxTestLevel = .02;
-            stim.stimLMS.minTestLevel = .001;
-        elseif dpy.NumSpec==3
-            dpy.ConeTypes='LMS';
-            stim.stimLMS.dir=[1 1 1]; %
-            stim.stimLMS.maxCont= .1;
-            stim.stimLMS.maxTestLevel = .07;
-            stim.stimLMS.minTestLevel = .002;
-        end
-        thisExp='LMS';
-        
-    case {'LLpMS'}
-        if dpy.NumSpec==4
-            stim.stimLMS.dir=[1 1 1 1]; %
-            stim.stimLMS.maxCont= .02;
-            stim.stimLMS.maxTestLevel = .02;
-            stim.stimLMS.minTestLevel = .001;
-        else
-            error('Num spec must be set to 4 to run LLpMS')
-        end
-        thisExp='LLpMS';
-        
-        
-    case {'S'}
-        if dpy.NumSpec==4
-            stim.stimLMS.dir=[0 0 0 1]; % S cone isolating
-            stim.stimLMS.maxCont= .25;
-            stim.stimLMS.maxTestLevel = .08;
-            stim.stimLMS.minTestLevel = .005;
-        elseif dpy.NumSpec==3
-            dpy.ConeTypes='LMS';
-            stim.stimLMS.dir=[0 0 1]; % S cone isolating
-            stim.stimLMS.maxCont= .25;
-            stim.stimLMS.maxTestLevel = .08;
-            stim.stimLMS.minTestLevel = .005;
-        elseif dpy.NumSpec==2
-            stim.stimLMS.dir=[0 1]; % S cone isolating
-            stim.stimLMS.maxCont= .25;
-            stim.stimLMS.maxTestLevel = .10;
-            stim.stimLMS.minTestLevel = .005;
-        end
-        thisExp='S';
-        
-    case {'TESTLM'}
-        if dpy.NumSpec==4
-            stim.stimLMS.dir=[0 1 0 0]; % testLM cone isolating
-            stim.stimLMS.maxCont= .008;
-            stim.stimLMS.maxTestLevel = .008;
-            stim.stimLMS.minTestLevel = .0005;
-        elseif dpy.NumSpec==2
-            stim.stimLMS.dir=[1 0]; % testLM cone isolating
-            stim.stimLMS.maxCont= .2;
-            stim.stimLMS.maxTestLevel = .1;
-            stim.stimLMS.minTestLevel = .005;
-        else
-            error('Incorrect NumSpec for this condition')
-        end
-        thisExp='testLM';
-        
     otherwise
         error ('Incorrect experiment type');
 end
@@ -346,12 +236,10 @@ for thisLevel = 1:length(dpy.stimLevels)
     plotResponseData(thisLevel,2)=totalHits;
     plotResponseData(thisLevel,3)=totalTrials;
     Data.CombinedResponseData=plotResponseData;
-    percentCorrect=(plotResponseData(:,2)./plotResponseData(:,3))*100;
+    percentCorrect=(plotResponseData(:,2)/plotResponseData(:,3))*100;
     Data.PercentCorrect=cat(2,plotResponseData(:,1),percentCorrect);
 end
-
-scatter(Data.PercentCorrect(:,1),Data.PercentCorrect(:,2))
-set(gca,'YLim',[0,100])
+scatter(plotResponseData(:,1),plotResponseData(:,2))
 try
     title(sprintf('LMpeak %d at %.1f Hz Trial %d',dpy.LMpeak,dpy.Freq,dpy.Repeat))
 catch
