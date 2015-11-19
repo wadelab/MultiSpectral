@@ -106,8 +106,8 @@ switch dpy.ExptID
             dpy.ConeTypes='LMS';
             stim.stimLMS.dir=[Lval, -Mval, 0]; %
             stim.stimLMS.maxCont= .045;
-            stim.stimLMS.maxTestLevel = .05;
-            stim.stimLMS.minTestLevel = .005;
+            stim.stimLMS.maxTestLevel = .07;
+            stim.stimLMS.minTestLevel = .02;
         end;
         thisExp='LM';
         

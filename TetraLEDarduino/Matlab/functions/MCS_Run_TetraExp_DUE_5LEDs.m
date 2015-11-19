@@ -55,7 +55,7 @@ dpy.baselevelsLEDS=baselevelsLEDS;
 dpy.bitDepth=BITDEPTH;
 dpy.backLED.dir=baselevelsLEDS;
 
-dpy.backLED.scale=.3; % LEDs on at 50%
+dpy.backLED.scale=.15; % LEDs on at 50%
 
 %CHECK THIS *******************************
 dpy.LEDbaseLevel=round(dpy.backLED.dir*dpy.backLED.scale*(2.^dpy.bitDepth-1)); % Set just the LEDs we're using to be on a 50%
@@ -159,14 +159,14 @@ switch dpy.ExptID
         if dpy.NumSpec==4
             stim.stimLMS.dir=[0.5 0 -1 0]; %
             stim.stimLMS.maxCont= .005;
-            stim.stimLMS.maxTestLevel = .005;
-            stim.stimLMS.minTestLevel = .0001;
+            stim.stimLMS.maxTestLevel = .015;
+            stim.stimLMS.minTestLevel = .005;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LMS';
-            stim.stimLMS.dir=[0.3233 -.9463 0]; %
+            stim.stimLMS.dir=[0.5 -1 0]; %
             stim.stimLMS.maxCont= .045;
-            stim.stimLMS.maxTestLevel = .05;
-            stim.stimLMS.minTestLevel = .005;
+            stim.stimLMS.maxTestLevel = .07;
+            stim.stimLMS.minTestLevel = .02;
         end;
         thisExp='LM';
         
@@ -174,8 +174,8 @@ switch dpy.ExptID
         if dpy.NumSpec==4
             stim.stimLMS.dir=[0.5 -1 0 0]; %
             stim.stimLMS.maxCont= .005;
-            stim.stimLMS.maxTestLevel = .005;
-            stim.stimLMS.minTestLevel = .0001;
+            stim.stimLMS.maxTestLevel = .007;
+            stim.stimLMS.minTestLevel = .00005;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LLpS';
             stim.stimLMS.dir=[0.5 -1 0]; %
@@ -189,8 +189,8 @@ switch dpy.ExptID
         if dpy.NumSpec==4
             stim.stimLMS.dir=[0 0.5 -1 0]; %
             stim.stimLMS.maxCont= .005;
-            stim.stimLMS.maxTestLevel = .005;
-            stim.stimLMS.minTestLevel = .0001;
+            stim.stimLMS.maxTestLevel = .007;
+            stim.stimLMS.minTestLevel = .00005;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LpMS';
             stim.stimLMS.dir=[0.5 -1 0]; %
