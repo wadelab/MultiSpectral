@@ -28,8 +28,8 @@ nLEDsTotal=length(LEDamps);
 
 % Initialize the display system
 % Load LEDspectra calib contains 1 column with wavelengths, then the LED calibs
-load('LEDspectra_070515.mat'); %load in calib for the prizmatix
-LEDcalib=LEDspectra; %if update the file loaded, the name only has to be updated here for use in rest of code
+load('LEDspectra_301115.mat'); %load in calib for the prizmatix
+LEDcalib=LEDspectraScaled; %if update the file loaded, the name only has to be updated here for use in rest of code
 LEDcalib(LEDcalib<0)=0; %set any negative values to 0
 clear LEDspectra %we'll use this variable name later so clear it here
 
@@ -159,8 +159,8 @@ switch dpy.ExptID
         if dpy.NumSpec==4
             stim.stimLMS.dir=[0.5 0 -1 0]; %
             stim.stimLMS.maxCont= .005;
-            stim.stimLMS.maxTestLevel = .015;
-            stim.stimLMS.minTestLevel = .005;
+            stim.stimLMS.maxTestLevel = .01;
+            stim.stimLMS.minTestLevel = .0005;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LMS';
             stim.stimLMS.dir=[0.5 -1 0]; %
@@ -268,8 +268,9 @@ switch dpy.ExptID
 end
 
 % Create the series of trials to present in the method of constant stimuli
-intervalSize=(stim.stimLMS.maxTestLevel-stim.stimLMS.minTestLevel)/(dpy.NumStimLevels-1); %determine the interval size using min, max and num stim levels
-dpy.stimLevels=(stim.stimLMS.minTestLevel:intervalSize:stim.stimLMS.maxTestLevel)'; %create the stimulus levels
+% We are going to do this on a log scale so we don't have too many levels
+% at the high 'easy-to-see' end
+dpy.stimLevels=log10(logspace(stim.stimLMS.minTestLevel,stim.stimLMS.maxTestLevel,dpy.NumStimLevels)'; %create the stimulus levels
 dpy.allStimTrialLevels=Shuffle(repmat(dpy.stimLevels,dpy.NumTrialsPerLevel,1)); %produce list of all the contrast levels (i.e. all trials) and shuffle them
 
 % Run the trials.
