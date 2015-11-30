@@ -55,7 +55,7 @@ dpy.baselevelsLEDS=baselevelsLEDS;
 dpy.bitDepth=BITDEPTH;
 dpy.backLED.dir=baselevelsLEDS;
 
-dpy.backLED.scale=.3; % LEDs on at 50%
+dpy.backLED.scale=.3; % LEDs on at 30%
 
 %CHECK THIS *******************************
 dpy.LEDbaseLevel=round(dpy.backLED.dir*dpy.backLED.scale*(2.^dpy.bitDepth-1)); % Set just the LEDs we're using to be on a 50%

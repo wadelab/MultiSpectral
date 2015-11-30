@@ -42,8 +42,9 @@ for thisInterval= 1:2
     
     
     if (isobject(serialObject))
-
+            if (~dummyFlag)
             sound(sin(linspace(1,650*2*pi,1000))/4,8000);
+            end
             % We are going to send data out byte by byte to avoid any
             % issues with endianness
             for thisLed=1:dpy.nLEDsToUse

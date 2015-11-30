@@ -36,7 +36,7 @@ Dummydpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LEDs to use
 Dummydpy.LEDsToUse=LEDsToUse;
 Dummydpy.backLED.dir=baselevelsLEDS;
 
-Dummydpy.backLED.scale=.5;
+Dummydpy.backLED.scale=.3;
 Dummydpy.LEDbaseLevel=round(Dummydpy.backLED.dir*Dummydpy.backLED.scale*(2.^Dummydpy.bitDepth-1)); % Set just the LEDs we're using to be on a 50%
 Dummydpy.nLEDsTotal=nLEDsTotal;
 Dummydpy.nLEDsToUse=length(Dummydpy.LEDsToUse);
@@ -53,9 +53,9 @@ q.normalizePdf=1; % This adds a few ms per call to QuestUpdate, but otherwise th
 
 
 Speak('Preparing experiment','Daniel');
-Dummydpy.NumSpec=3;
-Dummydpy.ConeTypes='LLpS';
-dummyStim.stimLMS.dir=[1 1 1];
-dummyStim.stimLMS.scale=.1;
+Dummydpy.NumSpec=4;
+%Dummydpy.ConeTypes='LMS';
+dummyStim.stimLMS.dir=[1 1 1 1];
+dummyStim.stimLMS.scale=.05;
 [dummyResponse,Dummydpy]=tetra_led_doLEDTrial_5LEDs(Dummydpy,dummyStim,q,s,1); % This should return 0 for an incorrect answer and 1 for correct
 end
