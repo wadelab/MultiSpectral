@@ -1,4 +1,4 @@
-function Data=MCS_Run_TetraExp_DUE_5LEDs(dpy,s)
+function Data=DEMO_MCS_Run_TetraExp_DUE_5LEDs(dpy,s)
 % Data = MCS_Run_TetraExp_DUE_5LEDs(dpy,s)
 %
 % Runs the experiment using details from dpy. s is the serial connection.
@@ -160,7 +160,7 @@ switch dpy.ExptID
             stim.stimLMS.dir=[0.5 0 -1 0]; %
             stim.stimLMS.maxCont= .005;
             stim.stimLMS.maxTestLevel = .015;
-            stim.stimLMS.minTestLevel = .001;
+            stim.stimLMS.minTestLevel = .005;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LMS';
             stim.stimLMS.dir=[0.5 -1 0]; %
@@ -175,7 +175,7 @@ switch dpy.ExptID
             stim.stimLMS.dir=[0.5 -1 0 0]; %
             stim.stimLMS.maxCont= .005;
             stim.stimLMS.maxTestLevel = .007;
-            stim.stimLMS.minTestLevel = .00005;
+            stim.stimLMS.minTestLevel = .004;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LLpS';
             stim.stimLMS.dir=[0.5 -1 0]; %
@@ -190,7 +190,7 @@ switch dpy.ExptID
             stim.stimLMS.dir=[0 0.5 -1 0]; %
             stim.stimLMS.maxCont= .005;
             stim.stimLMS.maxTestLevel = .007;
-            stim.stimLMS.minTestLevel = .00005;
+            stim.stimLMS.minTestLevel = .004;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LpMS';
             stim.stimLMS.dir=[0.5 -1 0]; %
