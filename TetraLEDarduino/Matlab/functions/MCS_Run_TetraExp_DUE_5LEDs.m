@@ -140,8 +140,8 @@ switch dpy.ExptID
         if dpy.NumSpec==4
             stim.stimLMS.dir=[0 0 1 0]; % M cone isolating
             stim.stimLMS.maxCont= .008;
-            stim.stimLMS.maxTestLevel = .008;
-            stim.stimLMS.minTestLevel = .0005;
+            stim.stimLMS.maxTestLevel = .01;
+            stim.stimLMS.minTestLevel = .001;
         elseif dpy.NumSpec==3
             if isfield(dpy,'ConeTypes')==1
                 disp('cone types specified') %leave it set as is
