@@ -231,7 +231,7 @@ switch dpy.ExptID
         error ('Incorrect experiment type');
 end
 
-tGuessSd=2; % This is roughly the same for all values.
+tGuessSd=3; % This is roughly the same for all values.
 
 % Print out what we are starting with:
 fprintf('\nExpt %s - tGuess is %.2f, SD is %.2f\n',thisExp,tGuess,tGuessSd); % Those weird \n things mean 'new line'
