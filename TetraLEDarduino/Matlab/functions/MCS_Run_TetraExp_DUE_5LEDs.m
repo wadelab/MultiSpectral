@@ -159,7 +159,7 @@ switch dpy.ExptID
         if dpy.NumSpec==4
             stim.stimLMS.dir=[0.5 0 -1 0]; %
             stim.stimLMS.maxCont= .005;
-            stim.stimLMS.maxTestLevel = .015;
+            stim.stimLMS.maxTestLevel = .025;
             stim.stimLMS.minTestLevel = .001;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LMS';
