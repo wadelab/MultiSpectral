@@ -30,7 +30,7 @@ s=ConnectToArduino;
 dpy.NumSpec=4; %this is the number of assumed cones used to create stim (e.g. LMS, or L Lp S, etc)
 dpy.LprimePosition=0.5; %set this if running and experiments with Lprime, 0.5 puts the peak of Lp between L and M
 theExptID={'LM'}; %set the experiment IDs you want to test, e.g.: LM, LLP, LPM
-theFreq=[16]; %the frequencies to test for each experiment ID
+theFreq=[4]; %the frequencies to test for each experiment ID
 
 %Set details for the method of constant stimuli here, i.e. num levels, num
 %trials at each level.  Details of max and min levels will be set within the 
@@ -87,16 +87,23 @@ for thisCond = 1:TotalNumConds
     % Now send experiment details out and start experiment trials.
     Data=MCS_Run_TetraExp_DUE_5LEDs(dpy,s);
     
-    
+    close all
     % Compute the ssq error between the actual LMS vals that we end up with and
     % the requested vals.
     LEDstimQuant=(round(Data.dpy.targetLEDdir*(2^Data.dpy.bitDepth)))/2^(Data.dpy.bitDepth);
     LMSQuant=Data.dpy.led2llms*LEDstimQuant(:);
     LMSQuant=LMSQuant/norm(LMSQuant);
+    disp('LMSQuant:');
+    disp(LMSQuant);
     
     
-    normStimLMSDir=(Data.dpy.targetStimLMSdir(:)/norm(Data.dpy.targetStimLMSdir(:)))
-    errorL1=LMSQuant-normStimLMSDir
+    normStimLMSDir=(Data.dpy.targetStimLMSdir(:)/norm(Data.dpy.targetStimLMSdir(:)));
+    disp('norm Stim LMS dir:');
+    disp(normStimLMSDir);
+    
+    errorL1=LMSQuant-normStimLMSDir;
+    disp('Error L1:');
+    disp(errorL1);
     ssqErrorLMS=norm(errorL1(:)).^2;
     fprintf('\nSSQ error = %.4f pc\n',ssqErrorLMS);
     
@@ -107,26 +114,26 @@ for thisCond = 1:TotalNumConds
     %save out a file containing the contrastThresh, SubID, experimentType, freq and
     %Session num
     
-    %go to wherever you want to save it
-    cd('/Users/wade/Documents/Github_MultiSpectral/TetraLEDarduino/Pilot_Data')
-    
-%     save(sprintf('SubID%s_Expt%s_Spec%d_Freq%d_Rep%d_%s.mat',...
-%         dpy.SubID,dpy.ExptID,dpy.NumSpec,dpy.Freq,dpy.Repeat,Data.Date),'Data');
-%     %save the figure
-%     savefig(sprintf('SubID%s_Expt%s_Spec%d_Freq%d_Rep%d_%s.fig',...
-%         dpy.SubID,dpy.ExptID,dpy.NumSpec,dpy.Freq,dpy.Repeat,Data.Date));
-    fprintf('\nSubject %s data saved\n',dpy.SubID);
-    fprintf('\n******** End of Condition ********\n');
-    CondName=sprintf('%s',dpy.ExptID);
-    FreqName=sprintf('Freq%d',dpy.Freq);
-    TempData.Thresh.(CondName).(FreqName)=Data.contrastThresh;    
-    TempData.fitExit.(CondName).(FreqName)=Data.fitExit;    
-
-    AllData.OrderOfConditions{thisCond}=fullCondName; %save out order the conditions were presented in
-    AllData.(CondName).(FreqName)=Data; %save all the Data associated with the condition
+%     %go to wherever you want to save it
+%     cd('/Users/wade/Documents/Github_MultiSpectral/TetraLEDarduino/Pilot_Data')
+%     
+% %     save(sprintf('SubID%s_Expt%s_Spec%d_Freq%d_Rep%d_%s.mat',...
+% %         dpy.SubID,dpy.ExptID,dpy.NumSpec,dpy.Freq,dpy.Repeat,Data.Date),'Data');
+% %     %save the figure
+% %     savefig(sprintf('SubID%s_Expt%s_Spec%d_Freq%d_Rep%d_%s.fig',...
+% %         dpy.SubID,dpy.ExptID,dpy.NumSpec,dpy.Freq,dpy.Repeat,Data.Date));
+%     fprintf('\nSubject %s data saved\n',dpy.SubID);
+%     fprintf('\n******** End of Condition ********\n');
+%     CondName=sprintf('%s',dpy.ExptID);
+%     FreqName=sprintf('Freq%d',dpy.Freq);
+%     TempData.Thresh.(CondName).(FreqName)=Data.contrastThresh;    
+%     TempData.fitExit.(CondName).(FreqName)=Data.fitExit;    
+% 
+%     AllData.OrderOfConditions{thisCond}=fullCondName; %save out order the conditions were presented in
+%     AllData.(CondName).(FreqName)=Data; %save all the Data associated with the condition
     
     %clear the Data and Figure before creating stimuli for next condition
-    %1clear Data; close all
+    %clear Data; close all
 end
 %Speak('All conditions complete','Daniel');
 finalDate=datestr(now,30);
@@ -135,17 +142,17 @@ finalDate=datestr(now,30);
 %turn off LEDs and close connection to ardunio
 CloseArduino(s);%close connection to arduino
 
-%output the thresholds calculated for each condition (just based on trials
-%in this session)
-for thisCond=1:length(theExptID)
-    theCondName=theExptID{thisCond};
-    for thisFreq=1:length(theFreq)
-        theFreqName=sprintf('Freq%d',theFreq(thisFreq));
-        fprintf('\nContrast Threshold for Cond %s  %s : %.2f%%      Fit %s\n',...
-        theCondName,theFreqName,TempData.Thresh.(theCondName).(theFreqName),TempData.fitExit.(CondName).(FreqName));
-    end
-end
-
-%output total time for experiment
-timeElapsed=toc/60;
-fprintf('Experiment complete in %.3f minutes\n',timeElapsed);
+% %output the thresholds calculated for each condition (just based on trials
+% %in this session)
+% for thisCond=1:length(theExptID)
+%     theCondName=theExptID{thisCond};
+%     for thisFreq=1:length(theFreq)
+%         theFreqName=sprintf('Freq%d',theFreq(thisFreq));
+%         fprintf('\nContrast Threshold for Cond %s  %s : %.2f%%      Fit %s\n',...
+%         theCondName,theFreqName,TempData.Thresh.(theCondName).(theFreqName),TempData.fitExit.(CondName).(FreqName));
+%     end
+% end
+% 
+% %output total time for experiment
+% timeElapsed=toc/60;
+% fprintf('Experiment complete in %.3f minutes\n',timeElapsed);

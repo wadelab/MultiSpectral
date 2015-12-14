@@ -360,8 +360,8 @@ for thisLevel = 1:length(dpy.stimLevels)
     Data.PercentCorrect=cat(2,plotResponseData(:,1),percentCorrect);
 end
 
-scatter(Data.PercentCorrect(:,1),Data.PercentCorrect(:,2))
-set(gca,'YLim',[0,100])
+scatter(Data.PercentCorrect(:,1),Data.PercentCorrect(:,2));
+set(gca,'YLim',[0,100]);
 try
     title(sprintf('LMpeak %d at %.1f Hz Trial %d',dpy.LMpeak,dpy.Freq,dpy.Repeat))
 catch
@@ -391,8 +391,8 @@ if Data.Fit.exitFlag == 1
 elseif Data.Fit.exitFlag == 0
     Data.fitExit='not successful';
 end
-fprintf('Final threshold estimate is %.2f%%     Fit %s',Data.contrastThresh,Data.fitExit); %first val is threshold
-Speak('Condition complete','Daniel')
+fprintf('Final threshold estimate is %.2f%%     Fit %s\n\n',Data.contrastThresh,Data.fitExit); %first val is threshold
+Speak('Condition complete','Daniel');
 Data.Date=datestr(now,30); %current date with time
 
 Data.dpy=dpy;
