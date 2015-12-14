@@ -105,11 +105,11 @@ for thisCond = 1:TotalNumConds
     %go to wherever you want to save it
     cd('/Users/wade/Documents/Github_MultiSpectral/TetraLEDarduino/Pilot_Data')
     
-    save(sprintf('SubID%s_Expt%s_Freq%d_Rep%d_%s.mat',...
-        dpy.SubID,dpy.ExptID,dpy.Freq,dpy.Repeat,Data.Date),'Data');
+    save(sprintf('SubID%s_Expt%s_Spec%d_Freq%d_Rep%d_%s.mat',...
+        dpy.SubID,dpy.ExptID,dpy.NumSpec,dpy.Freq,dpy.Repeat,Data.Date),'Data');
     %save the figure
-    savefig(sprintf('SubID%s_Expt%s_Freq%d_Rep%d_%s.fig',...
-        dpy.SubID,dpy.ExptID,dpy.Freq,dpy.Repeat,Data.Date));
+    savefig(sprintf('SubID%s_Expt%s_Spec%d_Freq%d_Rep%d_%s.fig',...
+        dpy.SubID,dpy.ExptID,dpy.NumSpec,dpy.Freq,dpy.Repeat,Data.Date));
     fprintf('\nSubject %s data saved\n',dpy.SubID);
     fprintf('\n******** End of Condition ********\n');
     CondName=sprintf('%s',dpy.ExptID);
