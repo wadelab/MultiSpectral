@@ -24,7 +24,7 @@ addpath(genpath('/Users/wade/Documents/GitHub_Multispectral/TetraLEDardui4no'))
 %connect to arduino
 s=ConnectToArduino;
 %Run a dummy trial to prepare the stimulus
-dummyTrial(s);
+%dummyTrial(s);
 
 %set some of the experiment parameters
 dpy.NumSpec=4; %this is the number of assumed cones used to create stim (e.g. LMS, or L Lp S, etc)
@@ -36,29 +36,17 @@ theFreq=[16]; %the frequencies to test for each experiment ID
 %trials at each level.  Details of max and min levels will be set within the 
 %Run function.  Need to make sure the values don't exceed the max available.
 %These values will vary depending on the experiment ID
-dpy.NumStimLevels = 5; %the number of levels for the method of constant stim
-dpy.NumTrialsPerLevel = 10; %the number of trials for each level
+% dpy.NumStimLevels = 5; %the number of levels for the method of constant stim
+% dpy.NumTrialsPerLevel = 10; %the number of trials for each level
 
-% Ask the user to enter a Subject ID number
-SubID=-1; 
-while(SubID<1)
-    SubID=input ('Enter Subject ID, e.g. 001: ','s'); %prompts to enter a subject ID
-    if(isempty(SubID))
-        SubID=-1;
-    end
-end
-dpy.SubID=SubID;
+%%%% FLAG FOR TESTING MODE
+dpy.testingMode = 1;
+dpy.TestingStimLevel = 0.015; % the contrast level you want to test (on 0 to 1 scale)
+dpy.NumTrialsPerLevel = 1; % how many test trials do you want to do
 
-% Ask the user to enter a session number
-Repeat=-1; 
-while(Repeat<1)
-    RepeatString=input ('Enter the session number for this condition: ','s'); 
-    Repeat=str2double(RepeatString);
-    if(isempty(Repeat))
-        Repeat=-1;
-    end
-end
-dpy.Repeat=Repeat;
+dpy.SubID='999';%SubID;
+
+dpy.Repeat='1'; %Repeat;
 tic; %start timer so can output total run time at the end of the experiment
 
 %Create a list of conditions that is properly randomised - a matrix of
@@ -99,17 +87,34 @@ for thisCond = 1:TotalNumConds
     % Now send experiment details out and start experiment trials.
     Data=MCS_Run_TetraExp_DUE_5LEDs(dpy,s);
     
+    
+    % Compute the ssq error between the actual LMS vals that we end up with and
+    % the requested vals.
+    LEDstimQuant=(round(Data.dpy.targetLEDdir*(2^Data.dpy.bitDepth)))/2^(Data.dpy.bitDepth);
+    LMSQuant=Data.dpy.led2llms*LEDstimQuant(:);
+    LMSQuant=LMSQuant/norm(LMSQuant);
+    
+    
+    normStimLMSDir=(Data.dpy.targetStimLMSdir(:)/norm(Data.dpy.targetStimLMSdir(:)))
+    errorL1=LMSQuant-normStimLMSDir
+    ssqErrorLMS=norm(errorL1(:)).^2;
+    fprintf('\nSSQ error = %.4f pc\n',ssqErrorLMS);
+    
+    
+    
+    
+    
     %save out a file containing the contrastThresh, SubID, experimentType, freq and
     %Session num
     
     %go to wherever you want to save it
     cd('/Users/wade/Documents/Github_MultiSpectral/TetraLEDarduino/Pilot_Data')
     
-    save(sprintf('SubID%s_Expt%s_Spec%d_Freq%d_Rep%d_%s.mat',...
-        dpy.SubID,dpy.ExptID,dpy.NumSpec,dpy.Freq,dpy.Repeat,Data.Date),'Data');
-    %save the figure
-    savefig(sprintf('SubID%s_Expt%s_Spec%d_Freq%d_Rep%d_%s.fig',...
-        dpy.SubID,dpy.ExptID,dpy.NumSpec,dpy.Freq,dpy.Repeat,Data.Date));
+%     save(sprintf('SubID%s_Expt%s_Spec%d_Freq%d_Rep%d_%s.mat',...
+%         dpy.SubID,dpy.ExptID,dpy.NumSpec,dpy.Freq,dpy.Repeat,Data.Date),'Data');
+%     %save the figure
+%     savefig(sprintf('SubID%s_Expt%s_Spec%d_Freq%d_Rep%d_%s.fig',...
+%         dpy.SubID,dpy.ExptID,dpy.NumSpec,dpy.Freq,dpy.Repeat,Data.Date));
     fprintf('\nSubject %s data saved\n',dpy.SubID);
     fprintf('\n******** End of Condition ********\n');
     CondName=sprintf('%s',dpy.ExptID);
@@ -121,12 +126,12 @@ for thisCond = 1:TotalNumConds
     AllData.(CondName).(FreqName)=Data; %save all the Data associated with the condition
     
     %clear the Data and Figure before creating stimuli for next condition
-    clear Data; close all
+    %1clear Data; close all
 end
-Speak('All conditions complete','Daniel');
+%Speak('All conditions complete','Daniel');
 finalDate=datestr(now,30);
-save(sprintf('SubID%s_Palamedes_Opponency_Rep%d_%s.mat',...
-    dpy.SubID,dpy.Repeat,finalDate),'AllData');
+%save(sprintf('SubID%s_Palamedes_Opponency_Rep%d_%s.mat',...
+ %   dpy.SubID,dpy.Repeat,finalDate),'AllData');
 %turn off LEDs and close connection to ardunio
 CloseArduino(s);%close connection to arduino
 

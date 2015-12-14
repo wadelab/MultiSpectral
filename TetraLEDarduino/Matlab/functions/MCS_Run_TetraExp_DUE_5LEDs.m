@@ -21,7 +21,7 @@ function Data=MCS_Run_TetraExp_DUE_5LEDs(dpy,s)
 pause(2);
 fprintf('\n****** Experiment Running ******\n \n');
 BITDEPTH=12;
-LEDamps=uint16([0,0,0,0,0]);
+LEDamps=uint16([0,0,0,0]);
 nLEDsTotal=length(LEDamps);
 % This code presents two flicker intervals - randomising which interval
 % contains the target
@@ -39,12 +39,12 @@ dpy.WLrange=(400:1:720)'; %must use range from 400 to 720
 % background), and resample the LEDcalib spectra to the desired WL range
 [dummy, LEDspectra] = LED2white(LEDcalib,dpy); % outputs scaled baselevels and resampled LEDspectra based on WL
 %baselevelsLEDS=baselevels/2; %we want the baselevels at half their scaled levels
-baselevelsLEDS=[1,1,1,1,1];
+baselevelsLEDS=[1,1,1,1];
 LEDbaseLevel=uint16((baselevelsLEDS)*(2^BITDEPTH)); % convert for sending to arduino
 
 %specify the LEDs in use in this experiment (usually all 5) and keep the
 %necessary spectra for each
-LEDsToUse=find(LEDbaseLevel);
+LEDsToUse=[2,3,4,5]; %find(LEDbaseLevel);
 dpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LED spectra to keep
 dpy.LEDsToUse=LEDsToUse; % save to dpy
 dpy.nLEDsTotal=nLEDsTotal; % save number of LEDs
@@ -55,7 +55,7 @@ dpy.baselevelsLEDS=baselevelsLEDS;
 dpy.bitDepth=BITDEPTH;
 dpy.backLED.dir=baselevelsLEDS;
 
-dpy.backLED.scale=.15; % LEDs on at 50%
+dpy.backLED.scale=.5; % LEDs on at 50%
 
 %CHECK THIS *******************************
 dpy.LEDbaseLevel=round(dpy.backLED.dir*dpy.backLED.scale*(2.^dpy.bitDepth-1)); % Set just the LEDs we're using to be on a 50%
@@ -165,8 +165,8 @@ switch dpy.ExptID
             dpy.ConeTypes='LMS';
             stim.stimLMS.dir=[0.5 -1 0]; %
             stim.stimLMS.maxCont= .045;
-            stim.stimLMS.maxTestLevel = .07;
-            stim.stimLMS.minTestLevel = .02;
+            stim.stimLMS.maxTestLevel = .045;
+            stim.stimLMS.minTestLevel = .001;
         end;
         thisExp='LM';
         
@@ -270,9 +270,18 @@ end
 % Create the series of trials to present in the method of constant stimuli
 % We are going to do this on a log scale so we don't have too many levels
 % at the high 'easy-to-see' end
+
+%in case just in testing mode using pre-defined contrasts check for
+%indicator
+try
+    if dpy.testingMode == 1
+        dpy.stimLevels = dpy.TestingStimLevel;
+        dpy.allStimTrialLevels = repmat(dpy.stimLevels,dpy.NumTrialsPerLevel,1);
+    end
+catch %if doesn't exist, proceed as normal
 dpy.stimLevels=logspace(log10(stim.stimLMS.minTestLevel),log10(stim.stimLMS.maxTestLevel),dpy.NumStimLevels)'; %create the stimulus levels
 dpy.allStimTrialLevels=Shuffle(repmat(dpy.stimLevels,dpy.NumTrialsPerLevel,1)); %produce list of all the contrast levels (i.e. all trials) and shuffle them
-
+end
 % Run the trials.
 % On each trial we run one of the pre-defined stimulus contrast levels that have
 % been pre-shuffled in dpy.allStimTrialLevels

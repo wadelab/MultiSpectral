@@ -55,12 +55,3 @@ LEDStim=tetra_led_makeStimArduino(dpy,stimLMS); % This returns a structure with 
 % background scale.
 
 
-
-%%code can take negative values now, so no need to error 
-% if (sum(LEDStim.dir(:)<0))
-%    disp(LEDStim.dir);
-%    %warning('Found negative numbers in scaled stim! Contrast too high');
-%    % LEDStim.dir(LEDStim.dir<0)=0;
-% end
-
-

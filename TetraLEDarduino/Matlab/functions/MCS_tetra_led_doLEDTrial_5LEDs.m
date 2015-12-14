@@ -1,7 +1,7 @@
 function [response,dpy]=MCS_tetra_led_doLEDTrial_5LEDs(dpy,stim,serialObject,dummyFlag)
 % function response=led_doLEDTrial(dpy,stimLMS, q,serialObject)
 % Returns 0 or 1 for wrong/right
-%
+% LEW
 
 
 if (nargin < 5)
@@ -16,9 +16,7 @@ catch %if dummy run don't save it - dpy.theTrial only specified after dummy
 end
 
 for thisInterval= 1:2
-    %pause(.1);
-    %sound(sin(linspace(1,650*2*pi,1000))/4,8000); % Do a beep
-    %pause(.4); %pause after beep
+
     
     if (thisInterval == signalInterval) % Is this is the interval with the modulation
         try
@@ -28,12 +26,17 @@ for thisInterval= 1:2
         % Compute the LED levels we want
         stimOne=stim;
         stimOne.stimLMS.dir=stim.stimLMS.dir+(ones(dpy.NumSpec,1)'); %luminance plus target direction
-        [stim.LEDvals,dpy]=tetra_led_arduinoConeIsolationLMS(dpy,stimOne.stimLMS);
+        [stimTarget,dpy]=tetra_led_arduinoConeIsolationLMS(dpy,stimOne.stimLMS);
         
-        
-        
-        LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
+               
+        LEDoutputAmps=round(((stimTarget.dir)*(stimTarget.scale)*(2^(dpy.bitDepth)-1)))';
         LEDoutput=LEDoutputAmps/2;
+        %save out the amp values into dpy
+        dpy.targetLEDoutput(dpy.theTrial,:)=LEDoutput;
+        dpy.targetLEDdir(dpy.theTrial,:)=stimTarget.dir';
+        dpy.targetStimLMSdir(dpy.theTrial,:)=stimOne.stimLMS.dir;
+        dpy.led2llms=stimTarget.led2llms;
+        dpy.llms2led=stimTarget.llms2led;
         
     else
         stimTwo=stim;
