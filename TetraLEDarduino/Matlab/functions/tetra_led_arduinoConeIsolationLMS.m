@@ -34,13 +34,14 @@ end
 dpy.coneSpectra=coneSpectra(:,2:end); %remove the wavelengths column
 
 %replace NaNs with 0
-for thisColumn=1:size(dpy.coneSpectra,2);
-    for thisRow=1:size(dpy.coneSpectra,1);
-        if isnan(dpy.coneSpectra(thisRow,thisColumn));
-            dpy.coneSpectra(thisRow,thisColumn)=0;
-        end
-    end
-end
+dpy.coneSpectra(isnan(dpy.coneSpectra))=0;
+% for thisColumn=1:size(dpy.coneSpectra,2);
+%     for thisRow=1:size(dpy.coneSpectra,1);
+%         if isnan(dpy.coneSpectra(thisRow,thisColumn));
+%             dpy.coneSpectra(thisRow,thisColumn)=0;
+%         end
+%     end
+% end
             
 %% Make the Stimulus
 
