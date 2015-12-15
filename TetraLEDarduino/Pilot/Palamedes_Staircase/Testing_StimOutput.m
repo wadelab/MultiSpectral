@@ -29,7 +29,7 @@ s=ConnectToArduino;
 %set some of the experiment parameters
 dpy.NumSpec=4; %this is the number of assumed cones used to create stim (e.g. LMS, or L Lp S, etc)
 dpy.LprimePosition=0.5; %set this if running and experiments with Lprime, 0.5 puts the peak of Lp between L and M
-theExptID={'LM'}; %set the experiment IDs you want to test, e.g.: LM, LLP, LPM
+theExptID={'S'}; %set the experiment IDs you want to test, e.g.: LM, LLP, LPM
 theFreq=[4]; %the frequencies to test for each experiment ID
 
 %Set details for the method of constant stimuli here, i.e. num levels, num
@@ -41,7 +41,7 @@ theFreq=[4]; %the frequencies to test for each experiment ID
 
 %%%% FLAG FOR TESTING MODE
 dpy.testingMode = 1;
-dpy.TestingStimLevel = 0.001; % the contrast level you want to test (on 0 to 1 scale)
+dpy.TestingStimLevel = 0.1; % the contrast level you want to test (on 0 to 1 scale)
 dpy.NumTrialsPerLevel = 1; % how many test trials do you want to do
 
 dpy.SubID='999';%SubID;
