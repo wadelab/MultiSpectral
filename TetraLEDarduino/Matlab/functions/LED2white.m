@@ -33,9 +33,11 @@ LEDspectra(LEDspectra<0) = 0; %set any negative values to 0
 %specify the LEDs that are in use
 LEDspectra = LEDspectra(:,dpy.LEDsToUse);
 cones = dpy.coneSpectra(:,2:end); %don't want WL col
-% multiply white spectra by the LED spectra to get the LED values
-% necessary to produce white light
+
+%first find out what the cone vals are in response to the white spectra
 white2cone = cones'*white; %get cone values in response to the white spectra
+
+%produce a cones to led transform matrix
 lms2led = LEDspectra'*cones; %get lms2led transform
 
 %use the cone vals from white2cone and the lms2led transform to get the led

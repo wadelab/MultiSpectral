@@ -13,12 +13,21 @@ clear LEDspectra
 
 Dummydpy.WLrange=(400:1:720)'; %must use range from 400 to 720 
 
+LEDsToUse=[1,2,3,4,5]; 
+Dummydpy.LEDsToUse = LEDsToUse;
+
+Dummydpy.LprimePosition=0.5; %position of peak between the L and M cones, 0.5 is half way
+coneSpectra=creatingLprime(Dummydpy); %outputs the L L' M S spectra, with first column containing wavelengths
+
+Dummydpy.coneSpectra = coneSpectra;
+Dummydpy.coneSpectra(isnan(Dummydpy.coneSpectra))=0;
+
 % use white spectra to get baselevels for each LED (so white light as
 % background), and resample the LEDcalib spectra to the desired WL range
 
-[dummy, LEDspectra] = LED2white(LEDcalib,Dummydpy); % send the LED spectra and dpy with WL values
+[baselevelsLEDS, LEDspectra] = LED2white(LEDcalib,Dummydpy); % send the LED spectra and dpy with WL values
 %baselevelsLEDS=baselevels/2; %we want them at half their scaled levels
-baselevelsLEDS=[1,1,1,1,1];
+%baselevelsLEDS=[1,1,1,1,1];
 LEDbaseLevel=uint16((baselevelsLEDS)*(2^BITDEPTH)); % Adjust these to get a nice white background....THis is convenient and makes sure that everything is off by default
 fprintf('Baselevels:\n%d\n',baselevelsLEDS);
 fprintf('converted baselevels:\n%d\n',LEDbaseLevel);
