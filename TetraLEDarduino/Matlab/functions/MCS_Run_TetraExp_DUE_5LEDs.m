@@ -21,7 +21,7 @@ function Data=MCS_Run_TetraExp_DUE_5LEDs(dpy,s)
 pause(2);
 fprintf('\n****** Experiment Running ******\n \n');
 BITDEPTH=12;
-LEDamps=uint16([0,0,0,0]);
+LEDamps=uint16([0,0,0,0,0]);
 nLEDsTotal=length(LEDamps);
 % This code presents two flicker intervals - randomising which interval
 % contains the target
@@ -29,7 +29,7 @@ nLEDsTotal=length(LEDamps);
 % Initialize the display system
 % Load LEDspectra calib contains 1 column with wavelengths, then the LED calibs
 load('LEDspectra_151215.mat'); %load in calib for the prizmatix
-LEDcalib=LEDspectraScaled; %if update the file loaded, the name only has to be updated here for use in rest of code
+LEDcalib=LEDspectra; %if update the file loaded, the name only has to be updated here for use in rest of code
 LEDcalib(LEDcalib<0)=0; %set any negative values to 0
 clear LEDspectra %we'll use this variable name later so clear it here
 
@@ -39,12 +39,12 @@ dpy.WLrange=(400:1:720)'; %must use range from 400 to 720
 % background), and resample the LEDcalib spectra to the desired WL range
 [dummy, LEDspectra] = LED2white(LEDcalib,dpy); % outputs scaled baselevels and resampled LEDspectra based on WL
 %baselevelsLEDS=baselevels/2; %we want the baselevels at half their scaled levels
-baselevelsLEDS=[1,1,1,1];
+baselevelsLEDS=[1,1,1,1,1];
 LEDbaseLevel=uint16((baselevelsLEDS)*(2^BITDEPTH)); % convert for sending to arduino
 
 %specify the LEDs in use in this experiment (usually all 5) and keep the
 %necessary spectra for each
-LEDsToUse=[2,3,4,5]; %find(LEDbaseLevel);
+LEDsToUse=[1,2,3,4,5]; %find(LEDbaseLevel);
 dpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LED spectra to keep
 dpy.LEDsToUse=LEDsToUse; % save to dpy
 dpy.nLEDsTotal=nLEDsTotal; % save number of LEDs

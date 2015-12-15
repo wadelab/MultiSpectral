@@ -19,7 +19,7 @@
 
 clear all; close all;
 %Add the necessary folder to the path
-addpath(genpath('/Users/wade/Documents/GitHub_Multispectral/TetraLEDardui4no'))
+addpath(genpath('/Users/wade/Documents/GitHub_Multispectral/TetraLEDarduino'))
 
 %connect to arduino
 s=ConnectToArduino;
@@ -41,7 +41,7 @@ theFreq=[4]; %the frequencies to test for each experiment ID
 
 %%%% FLAG FOR TESTING MODE
 dpy.testingMode = 1;
-dpy.TestingStimLevel = 0.005; % the contrast level you want to test (on 0 to 1 scale)
+dpy.TestingStimLevel = 0.001; % the contrast level you want to test (on 0 to 1 scale)
 dpy.NumTrialsPerLevel = 1; % how many test trials do you want to do
 
 dpy.SubID='999';%SubID;
