@@ -25,7 +25,7 @@ for thisInterval= 1:2
         end
         % Compute the LED levels we want
         stimOne=stim;
-        stimOne.stimLMS.dir=stim.stimLMS.dir+(ones(dpy.NumSpec,1)'); %luminance plus target direction
+        stimOne.stimLMS.dir=stimOne.stimLMS.dir; % ex lum for now %%%% +(ones(dpy.NumSpec,1)'); %luminance plus target direction
         [stimTarget,dpy]=tetra_led_arduinoConeIsolationLMS(dpy,stimOne.stimLMS);
         
                
@@ -39,13 +39,15 @@ for thisInterval= 1:2
         dpy.llms2led=stimTarget.llms2led;
         
     else
-        stimTwo=stim;
-        stimTwo.stimLMS.dir=ones(dpy.NumSpec,1)'; %just luminance
-
-        [stim.LEDvals,dpy]=tetra_led_arduinoConeIsolationLMS(dpy,stimTwo.stimLMS);
-              
-        LEDoutputAmps=round(((stim.LEDvals.dir)*(stim.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
-        LEDoutput=LEDoutputAmps/2;
+%         stimTwo=stim;
+%         stimTwo.stimLMS.dir=repmat(0,dpy.NumSpec,1)'; %no dir
+%         stimTwo.stimLMS.scale=0;
+% 
+%         [stimTwo.LEDvals,dpy]=tetra_led_arduinoConeIsolationLMS(dpy,stimTwo.stimLMS);
+%               
+%         LEDoutputAmps=round(((stimTwo.LEDvals.dir)*(stimTwo.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
+%         LEDoutput=LEDoutputAmps/2;
+        LEDoutput=zeros(dpy.nLEDsTotal,1)';
     end
         
     
