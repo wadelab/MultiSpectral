@@ -28,7 +28,7 @@ nLEDsTotal=length(LEDamps);
 
 % Initialize the display system
 % Load LEDspectra calib contains 1 column with wavelengths, then the LED calibs
-load('LEDspectra_301115.mat'); %load in calib for the prizmatix
+load('LEDspectra_151215.mat'); %load in calib for the prizmatix
 LEDcalib=LEDspectraScaled; %if update the file loaded, the name only has to be updated here for use in rest of code
 LEDcalib(LEDcalib<0)=0; %set any negative values to 0
 clear LEDspectra %we'll use this variable name later so clear it here
