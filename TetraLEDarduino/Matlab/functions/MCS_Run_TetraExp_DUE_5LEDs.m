@@ -119,8 +119,8 @@ switch dpy.ExptID
         if dpy.NumSpec==4
             stim.stimLMS.dir=[1 0 0 0]; % L cone isolating
             stim.stimLMS.maxCont = .008;
-            stim.stimLMS.maxTestLevel = .01;
-            stim.stimLMS.minTestLevel = .0005;
+            stim.stimLMS.maxTestLevel = .006;
+            stim.stimLMS.minTestLevel = .0001;
         elseif dpy.NumSpec==3
             if isfield(dpy,'ConeTypes')==1
                 dpy.ConeTypes=dpy.ConeTypes;
@@ -139,11 +139,11 @@ switch dpy.ExptID
             stim.stimLMS.dir=[0 1 0 0]; % L' cone isolating
             if dpy.LprimePosition<0.25 || 0.75<dpy.LprimePosition
                 stim.stimLMS.maxCont= .0007;
-                stim.stimLMS.maxTestLevel = .01;
-                stim.stimLMS.minTestLevel = .0005;
+                stim.stimLMS.maxTestLevel = .0007;
+                stim.stimLMS.minTestLevel = .0001;
             else
                 stim.stimLMS.maxCont= .005;
-                stim.stimLMS.maxTestLevel = .005;
+                stim.stimLMS.maxTestLevel = .002;
                 stim.stimLMS.minTestLevel = .0001;
             end
         elseif dpy.NumSpec==3
@@ -165,8 +165,8 @@ switch dpy.ExptID
         if dpy.NumSpec==4
             stim.stimLMS.dir=[0 0 1 0]; % M cone isolating
             stim.stimLMS.maxCont= .008;
-            stim.stimLMS.maxTestLevel = .01;
-            stim.stimLMS.minTestLevel = .0005;
+            stim.stimLMS.maxTestLevel = .005;
+            stim.stimLMS.minTestLevel = .0001;
         elseif dpy.NumSpec==3
             if isfield(dpy,'ConeTypes')==1
                 disp('cone types specified') %leave it set as is
@@ -256,8 +256,8 @@ switch dpy.ExptID
         if dpy.NumSpec==4
             stim.stimLMS.dir=[0 0 0 1]; % S cone isolating
             stim.stimLMS.maxCont= .25;
-            stim.stimLMS.maxTestLevel = .08;
-            stim.stimLMS.minTestLevel = .005;
+            stim.stimLMS.maxTestLevel = .5;
+            stim.stimLMS.minTestLevel = .01;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LMS';
             stim.stimLMS.dir=[0 0 1]; % S cone isolating
@@ -342,7 +342,7 @@ for thisTrial = 1:length(dpy.allStimTrialLevels)
         % Check if the response was given, and whether 'q' was pressed to quit
         % experiment
         if (response ~=-1)
-            fprintf('Trial %3d at %5.2f is %s\n',thisTrial,tTest,char(wrongRight(response+1)));
+            fprintf('Trial %3d at %.4f is %s\n',thisTrial,tTest,char(wrongRight(response+1)));
             timeZero=timeZero+GetSecs-timeSplit;
             k=k+1;
         else
