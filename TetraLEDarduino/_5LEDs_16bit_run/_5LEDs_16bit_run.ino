@@ -8,7 +8,7 @@ TODO : Add noise (possibly) to increase thresholds and mask stim onset. Or allow
  
  
 // this constant won't change:
-const int ledPins[] = {9,10,11,12};       // the pin that the LED is attached to
+const int ledPins[] = {8,9,10,11,12};       // the pin that the LED is attached to
 
 // Variables will change:
 unsigned long startTime;
