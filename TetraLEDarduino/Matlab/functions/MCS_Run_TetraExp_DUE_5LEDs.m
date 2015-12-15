@@ -30,6 +30,16 @@ LEDcalib=LEDspectra; %if update the file loaded, the name only has to be updated
 LEDcalib(LEDcalib<0)=0; %set any negative values to 0
 clear LEDspectra %we'll use this variable name later so clear it here
 
+%normalise the spectra scale so 0 to 1
+maxVal=max(max(LEDcalib(:,2:end)));
+normLEDcalib(:,1)=LEDcalib(:,1);
+for thisLED = 1:size(LEDcalib,2)-1
+    normLEDcalib(:,1+thisLED)=LEDcalib(:,1+thisLED)./maxVal;
+end
+
+LEDcalib=normLEDcalib;   
+
+
 dpy.WLrange=(400:1:720)'; %must use range from 400 to 720
 BITDEPTH=12;
 
@@ -38,15 +48,27 @@ baselevelsLEDS=[1,1,1,1,1];
 LEDamps=uint16([0,0,0,0,0]);
 LEDsToUse=[1,2,3,4,5]; % the LEDs you want to use, where 1 is the 410nm LED, and 5 is 630nm LED
 %**************************************************************************
-
+dpy.LEDsToUse = LEDsToUse;
 nLEDsTotal=length(LEDamps);
+
+if dpy.NumSpec==4 %if tetra stim
+    LprimePos=dpy.LprimePosition; %position of peak between the L and M cones, 0.5 is half way
+    coneSpectra=creatingLprime(dpy); %outputs the L L' M S spectra, with first column containing wavelengths
+    fprintf('LprimePos is %.2f\n',LprimePos);
+elseif dpy.NumSpec==3; %if LMS stim
+    coneSpectra=creatingLMSspectra(dpy);
+elseif dpy.NumSpec==2;
+    [coneSpectra,dpy]=creating2coneSpectra(dpy); %where 'LMpeak' is lambdaMax of the cone in longwavelength region
+end
+dpy.coneSpectra = coneSpectra;
+dpy.coneSpectra(isnan(dpy.coneSpectra))=0;
 
 % use white spectra to get baselevels for each LED (so white light as
 % background), and resample the LEDcalib spectra to the desired WL range
-[dummy, LEDspectra] = LED2white(LEDcalib,dpy); % outputs scaled baselevels and resampled LEDspectra based on WL
+[baselevelsLEDS, LEDspectra] = LED2white(LEDcalib,dpy); % outputs scaled baselevels and resampled LEDspectra based on WL
 %baselevelsLEDS=baselevels/2; %we want the baselevels at half their scaled levels
 %LEDbaseLevel=uint16((baselevelsLEDS)*(2^BITDEPTH)); % convert for sending to arduino
-
+baselevelsLEDS = baselevelsLEDS(:,LEDsToUse);
 % keep the necessary spectra for each LED in use (as specified above)
 dpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LED spectra to keep
 dpy.LEDsToUse=LEDsToUse; % save to dpy

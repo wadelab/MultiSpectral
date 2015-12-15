@@ -22,19 +22,26 @@ function [relativeLEDlevels, LEDspectra] = LED2white(LEDcalib,dpy)
 WL = dpy.WLrange;
 
 % resample the white spectra to match desired wavelength range
-[white,~] = resampleWhite(WL);
-
+[white,~] = resampleWhite(WL);% uses philly white paper
+%[white,~] = resampleCIEillumC(WL); %uses illum C
 % resample the LED spectra using wavelength range
 for thisLED = 1:size(LEDcalib,2)-1 % column1 is wavelengths
     LEDspectra(:,thisLED) = interp1(LEDcalib(:,1),LEDcalib(:,1+thisLED),WL);
 end
 LEDspectra(LEDspectra<0) = 0; %set any negative values to 0
 
+%specify the LEDs that are in use
+LEDspectra = LEDspectra(:,dpy.LEDsToUse);
+cones = dpy.coneSpectra(:,2:end); %don't want WL col
 % multiply white spectra by the LED spectra to get the LED values
 % necessary to produce white light
-LED2spec = white'*LEDspectra;
+white2cone = cones'*white; %get cone values in response to the white spectra
+lms2led = LEDspectra'*cones; %get lms2led transform
 
+%use the cone vals from white2cone and the lms2led transform to get the led
+%vals necessary for 'white' cone response
+whiteDir = lms2led * white2cone;
 % normalise the outputted LED values
-relativeLEDlevels = LED2spec./(max(LED2spec));
+relativeLEDlevels = (whiteDir./(max(whiteDir)))';
 
 end
