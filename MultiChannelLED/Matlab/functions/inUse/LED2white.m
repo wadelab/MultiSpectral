@@ -21,10 +21,26 @@ function [relativeLEDlevels, LEDspectra] = LED2white(LEDcalib,dpy)
 % Set the WL values
 WL = dpy.WLrange;
 
-% resample the white spectra to match desired wavelength range
-[white,~] = resampleWhite(WL);% uses philly white paper
-%[white,~] = resampleCIEillumC(WL); %uses illum C
-% resample the LED spectra using wavelength range
+%% resample the white spectra to match desired wavelength range
+% load in the spectral power distribution for white reflectance
+load('spd_phillybright.mat');
+% calculate original wavelength range using the contents of 'spd_phillybright'.
+% 'S_CIEC' contains starting wavelength, step size, and total number of
+% steps (including starting wavelength) e.g. [380,5,81]
+originalWL = S_phillybright(1):S_phillybright(2):(S_phillybright(1)+(S_phillybright(2)*(S_phillybright(3)-1)));
+
+% check that the desired wavelength is within the limits of the min and max
+% wavelength values possible from spectra. If so, interpolated into desired
+% WL range
+if min(originalWL)<min(WL) && max(WL)<max(originalWL)
+    white = interp1(originalWL,spd_phillybright, WL);
+    %disp('WL values entered are within possible range')
+else
+    theError=sprintf('Wavelength range entered falls outside max range (%d to %d)',min(originalWL),max(originalWL));
+    error((theError));
+end
+   
+%% resample the LED spectra using wavelength range
 for thisLED = 1:size(LEDcalib,2)-1 % column1 is wavelengths
     LEDspectra(:,thisLED) = interp1(LEDcalib(:,1),LEDcalib(:,1+thisLED),WL);
 end

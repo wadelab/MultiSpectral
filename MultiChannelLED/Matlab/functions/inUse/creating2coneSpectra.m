@@ -1,5 +1,8 @@
 function [Spectra,dpy]=creating2coneSpectra(dpy)
 % Spectra=creating2coneSpectra(WLrange,LMpeak)
+% 
+% creates spectra for two cones, the S cone and one cone in the middle/long
+% region, called 'LM'
 %
 % WLrange = the range of wavelengths to output e.g. 400:1:720
 % LMpeak  = lambdaMax of cone in the long-medium wavelength region
@@ -9,7 +12,9 @@ function [Spectra,dpy]=creating2coneSpectra(dpy)
 % The spectra for the 'LM' cone will be created by shifting the Lcone or
 % Mcone CF, depending on whether LM peak is nearest to L or M peak
 %
-% written by LW 190815
+% written by LW 190815 N.B. this code needs a bit of work to be properly
+% useable, it was created to allow possibility of creating a dichromatic
+% stimulus, but no current plans for use so hasn't been optimised!
 
 %desired WL range
 WL1nm=dpy.WLrange; 

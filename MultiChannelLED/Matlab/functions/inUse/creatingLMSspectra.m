@@ -47,31 +47,16 @@ switch dpy.ConeTypes
         %we want normal L and S spectra, and the Lprime
         %calculate the full 4cone spectra and extract the Lp value from 
         %L Lp M S range
-        if isfield(dpy,'LprimePosition')==1
-            tempSpectra=creatingLprime(dpy);            
-            Lprime=tempSpectra(:,3); %column 3 because 1 is WL and 2 is L
-            Spectra=cat(2,WLrange,LconeResample,Lprime,SconeResample);
-        elseif isfield(dpy,'Mpeak')==1
-            dpy.LMpeak=dpy.Mpeak;
-            [tempSpectra,~]=creating2coneSpectra(dpy);
-            Lprime=tempSpectra(:,2); %in second column after wl vals
-            Spectra=cat(2,WLrange,LconeResample,Lprime,SconeResample);            
-        end
-            
+        tempSpectra=creatingLprime(dpy); %create the Lprime curve            
+        Lprime=tempSpectra(:,3); %column 3 because 1 is WL and 2 is L
+        Spectra=cat(2,WLrange,LconeResample,Lprime,SconeResample);            
     case {'LpMS'}
         %we want normal M and S spectra, and the Lprime
         %calculate the full 4cone spectra and extract the Lp value from 
         %L Lp M S range
-        if isfield(dpy,'LprimePosition')==1
-            tempSpectra=creatingLprime(dpy);            
-            Lprime=tempSpectra(:,3); %column 3 because 1 is WL and 2 is L
-            Spectra=cat(2,WLrange,Lprime,MconeResample,SconeResample);
-        elseif isfield(dpy,'Lpeak')==1
-            dpy.LMpeak=dpy.Lpeak;
-            [tempSpectra,~]=creating2coneSpectra(dpy);
-            Lprime=tempSpectra(:,2); %in second column after wl vals
-            Spectra=cat(2,WLrange,Lprime,MconeResample,SconeResample);            
-        end
+        tempSpectra=creatingLprime(dpy);            
+        Lprime=tempSpectra(:,3); %column 3 because 1 is WL and 2 is L
+        Spectra=cat(2,WLrange,Lprime,MconeResample,SconeResample);
 end
 
 end
