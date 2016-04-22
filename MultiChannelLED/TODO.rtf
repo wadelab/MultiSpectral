@@ -10,4 +10,9 @@
 \
 2: We do send a noise scaling parameter to the Arduino but we call it something funny like LEDScaleFactor. Clean this up: In the arduino code generate noise from -1 to 1, then make the scaling variable something explicit like LEDNoiseScale\
 \
-3: }
+3: Done: When we call tetra_findMaxSensorScale we pass in stimLMS. Fine. The point of this function is to return the dir and scale of the LED outputs. It also (on the fly) tells you what the max scale can be given your LED gamut. This is computed in LED space, then converted to LMS space so that you are able to compare it easily with the thing you asked for in the first place. For some reason we(?) had a) disabled this and b) pass back the original LMS scale in a copy. We no longer do this now - we just send back the max LMS contrast that you can have in the requested direction.\
+\
+4: Do a quick check to make sure we really do know what scale means (contrast) in the case of L-M etc. For cone isolation, it really is contrast. For L-M etc it >should< reflect RMS contrast because that is what we report in papers.\
+\
+5: At least for 3 sensors (LMS) max cone scale is okay and doesn\'92t break anything. We\'92d like to save this number out all the time - so we can see whether the cone contrast we\'92re allowed to get with 4 sensors (particularly for the L\'92 thing) is anything like high enough to actually see\'85\
+}
