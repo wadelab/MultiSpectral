@@ -92,13 +92,6 @@ for thisLED = 1:size(LEDcalib,2)-1 % column1 is wavelengths
 end
 LEDspectra(LEDspectra<0) = 0; %set any negative values to 0
 
-%% *** this needs work - what do we want as background???
-% to use white spectra to get baselevels for each LED (so white light as
-% background):
-%[baselevelsLEDS, LEDspectra] = LED2white(LEDcalib,dpy); % outputs scaled baselevels and resampled LEDspectra based on WL
-%baselevelsLEDS=baselevelsLEDS/2; %we want the baselevels at half their scaled levels
-%LEDbaseLevel=uint16((baselevelsLEDS)*(2^BITDEPTH)); % convert for sending to arduino
-
 % for now, use values set earlier (1's)
 baselevelsLEDS = baselevelsLEDS(:,LEDsToUse);
 % keep the necessary spectra for each LED in use (as specified above)
@@ -114,9 +107,8 @@ dpy.backLED.dir=baselevelsLEDS;
 
 dpy.backLED.scale=.5; % LEDs on at 50%
 
-%CHECK THIS *******************************
-dpy.LEDbaseLevel=round(dpy.backLED.dir*dpy.backLED.scale*(2.^dpy.bitDepth-1)); % Set just the LEDs we're using to be on a 50%
-%*******************
+%Don't think this number is actually used again in the code...
+dpy.LEDbaseLevel=round(dpy.backLED.dir*dpy.backLED.scale*(2.^dpy.bitDepth)); % Set just the LEDs we're using to be on a 50%
 
 % Set the modulation rate using specified frequency
 dpy.modulationRateHz=dpy.Freq;
@@ -205,7 +197,7 @@ switch dpy.ExptID
             end
             stim.stimLMS.dir=[0 1 0]; % M cone isolating
             stim.stimLMS.maxCont= .035;
-            stim.stimLMS.maxTestLevel = .03;
+            stim.stimLMS.maxTestLevel = .05;
             stim.stimLMS.minTestLevel = .0000001;
         end
         thisExp='M';
@@ -220,7 +212,7 @@ switch dpy.ExptID
             dpy.ConeTypes='LMS';
             stim.stimLMS.dir=[0.5 -1 0]; %
             stim.stimLMS.maxCont= .045;
-            stim.stimLMS.maxTestLevel = .045;
+            stim.stimLMS.maxTestLevel = .03;
             stim.stimLMS.minTestLevel = .0000001;
         end;
         thisExp='LM';
@@ -286,13 +278,13 @@ switch dpy.ExptID
         if dpy.NumSpec==4
             stim.stimLMS.dir=[0 0 0 1]; % S cone isolating
             stim.stimLMS.maxCont= .25;
-            stim.stimLMS.maxTestLevel = .15;
+            stim.stimLMS.maxTestLevel = .20;
             stim.stimLMS.minTestLevel = .0000001;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LMS';
             stim.stimLMS.dir=[0 0 1]; % S cone isolating
             stim.stimLMS.maxCont= .25;
-            stim.stimLMS.maxTestLevel = .12;
+            stim.stimLMS.maxTestLevel = .20;
             stim.stimLMS.minTestLevel = .0000001;
         elseif dpy.NumSpec==2
             stim.stimLMS.dir=[0 1]; % S cone isolating

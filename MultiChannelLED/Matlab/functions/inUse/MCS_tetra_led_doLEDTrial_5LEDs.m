@@ -1,5 +1,5 @@
 function [response,dpy]=MCS_tetra_led_doLEDTrial_5LEDs(dpy,stim,serialObject,dummyFlag)
-% function response=led_doLEDTrial(dpy,stimLMS, q,serialObject)
+% function [response,dpy]=MCS_tetra_led_doLEDTrial_5LEDs(dpy,stim,serialObject,dummyFlag)
 % Returns 0 or 1 for wrong/right
 % LEW
 
@@ -29,7 +29,7 @@ for thisInterval= 1:2
         [stimTarget,dpy]=tetra_led_arduinoConeIsolationLMS(dpy,stimOne.stimLMS);
         
                
-        LEDoutputAmps=round(((stimTarget.dir)*(stimTarget.scale)*(2^(dpy.bitDepth)-1)))';
+        LEDoutputAmps=round(((stimTarget.dir)*(stimTarget.scale)*(2^(dpy.bitDepth))))';
         LEDoutput=LEDoutputAmps/2;
         %save out the amp values into dpy
         dpy.targetLEDoutput(dpy.theTrial,:)=LEDoutput;
@@ -39,14 +39,6 @@ for thisInterval= 1:2
         dpy.llms2led=stimTarget.llms2led;
         
     else
-%         stimTwo=stim;
-%         stimTwo.stimLMS.dir=repmat(0,dpy.NumSpec,1)'; %no dir
-%         stimTwo.stimLMS.scale=0;
-% 
-%         [stimTwo.LEDvals,dpy]=tetra_led_arduinoConeIsolationLMS(dpy,stimTwo.stimLMS);
-%               
-%         LEDoutputAmps=round(((stimTwo.LEDvals.dir)*(stimTwo.LEDvals.scale)*(2^(dpy.bitDepth)-1)))';
-%         LEDoutput=LEDoutputAmps/2;
         LEDoutput=zeros(dpy.nLEDsTotal,1)';
     end
         
@@ -79,24 +71,15 @@ for thisInterval= 1:2
             
             
             fwrite(serialObject,int8(LEDampSign),'int8'); %indicates whether each LED amp is pos (0) or neg (1)
-            fwrite(serialObject,int16(dpy.LEDbaseLevel),'int16'); %the baselevels
+            fwrite(serialObject,int16(dpy.LEDbaseLevel),'int16'); %the baselevels amps
             fwrite(serialObject,int16(dpy.modulationRateHz*256),'int16'); %the modulation rate
-            fwrite(serialObject,int8(dpy.baselevelsLEDS),'int8'); %send the scaling info
-            %pause(.1)
-            
-
-            
-%             %disp(serialObject.ValuesSent);
-%             fprintf('\nfirst 5bytes sent %d',LEDoutput)
-%             %disp(LEDoutput);
-%             fprintf('\nsecond set of 5 bytes %d',dpy.LEDbaseLevel);
-%             fprintf('\nmodulation rate %d',dpy.modulationRateHz*256);
-%             
+            fwrite(serialObject,int8(dpy.baselevelsLEDS),'int8'); %send the scaling info for the noise - rename this eventually
+                  
+            %output the values used
             disp(serialObject.ValuesSent);
             disp(LEDoutput);
             disp(dpy.LEDbaseLevel);
-            disp(dpy.modulationRateHz);
-                        
+            disp(dpy.modulationRateHz);                        
             
             if thisInterval==1;
                 pause(0.8)
