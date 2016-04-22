@@ -34,7 +34,7 @@ fprintf('\n****** Experiment Running ******\n \n');
 
 % Initialize the display system
 % Load LEDspectra calib: contains 1 column with wavelengths, then the LED calibs
-theSpectra=load('LEDspectra_151215.mat'); %load in latest calib for the prizmatix
+theSpectra=load('LEDspectra_220416.mat'); %load in latest calib for the prizmatix
 %save the spectra in LEDcalib
 spectraVar=fieldnames(theSpectra); %get name of the field containing spectra
 LEDcalib=theSpectra.(spectraVar{1}); %save in LEDcalib variable
