@@ -45,7 +45,7 @@ dpy.coneSpectra(isnan(dpy.coneSpectra))=0;
             
 %% Make the Stimulus
 
-LEDStim=tetra_led_makeStimArduino(dpy,stimLMS); % This returns a structure with dir and scale that applies to the LEDs
+[LEDStim, dpy]=tetra_led_makeStimArduino(dpy,stimLMS); % This returns a structure with dir and scale that applies to the LEDs
  
 % The returned structure gives values in dir and scale ranging betweek 0
 % and 1. They are contrasts

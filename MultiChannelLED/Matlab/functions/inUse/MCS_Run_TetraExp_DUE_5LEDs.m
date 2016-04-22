@@ -144,7 +144,7 @@ switch dpy.ExptID
         if dpy.NumSpec==4 %4 cones used L Lp M S
             stim.stimLMS.dir=[1 0 0 0]; % L cone isolating
             stim.stimLMS.maxCont = .008; %max possible?
-            stim.stimLMS.maxTestLevel = .0045; %max level to use
+            stim.stimLMS.maxTestLevel = .005; %max level to use
             stim.stimLMS.minTestLevel = .0000001; %min level to use
         elseif dpy.NumSpec==3 %3 cones used L M S
             if isfield(dpy,'ConeTypes')==1 %see if ConeTypes is already set - not sure why, think it has to be set before here?!
@@ -163,7 +163,7 @@ switch dpy.ExptID
             stim.stimLMS.dir=[0 1 0 0]; % L' cone isolating
             if dpy.LprimePosition<0.25 || 0.75<dpy.LprimePosition
                 stim.stimLMS.maxCont= .0007;
-                stim.stimLMS.maxTestLevel = .0005;
+                stim.stimLMS.maxTestLevel = .005;
                 stim.stimLMS.minTestLevel = .0000001;
             else
                 stim.stimLMS.maxCont= .005;
@@ -188,7 +188,7 @@ switch dpy.ExptID
         if dpy.NumSpec==4 %4 cones
             stim.stimLMS.dir=[0 0 1 0]; % M cone isolating
             stim.stimLMS.maxCont= .008;
-            stim.stimLMS.maxTestLevel = .0045;
+            stim.stimLMS.maxTestLevel = .005;
             stim.stimLMS.minTestLevel = .0000001;
         elseif dpy.NumSpec==3 %3 cones
             if isfield(dpy,'ConeTypes')==1
@@ -206,7 +206,7 @@ switch dpy.ExptID
         if dpy.NumSpec==4
             stim.stimLMS.dir=[0.5 0 -1 0]; %
             stim.stimLMS.maxCont= .005;
-            stim.stimLMS.maxTestLevel = .005;
+            stim.stimLMS.maxTestLevel = .01;
             stim.stimLMS.minTestLevel = .0000001;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LMS';

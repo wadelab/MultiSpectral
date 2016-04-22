@@ -27,9 +27,9 @@ s=ConnectToArduino;
 dummyTrial(s);
 
 %set some of the experiment parameters
-dpy.NumSpec=3; %this is the number of assumed cones used to create stim (e.g. LMS, or L Lp M S, etc)
+dpy.NumSpec=4; %this is the number of assumed cones used to create stim (e.g. LMS, or L Lp M S, etc)
 dpy.LprimePosition=0.5; %set this if running and experiments with Lprime, 0.5 puts the peak of Lp midway between L and M peaks
-theExptID={'L'};%,'LMS','S'}; %set the experiment ID(s) you want to test, 
+theExptID={'LP','L','M'};%,'LMS','S'}; %set the experiment ID(s) you want to test, 
 % can be more than one (e.g.'{'LM,'LMS'}'Possible values: LM, LLP, LPM, L, M ,S, LP, LMS
 theFreq=[2]; %the frequencies to test for each experiment ID, can be one or more (e.g. [2,4,8])
 
@@ -158,6 +158,7 @@ for thisCond=1:length(theExptID) %for each expt id
         theFreqName=sprintf('Freq%d',theFreq(thisFreq)); %get name of freq
         fprintf('\nContrast Threshold for Cond %s  %s : %.2f%%      Fit %s\n',...
         theCondName,theFreqName,AllData.(theCondName).(theFreqName).contrastThresh,AllData.(theCondName).(theFreqName).fitExit);
+        fprintf('\nThe max contrast for Cond %s is %.4f\n',theCondName,AllData.(theCondName).(theFreqName).dpy.MaxSensorValue.(theCondName));
     end
 end
 

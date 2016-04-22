@@ -1,4 +1,4 @@
-function LEDStim = tetra_led_makeStimArduino(dpy,stimLMS)
+function [LEDStim, dpy] = tetra_led_makeStimArduino(dpy,stimLMS)
 % stim=makeStim(dpy,expt)
 % Create the stimulus by inputting the following variables:
 %
@@ -52,7 +52,7 @@ end
 
 
 
-LEDStim= tetra_sensor2primary(dpy,stimLMS);
+[LEDStim, dpy]= tetra_sensor2primary(dpy,stimLMS);
 
 
 
