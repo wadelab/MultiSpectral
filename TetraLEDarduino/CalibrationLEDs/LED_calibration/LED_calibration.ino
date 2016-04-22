@@ -5,10 +5,10 @@ void setup() {
 
 const int LEDs[] = {8,9,10,11,12}; //the LED pins available
 int nPins = 5;
-int ledOff = 255;
+int ledOff = 0;
 int ledOn = 255;
 
-int currentLEDon = 4; // specify which LED you want on
+int currentLEDon = 0; // specify which LED you want on
 
     for (int thisPin = 0; thisPin < nPins; thisPin++) {
         pinMode(LEDs[thisPin], OUTPUT);
