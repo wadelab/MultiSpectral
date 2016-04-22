@@ -17,7 +17,7 @@
 % written by LEW 20/08/15
 % editted by LEW on 13/11/15 for use with Method of Constant Stimuli
 
-clear Data; close all; %clear any Data variables that exist and close any figures before running
+clear all; close all; %clear any Data variables that exist and close any figures before running
 %Add the necessary folder to the path
 addpath(genpath('/Users/wade/Documents/GitHub_Multispectral/MultiChannelLED'))
 
@@ -29,7 +29,7 @@ dummyTrial(s);
 %set some of the experiment parameters
 dpy.NumSpec=3; %this is the number of assumed cones used to create stim (e.g. LMS, or L Lp M S, etc)
 dpy.LprimePosition=0.5; %set this if running and experiments with Lprime, 0.5 puts the peak of Lp midway between L and M peaks
-theExptID={'LM','LMS','S'}; %set the experiment ID(s) you want to test, 
+theExptID={'L','M','S','LM'};%,'LMS','S'}; %set the experiment ID(s) you want to test, 
 % can be more than one (e.g.'{'LM,'LMS'}'Possible values: LM, LLP, LPM, L, M ,S, LP, LMS
 theFreq=[2]; %the frequencies to test for each experiment ID, can be one or more (e.g. [2,4,8])
 
@@ -144,8 +144,8 @@ finalDate=datestr(now,30);
 %go to folder for saving all condition data (in one structure)
 cd('/Users/wade/Documents/Github_MultiSpectral/MultiChannelLED/DataFiles/AllConditions')
 %save data
-save(sprintf('SubID%s_MCS_Rep%d_%s.mat',...
-    dpy.SubID,dpy.Repeat,finalDate),'AllData');
+save(sprintf('SubID%s_MCS_numSpec%d_Rep%d_%s.mat',...
+    dpy.SubID,dpy.NumSpec,dpy.Repeat,finalDate),'AllData');
 
 %turn off LEDs and close connection to ardunio
 CloseArduino(s);%close connection to arduino

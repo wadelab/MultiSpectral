@@ -152,8 +152,8 @@ switch dpy.ExptID
         if dpy.NumSpec==4 %4 cones used L Lp M S
             stim.stimLMS.dir=[1 0 0 0]; % L cone isolating
             stim.stimLMS.maxCont = .008; %max possible?
-            stim.stimLMS.maxTestLevel = .006; %max level to use
-            stim.stimLMS.minTestLevel = .0001; %min level to use
+            stim.stimLMS.maxTestLevel = .0045; %max level to use
+            stim.stimLMS.minTestLevel = .0000001; %min level to use
         elseif dpy.NumSpec==3 %3 cones used L M S
             if isfield(dpy,'ConeTypes')==1 %see if ConeTypes is already set - not sure why, think it has to be set before here?!
             else %default to setting as LMS coneTypes if not
@@ -162,7 +162,7 @@ switch dpy.ExptID
             stim.stimLMS.dir=[1 0 0]; % L cone isolating
             stim.stimLMS.maxCont= .055;
             stim.stimLMS.maxTestLevel = .05;
-            stim.stimLMS.minTestLevel = .005;
+            stim.stimLMS.minTestLevel = .0000001;
         end
         thisExp='L';
         
@@ -171,12 +171,12 @@ switch dpy.ExptID
             stim.stimLMS.dir=[0 1 0 0]; % L' cone isolating
             if dpy.LprimePosition<0.25 || 0.75<dpy.LprimePosition
                 stim.stimLMS.maxCont= .0007;
-                stim.stimLMS.maxTestLevel = .0007;
-                stim.stimLMS.minTestLevel = .0001;
+                stim.stimLMS.maxTestLevel = .0005;
+                stim.stimLMS.minTestLevel = .0000001;
             else
                 stim.stimLMS.maxCont= .005;
-                stim.stimLMS.maxTestLevel = .002;
-                stim.stimLMS.minTestLevel = .0001;
+                stim.stimLMS.maxTestLevel = .0045;
+                stim.stimLMS.minTestLevel = .0000001;
             end
         elseif dpy.NumSpec==3
             if isfield(dpy,'ConeTypes')==1
@@ -186,7 +186,7 @@ switch dpy.ExptID
             stim.stimLMS.dir=[1 0 0]; % L cone isolating
             stim.stimLMS.maxCont= .035;
             stim.stimLMS.maxTestLevel = .05;
-            stim.stimLMS.minTestLevel = .002;
+            stim.stimLMS.minTestLevel = .0000001;
         else
             error('Check NumSpec for this condition')
         end
@@ -196,8 +196,8 @@ switch dpy.ExptID
         if dpy.NumSpec==4 %4 cones
             stim.stimLMS.dir=[0 0 1 0]; % M cone isolating
             stim.stimLMS.maxCont= .008;
-            stim.stimLMS.maxTestLevel = .005;
-            stim.stimLMS.minTestLevel = .0001;
+            stim.stimLMS.maxTestLevel = .0045;
+            stim.stimLMS.minTestLevel = .0000001;
         elseif dpy.NumSpec==3 %3 cones
             if isfield(dpy,'ConeTypes')==1
             else %default to setting as LMS coneTypes
@@ -206,7 +206,7 @@ switch dpy.ExptID
             stim.stimLMS.dir=[0 1 0]; % M cone isolating
             stim.stimLMS.maxCont= .035;
             stim.stimLMS.maxTestLevel = .03;
-            stim.stimLMS.minTestLevel = .002;
+            stim.stimLMS.minTestLevel = .0000001;
         end
         thisExp='M';
         
@@ -214,14 +214,14 @@ switch dpy.ExptID
         if dpy.NumSpec==4
             stim.stimLMS.dir=[0.5 0 -1 0]; %
             stim.stimLMS.maxCont= .005;
-            stim.stimLMS.maxTestLevel = .015;
-            stim.stimLMS.minTestLevel = .001;
+            stim.stimLMS.maxTestLevel = .005;
+            stim.stimLMS.minTestLevel = .0000001;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LMS';
             stim.stimLMS.dir=[0.5 -1 0]; %
             stim.stimLMS.maxCont= .045;
             stim.stimLMS.maxTestLevel = .045;
-            stim.stimLMS.minTestLevel = .001;
+            stim.stimLMS.minTestLevel = .0000001;
         end;
         thisExp='LM';
         
@@ -230,13 +230,13 @@ switch dpy.ExptID
             stim.stimLMS.dir=[0.5 -1 0 0]; %
             stim.stimLMS.maxCont= .005;
             stim.stimLMS.maxTestLevel = .007;
-            stim.stimLMS.minTestLevel = .00005;
+            stim.stimLMS.minTestLevel = .0000001;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LLpS';
             stim.stimLMS.dir=[0.5 -1 0]; %
             stim.stimLMS.maxCont= .045;
             stim.stimLMS.maxTestLevel = .05;
-            stim.stimLMS.minTestLevel = .005;
+            stim.stimLMS.minTestLevel = .0000001;
         end
         thisExp='LLp';
         
@@ -245,13 +245,13 @@ switch dpy.ExptID
             stim.stimLMS.dir=[0 0.5 -1 0]; %
             stim.stimLMS.maxCont= .005;
             stim.stimLMS.maxTestLevel = .007;
-            stim.stimLMS.minTestLevel = .00005;
+            stim.stimLMS.minTestLevel = .0000001;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LpMS';
             stim.stimLMS.dir=[0.5 -1 0]; %
             stim.stimLMS.maxCont= .045;
             stim.stimLMS.maxTestLevel = .05;
-            stim.stimLMS.minTestLevel = .005;
+            stim.stimLMS.minTestLevel = .0000001;
         end
         thisExp='LpM';
         
@@ -260,13 +260,13 @@ switch dpy.ExptID
             stim.stimLMS.dir=[1 0 1 1]; %
             stim.stimLMS.maxCont= .02;
             stim.stimLMS.maxTestLevel = .02;
-            stim.stimLMS.minTestLevel = .001;
+            stim.stimLMS.minTestLevel = .0000001;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LMS';
             stim.stimLMS.dir=[1 1 1]; %
             stim.stimLMS.maxCont= .1;
             stim.stimLMS.maxTestLevel = .07;
-            stim.stimLMS.minTestLevel = .002;
+            stim.stimLMS.minTestLevel = .0000001;
         end
         thisExp='LMS';
         
@@ -275,7 +275,7 @@ switch dpy.ExptID
             stim.stimLMS.dir=[1 1 1 1]; %
             stim.stimLMS.maxCont= .02;
             stim.stimLMS.maxTestLevel = .02;
-            stim.stimLMS.minTestLevel = .001;
+            stim.stimLMS.minTestLevel = .0000001;
         else
             error('Num spec must be set to 4 to run LLpMS')
         end
@@ -286,19 +286,19 @@ switch dpy.ExptID
         if dpy.NumSpec==4
             stim.stimLMS.dir=[0 0 0 1]; % S cone isolating
             stim.stimLMS.maxCont= .25;
-            stim.stimLMS.maxTestLevel = .5;
-            stim.stimLMS.minTestLevel = .01;
+            stim.stimLMS.maxTestLevel = .15;
+            stim.stimLMS.minTestLevel = .0000001;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LMS';
             stim.stimLMS.dir=[0 0 1]; % S cone isolating
             stim.stimLMS.maxCont= .25;
             stim.stimLMS.maxTestLevel = .12;
-            stim.stimLMS.minTestLevel = .005;
+            stim.stimLMS.minTestLevel = .0000001;
         elseif dpy.NumSpec==2
             stim.stimLMS.dir=[0 1]; % S cone isolating
             stim.stimLMS.maxCont= .25;
             stim.stimLMS.maxTestLevel = .10;
-            stim.stimLMS.minTestLevel = .005;
+            stim.stimLMS.minTestLevel = .0000001;
         end
         thisExp='S';
         
@@ -307,12 +307,12 @@ switch dpy.ExptID
             stim.stimLMS.dir=[0 1 0 0]; % testLM cone isolating
             stim.stimLMS.maxCont= .008;
             stim.stimLMS.maxTestLevel = .008;
-            stim.stimLMS.minTestLevel = .0005;
+            stim.stimLMS.minTestLevel = .0000001;
         elseif dpy.NumSpec==2
             stim.stimLMS.dir=[1 0]; % testLM cone isolating
             stim.stimLMS.maxCont= .2;
             stim.stimLMS.maxTestLevel = .1;
-            stim.stimLMS.minTestLevel = .005;
+            stim.stimLMS.minTestLevel = .0000001;
         else
             error('Incorrect NumSpec for this condition')
         end
@@ -334,9 +334,13 @@ try
         dpy.allStimTrialLevels = repmat(dpy.stimLevels,dpy.NumTrialsPerLevel,1);
     end
 catch %if doesn't exist, proceed as normal
-dpy.stimLevels=logspace(log10(stim.stimLMS.minTestLevel),log10(stim.stimLMS.maxTestLevel),dpy.NumStimLevels)'; %create the stimulus levels
+end   
+    %for now, don't log scale the stim values. kept code for dpy.stimLevels
+    %when log scaled so easy to re-introduce
+%dpy.stimLevels=logspace(log10(stim.stimLMS.minTestLevel),log10(stim.stimLMS.maxTestLevel),dpy.NumStimLevels)'; %create the stimulus levels
+dpy.stimLevels=[stim.stimLMS.minTestLevel:((stim.stimLMS.maxTestLevel-stim.stimLMS.minTestLevel)/(dpy.NumStimLevels-1)):stim.stimLMS.maxTestLevel]';
 dpy.allStimTrialLevels=Shuffle(repmat(dpy.stimLevels,dpy.NumTrialsPerLevel,1)); %produce list of all the contrast levels (i.e. all trials) and shuffle them
-end
+
 % Run the trials.
 % On each trial we run one of the pre-defined stimulus contrast levels that have
 % been pre-shuffled in dpy.allStimTrialLevels
@@ -360,7 +364,7 @@ exit=0;
 % Run the trials
 for thisTrial = 1:length(dpy.allStimTrialLevels)
     dpy.theTrial=thisTrial; %save the current trial in dpy so that the target interval and wrong/right info can be saved within next function
-    %set the tTest value (i.e. the contrast level for the current trial)
+    %set the TestTrial value (i.e. the contrast level for the current trial)
     TestTrial=dpy.allStimTrialLevels(thisTrial);
     
     timeSplit=GetSecs;
@@ -397,7 +401,7 @@ catch %if experiment was exited before end the values have to be altered for the
 end
 
 for thisLevel = 1:length(dpy.stimLevels)
-    plotResponseData(thisLevel,1)=dpy.stimLevels(thisLevel); %name of each level
+    plotResponseData(thisLevel,1)=dpy.stimLevels(thisLevel)*100; %name of each level *100 so in contrast %
     totalTrials=0;
     totalHits=0;
     for thisTrial=1:length(dpy.allStimTrialLevels)
@@ -434,7 +438,7 @@ PF = @PAL_CumulativeNormal;
 
 [Data.Fit.paramValues,Data.Fit.LL,Data.Fit.exitFlag,Data.Fit.output] = PAL_PFML_Fit(plotResponseData(:,1),plotResponseData(:,2),...
     plotResponseData(:,3),searchGrid,paramsFree,PF);
-Data.contrastThresh=Data.Fit.paramValues(1)*100;
+Data.contrastThresh=Data.Fit.paramValues(1);
 
 try
     fprintf('Experiment Condition: %s    Freq: %.1f testLMpeak: %d\n',dpy.ExptID,dpy.Freq,dpy.LMpeak);
