@@ -138,11 +138,11 @@ LPrimePeak=round((stockmanLpeak-stockmanMpeak)*locationLprime); %round peak so i
 % Interpolate Part 1 of the curves to given sensitivity range
 xL1 = interp1(LconePart1(:,2),LconePart1(:,1),valRangePart1); %l cone
 xM1 = interp1(MconePart1(:,2),MconePart1(:,1),valRangePart1); %m cone
-xS1 = interp1(SconePart1(:,2),SconePart1(:,1),valRangePart1); %s cone
+%xS1 = interp1(SconePart1(:,2),SconePart1(:,1),valRangePart1); %s cone
 % Interpolate Part 2 of the curves to given sensitivities. 
 xL2 = interp1(LconePart2(:,2),LconePart2(:,1),valRangePart2); %l cone
 xM2 = interp1(MconePart2(:,2),MconePart2(:,1),valRangePart2); %m cone
-xS2 = interp1(SconePart2(:,2),SconePart2(:,1),valRangePart2); %s cone
+%xS2 = interp1(SconePart2(:,2),SconePart2(:,1),valRangePart2); %s cone
 
 %calculate LPrime WLs for the given sensitivity range using the 
 %interpolated L and M sensitivities.
@@ -160,12 +160,12 @@ fullValRange=cat(1,valRangePart1,valRangePart2);
 %may as well be recreated while Lprime is created
 allLconeCF=cat(1,xL1,xL2);
 allMconeCF=cat(1,xM1,xM2);
-allSconeCF=cat(1,xS1,xS2);
+%allSconeCF=cat(1,xS1,xS2);
 allLprimeconeCF=cat(1,lPrimePart1,lPrimePart2); %this is the useful one
 
 cones.allLconeCFWLs=cat(2,allLconeCF,fullValRange);
 cones.allMconeCFWLs=cat(2,allMconeCF,fullValRange);
-cones.allSconeCFWLs=cat(2,allSconeCF,fullValRange);
+cones.allSconeCFWLs=cat(2,Scone,WL);
 cones.allLprimeconeCFWLs=cat(2,allLprimeconeCF,fullValRange);
 
 %labels for cone variables - these must match those above! excluding the
