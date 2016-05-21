@@ -131,7 +131,7 @@ SconePart2=Scone1nmWL(WLindexS(end):end,:);
 % end
 
 %specify range of sensitivity values for Lprime and desired peak
-valRangePart1=(0.01:0.005:1)'; %values to interpolate in to for first half of curve (low to high)
+valRangePart1=(0.001:0.001:1)'; %values to interpolate in to for first half of curve (low to high)
 valRangePart2=flipud(valRangePart1); %values to interpolate to for second half of curve (i.e. high to low)
 LPrimePeak=round((stockmanLpeak-stockmanMpeak)*locationLprime); %round peak so integer
 
