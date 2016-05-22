@@ -72,11 +72,13 @@ if dpy.NumSpec==4 %if tetra stim
     coneSpectra=creatingLprime(dpy); %outputs the L L' M S spectra, with first column containing wavelengths
     fprintf('LprimePos is %.2f\n',LprimePos);
 elseif dpy.NumSpec==3; %if LMS stim
-    %for now, we are defaulting to using LMS, but can build in prompt for
-    %this in experiment script, as below function accounts for different
-    %cones to be in use
-    dpy.ConeTypes='LMS';
-    coneSpectra=creatingLMSspectra(dpy);
+    if isfield(dpy,'shiftCone')==1 
+        %if a shifted cone has been specified, create the spectra for it
+        coneSpectra=creatingShiftedConeSpectra(dpy);
+    else %else default to using stockman LMS spectra
+        dpy.ConeTypes='LMS';
+        coneSpectra=creatingLMSspectra(dpy);
+    end
 elseif dpy.NumSpec==2;
     %must specifiy a peak for the only cone in the middle/long region
     dpy.LMpeak = 565; %can build this into script to be prompted if it'll be used. For now it's a place holder.
