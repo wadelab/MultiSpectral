@@ -4,9 +4,10 @@ function Spectra=creatingLprime(dpy)
 % dpy.LprimePosition = a value between 0 and 1 to specify location of the L prime
 % peak between the L and M cones. Where 0 is M cone and 1 is L cone
 % For example,to set Lprime peak half way between L and M, LprimePos=0.5
-%
+% 
 % Import stockman CFs and create an Lprime CF by interpolating between the 
-% M and L cone fundamentals.
+% M and L cone fundamentals. First shifts the L and M cones as specified
+% for the subject.
 %
 % written by LW 050315
 
@@ -19,57 +20,92 @@ else
     error('Cannot use values outside 0 and 1 for the LprimePos with this script')
 end
 
-%desired WL range
-WLrange=dpy.WLrange; %N.B. for now must be 400 and 720, else interp won't work - would need to edit part 1 and 2 values too if this changes
+WLrange = dpy.WLrange; %desired WL range
+Lpeak = dpy.Lpeak; %the subject's L peak
+Mpeak = dpy.Mpeak; %the subject's M peak
 
-%load in the 0.1nm stockmanCFs (downloaded from CVRL website)
+%load in the 0.1nm stockmanCFs
 load('stockman01nmCF.mat');
-%assign cones and WLs to variables
-Lcone=stockman.Lcone;
-Mcone=stockman.Mcone;
-Scone=stockman.Scone;
+%assign WLs to variable
 WL=stockman.wavelength;
+%interpolate CFs to desired WL range
+Lcone=interp1(WL,stockman.Lcone,WLrange);
+Mcone=interp1(WL,stockman.Mcone,WLrange);
+Scone=interp1(WL,stockman.Scone,WLrange);
+CombinedRaw=cat(2,WLrange,Lcone,Mcone,Scone);
 
-%concatenate with WLs
-LconeWL=cat(2,WL,Lcone);
-MconeWL=cat(2,WL,Mcone);
-SconeWL=cat(2,WL,Scone);
+%% find the WL peak of the each cone, i.e. where sensitivity is 1
+%L cone
+LconeOriginal_indx = find(CombinedRaw(:,2) == 1);
+%get the mean if more than one value is 1, round indx num to correspond to a row
+LconeOriginal_indx = round(mean(LconeOriginal_indx));
+%M cone
+MconeOriginal_indx = find(CombinedRaw(:,3) == 1);
+%get the mean if more than one value is 1, round indx num to correspond to a row
+MconeOriginal_indx = round(mean(MconeOriginal_indx));
 
-%calculate L and M cone peaks by averaging the WL values that correspond to
-%a spectra val of 1
-
-%for the L cone
-l=1; %index
-for thisWL=1:length(LconeWL) %for each row (wavelength)
-    if LconeWL(thisWL,2)==1 %check if the spectra in col 2 equals 1
-        lconePeakVals(l,1)=LconeWL(thisWL,1);%save out the wavelength if spectra val was 1
-        l=l+1; %update index
-    else continue
-    end
+%% get the indx of the wavelength for the desired cone peaks
+%L cone
+try
+    LpeakIndx=find(CombinedRaw(:,1) == Lpeak);
+catch
+    %if there isn't an exact match check across a slightly larger range and
+    %use the average (rounded to match an actual row)
+    LpeakIndx=find(CombinedRaw(:,1) <= (Lpeak+1) & CombinedRaw >= (Lpeak-1));
+    LpeakIndx=round(mean(LpeakIndx));
 end
-stockmanLpeak=mean(lconePeakVals); %average the lconePeakVals (in case more than 1) to get L cone peak wavelength
-
-%repeat for the M cone
-m=1; %index
-for thisWL=1:length(MconeWL) %for each row (wavelenth)
-    if MconeWL(thisWL,2)==1 %check if spectra equals 1
-        mconePeakVals(m,1)=MconeWL(thisWL,1); %if so, save out corresponding wavelength
-        m=m+1; %update index
-    else continue
-    end
+%M cone
+try
+    MpeakIndx=find(CombinedRaw(:,1) == Mpeak);
+catch
+    %if there isn't an exact match check across a slightly larger range and
+    %use the average (rounded to match an actual row)
+    MpeakIndx=find(CombinedRaw(:,1) <= (Mpeak+1) & CombinedRaw >= (Mpeak-1));
+    MpeakIndx=round(mean(MpeakIndx));
 end
-stockmanMpeak=mean(mconePeakVals); %average the mconePeakVals 
 
-%resample to desired WLrange (needed to avoid duplicate values, which can't 
-%be used in the interp), and then concatenate with desired WLrange
-Lcone1nmResample=interp1(LconeWL(:,1),LconeWL(:,2),WLrange); %l cone
-Lcone1nmWL=cat(2,WLrange,Lcone1nmResample);
-Mcone1nmResample=interp1(MconeWL(:,1),MconeWL(:,2),WLrange); %m cone
-Mcone1nmWL=cat(2,WLrange,Mcone1nmResample);
-Scone1nmResample=interp1(SconeWL(:,1),SconeWL(:,2),WLrange); %s cone
-Scone1nmWL=cat(2,WLrange,Scone1nmResample);
+%% Shift the Entire column of sensitivity values 
+%so that peak is on the peakIndx, by adding/removing rows from start and end of column
+%L cone
+shiftDistance=abs(LconeOriginal_indx-LpeakIndx); %rows to shift
+newLConeSpec=CombinedRaw(:,2); %save out original spectra for the cone being shifted
 
+%if shifting to shorter wavelength peak
+if LconeOriginal_indx > LpeakIndx
+    newLConeSpec=newLConeSpec(shiftDistance+1:end,1); %remove first rows corresponding to total number needing to shift
+    newLConeSpec(end+1:end+shiftDistance,1)=0; %add 0's to end rows corresponding to total number needing to shift
+%if shifting to longer wavelength peak
+elseif LconeOriginal_indx < LpeakIndx
+    newLConeSpec=cat(1,zeros(shiftDistance,1),newLConeSpec); %create zeros to add to front of spectra
+    newLConeSpec=newLConeSpec(1:(length(newLConeSpec)-shiftDistance),:); %remove last rows from spectra
+end
+%N.B. if peak already matches, no adjustment needed
 
+%M cone
+shiftDistance=abs(MconeOriginal_indx-MpeakIndx); %rows to shift
+newMConeSpec=CombinedRaw(:,3); %save out original spectra for the cone being shifted
+
+%if shifting to shorter wavelength peak
+if MconeOriginal_indx > MpeakIndx
+    newMConeSpec=newMConeSpec(shiftDistance+1:end,1); %remove first rows corresponding to total number needing to shift
+    newMConeSpec(end+1:end+shiftDistance,1)=0; %add 0's to end rows corresponding to total number needing to shift
+%if shifting to longer wavelength peak
+elseif MconeOriginal_indx < peakIndx
+    newMConeSpec=cat(1,zeros(shiftDistance,1),newMConeSpec); %create zeros to add to front of spectra
+    newMConeSpec=newMConeSpec(1:(length(newMConeSpec)-shiftDistance),:); %remove last rows from spectra
+end
+%N.B. if peak already matches, no adjustment needed
+
+%% store L and M cone peaks for sub
+subLpeak=Lpeak; 
+subMpeak=Mpeak;  
+
+%concatenate with the wavelengths
+LconeWL=cat(2,WLrange,newLConeSpec);
+MconeWL=cat(2,WLrange,newMConeSpec);
+SconeWL=cat(2,WLrange,Scone);
+
+%% interpolate L and M curves, in two halves.
 %split values into two halves, i.e. 0 to 1, and 1 to 0, as interp can't process
 %full curve in one go due to the increasing then decreasing values
 %This is now automated, so finds all '1' peak values and uses first 1 to be
@@ -78,62 +114,42 @@ Scone1nmWL=cat(2,WLrange,Scone1nmResample);
 
 %L cone
 Lindx=1;
-for thisL=1:length(Lcone1nmWL)
-    if Lcone1nmWL(thisL,2)==1
+for thisL=1:length(LconeWL)
+    if LconeWL(thisL,2)==1
         WLindexL(Lindx,1)=thisL;
         Lindx=Lindx+1;
     end
 end
-LconePart1=Lcone1nmWL(1:WLindexL(1),:);
-LconePart2=Lcone1nmWL(WLindexL(end):end,:);
+LconePart1=LconeWL(1:WLindexL(1),:);
+LconePart2=LconeWL(WLindexL(end):end,:);
 
 %M cone
 Mindx=1;
-for thisM=1:length(Mcone1nmWL)
-    if Mcone1nmWL(thisM,2)==1
+for thisM=1:length(MconeWL)
+    if MconeWL(thisM,2)==1
         WLindexM(Mindx,1)=thisM;
         Mindx=Mindx+1;
     end
 end
-MconePart1=Mcone1nmWL(1:WLindexM(1),:);
-MconePart2=Mcone1nmWL(WLindexM(end):end,:);
+MconePart1=MconeWL(1:WLindexM(1),:);
+MconePart2=MconeWL(WLindexM(end):end,:);
 
 %S cone
 Sindx=1;
-for thisS=1:length(Scone1nmWL)
-    if Scone1nmWL(thisS,2)==1
+for thisS=1:length(SconeWL)
+    if SconeWL(thisS,2)==1
         WLindexS(Sindx,1)=thisS;
         Sindx=Sindx+1;
     end
 end
-SconePart1=Scone1nmWL(1:WLindexS(1),:);
-SconePart2=Scone1nmWL(WLindexS(end):end,:);
+SconePart1=SconeWL(1:WLindexS(1),:);
+SconePart2=SconeWL(WLindexS(end):end,:);
 
-% %manual splitting into curves using known row vals - not ideal though so
-% now automated above. kept here in case there are any issues with the
-% above code
-% LconePart1=Lcone1nmWL(1:170,:); %l cone prev 170
-% LconePart2=Lcone1nmWL(172:end,:); % prev 172
-% MconePart1=Mcone1nmWL(1:143,:); %m cone prev143
-% MconePart2=Mcone1nmWL(144:end,:); %prev144
-% SconePart1=Scone1nmWL(1:43,:); %s cone prev43
-% SconePart2=Scone1nmWL(44:114,:); %prev44 to114
-
-% % this check has also been cut as there wasn't a built in solution if
-% values didn't monotonically increase, so it'll error anyway
-% %use this to check that values are monotonically increasing, highlight where the error is if not
-% for thisRow=1:length(LconePart1)-1
-%     if LconePart1(thisRow,2)>=LconePart1(thisRow+1,2)
-%         fprintf('Row %d greater than row %d\n',thisRow,thisRow+1)
-%     else
-%         continue
-%     end
-% end
 
 %specify range of sensitivity values for Lprime and desired peak
 valRangePart1=(0.001:0.001:1)'; %values to interpolate in to for first half of curve (low to high)
 valRangePart2=flipud(valRangePart1); %values to interpolate to for second half of curve (i.e. high to low)
-LPrimePeak=round((stockmanLpeak-stockmanMpeak)*locationLprime); %round peak so integer
+LPrimePeak=round((subLpeak-subMpeak)*locationLprime); %round peak so integer
 
 % Interpolate Part 1 of the curves to given sensitivity range
 xL1 = interp1(LconePart1(:,2),LconePart1(:,1),valRangePart1); %l cone
@@ -147,9 +163,9 @@ xM2 = interp1(MconePart2(:,2),MconePart2(:,1),valRangePart2); %m cone
 %calculate LPrime WLs for the given sensitivity range using the 
 %interpolated L and M sensitivities.
 %part 1
-lPrimePart1(:,1) = xM1 + ((xL1-xM1)*(LPrimePeak/(stockmanLpeak-stockmanMpeak)));
+lPrimePart1(:,1) = xM1 + ((xL1-xM1)*(LPrimePeak/(subLpeak-subMpeak)));
 %part2
-lPrimePart2(:,1) = xM2 + ((xL2-xM2)*(LPrimePeak/(stockmanLpeak-stockmanMpeak)));
+lPrimePart2(:,1) = xM2 + ((xL2-xM2)*(LPrimePeak/(subLpeak-subMpeak)));
 
 %combine part 1 and part 2.  First need to to flip the values for the
 %second part (see note above), so that the WL values will increase across full
@@ -191,9 +207,9 @@ end
 % %be used in the interp)
 
 %use original LMS values
-finalLcone1nmResample=interp1(WL,Lcone,WLrange); %l cone
-finalMcone1nmResample=interp1(WL,Mcone,WLrange); %m cone
-finalScone1nmResample=interp1(WL,Scone,WLrange); %s cone
+finalLcone=newLConeSpec; %l cone
+finalMcone=newMConeSpec; %m cone
+finalScone=Scone; %s cone
 
 % %or could use the recreated curve, but best to only have one 'new' curve,
 % i.e. the Lprime
@@ -205,5 +221,5 @@ finalScone1nmResample=interp1(WL,Scone,WLrange); %s cone
 finalLprimecone1nmResample=interp1(cones.allLprimeconeCFWLs(:,1),cones.allLprimeconeCFWLs(:,2),WLrange);
 
 %save out spectra with wavelengths (WL,L,L',M,S)
-Spectra=cat(2,WLrange,finalLcone1nmResample,finalLprimecone1nmResample,finalMcone1nmResample,finalScone1nmResample);
+Spectra=cat(2,WLrange,finalLcone,finalLprimecone1nmResample,finalMcone,finalScone);
 
