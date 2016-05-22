@@ -115,7 +115,7 @@ for thisCond = 1:TotalNumConds %for each condition
     Data=MCS_Run_TetraExp_DUE_5LEDs(dpy,s);
     
     %store full condition name
-    fullCondName=sprintf('%s_peak%.1f',dpy.ExptID,dpy.shiftPeakWL); %save name of condition as string
+    fullCondName=sprintf('%s_peak%d',dpy.ExptID,dpy.shiftPeakWL); %save name of condition as string
  
     %save out a file containing the data, SubID, experimentType, freq and
     %Session num - do this for each condition as the experiment runs - if it
@@ -125,15 +125,15 @@ for thisCond = 1:TotalNumConds %for each condition
     cd('/Users/wade/Documents/Github_MultiSpectral/MultiChannelLED/DataFiles/IndividualConditions')
     
     %save Data
-    save(sprintf('SubID%s_Expt%s_Shift%.1f_Rep%d_%s.mat',...
+    save(sprintf('SubID%s_Expt%s_Shift%d_Rep%d_%s.mat',...
         dpy.SubID,dpy.ExptID,Data.dpy.shiftPeakWL,dpy.Repeat,Data.Date),'Data');
     
     %save the figure - because, why not
     %go to figures folder
     cd('/Users/wade/Documents/Github_MultiSpectral/MultiChannelLED/DataFiles/IndividualConditions/Figures')
     %save figure
-    savefig(sprintf('SubID%s_Expt%s_Freq%d_Rep%d_%s.fig',...
-        dpy.SubID,dpy.ExptID,dpy.Freq,dpy.Repeat,Data.Date));
+    savefig(sprintf('SubID%s_Expt%s_Shift%d_Rep%d_%s.fig',...
+        dpy.SubID,dpy.ExptID,Data.dpy.shiftPeakWL,dpy.Repeat,Data.Date));
     
     %output text to command window when complete
     fprintf('\nSubject %s data saved\n',dpy.SubID);
@@ -141,9 +141,9 @@ for thisCond = 1:TotalNumConds %for each condition
     
     %Save Data into a structure for all the conditions
     CondName=sprintf('%s',dpy.ExptID); %Expt ID name
-    FreqName=sprintf('Freq%d',dpy.Freq); %freq name
+    shiftName=sprintf('Shift%d',Data.dpy.shiftPeakWL); %shift name (rounded up)
     AllData.OrderOfConditions{thisCond}=fullCondName; %save out order the conditions were presented in
-    AllData.(CondName).(FreqName)=Data; %save all the Data associated with the condition in appropriate structure
+    AllData.(CondName).(shiftName)=Data; %save all the Data associated with the condition in appropriate structure
     
     %clear the Data and Figure before creating stimuli for next condition
     clear Data; close all
@@ -164,11 +164,13 @@ CloseArduino(s);%close connection to arduino
 %in this session) in the command window
 for thisCond=1:length(theExptID) %for each expt id
     theCondName=theExptID{thisCond}; %get name of expt id
-    for thisFreq=1:length(theFreq) %for each freq
-        theFreqName=sprintf('Freq%d',theFreq(thisFreq)); %get name of freq
+    shifts=fieldnames(AllData);
+    for thisShift=1:length(shifts) %for each shift
+        theShiftName=shifts{thisShift}; %get name of freq
         fprintf('\nContrast Threshold for Cond %s  %s : %.2f%%      Fit %s\n',...
-        theCondName,theFreqName,AllData.(theCondName).(theFreqName).contrastThresh,AllData.(theCondName).(theFreqName).fitExit);
-        fprintf('\nThe max contrast for Cond %s is %.4f\n',theCondName,AllData.(theCondName).(theFreqName).dpy.MaxSensorValue.(theCondName));
+            theCondName,theShiftName,AllData.(theCondName).(theShiftName).contrastThresh,...
+            AllData.(theCondName).(theShiftName).fitExit);
+        fprintf('\nThe max contrast for Cond %s is %.4f\n',theCondName,AllData.(theCondName).(theShiftName).dpy.MaxSensorValue.(theCondName));
     end
 end
 
