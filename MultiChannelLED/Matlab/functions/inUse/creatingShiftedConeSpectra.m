@@ -63,10 +63,8 @@ if coneToShiftWL_indx > peakIndx
 elseif coneToShiftWL_indx < peakIndx
     newConeSpec=cat(1,zeros(shiftDistance,1),newConeSpec); %create zeros to add to front of spectra
     newConeSpec=newConeSpec(1:(length(newConeSpec)-shiftDistance),:); %remove last rows from spectra
-%if peak already matches, no adjustment needed
-elseif coneToShiftWL_indx == peakIndx
-    newConeSpec=newConeSpec;
 end
+%N.B. if peak already matches, no adjustment needed
 
 %save out spectra with wavelengths (WL,L,M,S)
 if strcmp(shiftCone,'L')==1 %if shifting L cone
