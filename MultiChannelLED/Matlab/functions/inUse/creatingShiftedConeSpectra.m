@@ -1,5 +1,5 @@
-function Spectra=creatingShiftedConeSpectra(dpy)
-% Spectra=creatingShiftedConeSpectra(dpy)
+function [Spectra,dpy]=creatingShiftedConeSpectra(dpy)
+% [Spectra,dpy]=creatingShiftedConeSpectra(dpy)
 % 
 % creates spectra for L M and S cones, where the L or M cone has a shifted
 % peak, as determined by dpy variables:
@@ -18,7 +18,7 @@ function Spectra=creatingShiftedConeSpectra(dpy)
 
 
 WLrange = dpy.WLrange; %desired WL range
-shiftPeak = dpy.shiftPeak; %the desired peak
+shiftPeak = dpy.shiftPeak; %the shift in nm from the original cone peak
 shiftCone = dpy.shiftCone; %the cone to shift
 
 %load in the 0.1nm stockmanCFs
@@ -40,13 +40,16 @@ coneToShiftWL_indx = find(CombinedRaw(:,coneIndx) == 1);
 %get the mean if more than one value is 1, round indx num to correspond to a row
 coneToShiftWL_indx = round(mean(coneToShiftWL_indx));
 
+%calculate the shifted peak wavelength
+dpy.shiftPeakWL=CombinedRaw(coneToShiftWL_indx,1)+shiftPeak;
+
 %get the indx of the wavelength for the desired cone peak
 try
-    peakIndx=find(CombinedRaw(:,1) == shiftPeak);
+    peakIndx=find(CombinedRaw(:,1) == dpy.shiftPeakWL);
 catch
     %if there isn't an exact match check across a slightly larger range and
     %use the average (rounded to match an actual row)
-    peakIndx=find(CombinedRaw(:,1) <= (shiftPeak+1) & CombinedRaw >= (shiftPeak-1));
+    peakIndx=find(CombinedRaw(:,1) <= (dpy.shiftPeakWL+1) & CombinedRaw >= (dpy.shiftPeakWL-1));
     peakIndx=round(mean(peakIndx));
 end
 
