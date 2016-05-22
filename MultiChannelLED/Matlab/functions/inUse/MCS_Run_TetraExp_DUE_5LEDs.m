@@ -320,6 +320,10 @@ end
 % We are going to do this on a log scale so we don't have too many levels
 % at the high 'easy-to-see' end
 
+%log scale the stim values. 
+dpy.stimLevels=logspace(log10(stim.stimLMS.minTestLevel),log10(stim.stimLMS.maxTestLevel),dpy.NumStimLevels)'; %create the stimulus levels
+%dpy.stimLevels=[stim.stimLMS.minTestLevel:((stim.stimLMS.maxTestLevel-stim.stimLMS.minTestLevel)/(dpy.NumStimLevels-1)):stim.stimLMS.maxTestLevel]';
+dpy.allStimTrialLevels=Shuffle(repmat(dpy.stimLevels,dpy.NumTrialsPerLevel,1)); %produce list of all the contrast levels (i.e. all trials) and shuffle them
 %in case just in testing mode using pre-defined contrasts check for the
 %indicator
 try
@@ -329,11 +333,6 @@ try
     end
 catch %if doesn't exist, proceed as normal
 end   
-    %for now, don't log scale the stim values. kept code for dpy.stimLevels
-    %when log scaled so easy to re-introduce
-%dpy.stimLevels=logspace(log10(stim.stimLMS.minTestLevel),log10(stim.stimLMS.maxTestLevel),dpy.NumStimLevels)'; %create the stimulus levels
-dpy.stimLevels=[stim.stimLMS.minTestLevel:((stim.stimLMS.maxTestLevel-stim.stimLMS.minTestLevel)/(dpy.NumStimLevels-1)):stim.stimLMS.maxTestLevel]';
-dpy.allStimTrialLevels=Shuffle(repmat(dpy.stimLevels,dpy.NumTrialsPerLevel,1)); %produce list of all the contrast levels (i.e. all trials) and shuffle them
 
 % Run the trials.
 % On each trial we run one of the pre-defined stimulus contrast levels that have
