@@ -29,16 +29,18 @@ dummyTrial(s);
 %set some of the experiment parameters
 dpy.NumSpec=4; %this is the number of assumed cones used to create stim (e.g. LMS, or L Lp M S, etc)
 dpy.LprimePosition=0.5; %set this if running and experiments with Lprime, 0.5 puts the peak of Lp midway between L and M peaks
-theExptID={'LP','L','M'};%,'LMS','S'}; %set the experiment ID(s) you want to test, 
+theExptID={'LP','L','M','S','LM','LMS'}; %set the experiment ID(s) you want to test, 
+dpy.Lpeak=570; %set subject's L cone peak
+dpy.Mpeak=545; %set subjects's M cone peak
 % can be more than one (e.g.'{'LM,'LMS'}'Possible values: LM, LLP, LPM, L, M ,S, LP, LMS
-theFreq=[2]; %the frequencies to test for each experiment ID, can be one or more (e.g. [2,4,8])
+theFreq=[2,4,8,16,32]; %the frequencies to test for each experiment ID, can be one or more (e.g. [2,4,8])
 
 %Set details for the method of constant stimuli here, i.e. num levels, num
 %trials at each level.  Details of max and min contrast levels will be set within the 
 %Run function (to make sure the values don't exceed the max contrast available
 %for the given experiment ID)
-dpy.NumStimLevels = 5; %the number of levels for the method of constant stim
-dpy.NumTrialsPerLevel = 10; %the number of trials for each level
+dpy.NumStimLevels = 6; %the number of levels for the method of constant stim
+dpy.NumTrialsPerLevel = 20; %the number of trials for each level
 
 % Ask the user to enter a Subject ID number
 SubID=-1; 
