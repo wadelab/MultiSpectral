@@ -27,15 +27,15 @@ s=ConnectToArduino;
 dummyTrial(s);
 
 %set some of the experiment parameters
-dpy.NumSpec=4; %this is the number of assumed cones used to create stim (e.g. LMS, or L Lp M S, etc)
-dpy.LprimePosition=0.5; %set this if running and experiments with Lprime, 0.5 puts the peak of Lp midway between L and M peaks
+dpy.NumSpec=3; %this is the number of assumed cones used to create stim (e.g. LMS, or L Lp M S, etc)
+%dpy.LprimePosition=0.5; %set this if running and experiments with Lprime, 0.5 puts the peak of Lp midway between L and M peaks
 theExptID={'L','M'}; %set the experiment ID(s) you want to test, 
 %set how many peak levels should be tested
 dpy.NumShiftPeaks = 7; %must be odd number
 dpy.shiftSteps = 1.5; %step size of shift in nm
 negShifts = -(((dpy.NumShiftPeaks-1)/2)*dpy.shiftSteps):dpy.shiftSteps:0;
 posShifts = 0:dpy.shiftSteps:((dpy.NumShiftPeaks-1)/2)*dpy.shiftSteps;
-dpy.shiftLevels = [negShifts,posShifts(2:end)];
+dpy.shiftLevels = [negShifts,posShifts(2:end)]; %create list, excludes one of the zeros so not duplicated
 
 % can be more than one (e.g.'{'LM,'LMS'}'Possible values: LM, LLP, LPM, L, M ,S, LP, LMS
 theFreq=[2]; %the frequencies to test for each experiment ID, can be one or more (e.g. [2,4,8])
