@@ -1,5 +1,5 @@
-function [Spectra,dpy]=creatingShiftedConeSpectra(dpy)
-% [Spectra,dpy]=creatingShiftedConeSpectra(dpy)
+function Spectra=creatingShiftedConeSpectra(dpy)
+% Spectra=creatingShiftedConeSpectra(dpy)
 % 
 % creates spectra for L M and S cones, where the L or M cone has a shifted
 % peak, as determined by dpy variables:
