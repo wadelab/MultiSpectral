@@ -7,29 +7,29 @@ function [LEDStim,dpy] = tetra_led_arduinoConeIsolationLMS(dpy,stimLMS)
 % Written by LEW 09/01/15
 % edited by LEW 21/05/15 - compatible with 5LEDs controlled by arduino DUE
 
-%% Load the Calibration data for the LEDs
-LEDsToUse=dpy.LEDsToUse;
-
-
-%% create cone fundamentals using stockman cone fundamentals
-% TODO - edit so dir==4 also works for TESTLM condition
-if length(stimLMS.dir)==4 %if tetra stim
-    LprimePos=dpy.LprimePosition; %position of peak between the L and M cones, 0.5 is half way
-    coneSpectra=creatingLprime(dpy); %outputs the L L' M S spectra, with first column containing wavelengths
-    fprintf('LprimePos is %.2f\n',LprimePos);
-elseif length(stimLMS.dir)==3; %if LMS stim
-    coneSpectra=creatingLMSspectra(dpy);
-elseif length(stimLMS.dir)==2;
-    [coneSpectra,dpy]=creating2coneSpectra(dpy); %where 'LMpeak' is lambdaMax of the cone in longwavelength region
-end
-%check WL match in coneSpectra and dpy.WLrange
-try 
-    if dpy.WLrange==coneSpectra(:,1)
-    %disp('wavelengths match')
-    end
-catch 
-    error('Wavelength ranges used for dpy.WLrange do not match the dpy.coneSpectra wavelengths. Edit dpy.WLranges to match')
-end
+% %% Load the Calibration data for the LEDs
+% LEDsToUse=dpy.LEDsToUse;
+% 
+% 
+% %% create cone fundamentals using stockman cone fundamentals
+% % TODO - edit so dir==4 also works for TESTLM condition
+% if length(stimLMS.dir)==4 %if tetra stim
+%     LprimePos=dpy.LprimePosition; %position of peak between the L and M cones, 0.5 is half way
+%     coneSpectra=creatingLprime(dpy); %outputs the L L' M S spectra, with first column containing wavelengths
+%     fprintf('LprimePos is %.2f\n',LprimePos);
+% elseif length(stimLMS.dir)==3; %if LMS stim
+%     coneSpectra=creatingLMSspectra(dpy);
+% elseif length(stimLMS.dir)==2;
+%     [coneSpectra,dpy]=creating2coneSpectra(dpy); %where 'LMpeak' is lambdaMax of the cone in longwavelength region
+% end
+% %check WL match in coneSpectra and dpy.WLrange
+% try 
+%     if dpy.WLrange==coneSpectra(:,1)
+%     %disp('wavelengths match')
+%     end
+% catch 
+%     error('Wavelength ranges used for dpy.WLrange do not match the dpy.coneSpectra wavelengths. Edit dpy.WLranges to match')
+% end
 % specify the coneSpectra so that the stimulus can be built
 dpy.coneSpectra=coneSpectra(:,2:end); %remove the wavelengths column
 

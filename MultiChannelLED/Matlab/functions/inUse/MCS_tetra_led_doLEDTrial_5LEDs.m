@@ -25,7 +25,7 @@ for thisInterval= 1:2
         end
         % Compute the LED levels we want
         stimOne=stim;
-        stimOne.stimLMS.dir=stimOne.stimLMS.dir; % without added lum for now %%%% +(ones(dpy.NumSpec,1)'); %luminance plus target direction
+        stimOne.stimLMS.dir=stimOne.stimLMS.dir; 
         [stimTarget,dpy]=tetra_led_arduinoConeIsolationLMS(dpy,stimOne.stimLMS);
         
                
