@@ -154,7 +154,7 @@ switch dpy.ExptID
                 dpy.ConeTypes='LMS';
             end
             stim.stimLMS.dir=[1 0 0]; % L cone isolating
-            stim.stimLMS.maxCont= .055;
+            stim.stimLMS.maxCont= .05;
             stim.stimLMS.maxTestLevel = .05;
             stim.stimLMS.minTestLevel = .0000001;
         end
@@ -198,7 +198,7 @@ switch dpy.ExptID
                 dpy.ConeTypes='LMS';
             end
             stim.stimLMS.dir=[0 1 0]; % M cone isolating
-            stim.stimLMS.maxCont= .035;
+            stim.stimLMS.maxCont= .05;
             stim.stimLMS.maxTestLevel = .05;
             stim.stimLMS.minTestLevel = .0000001;
         end
@@ -259,7 +259,7 @@ switch dpy.ExptID
             dpy.ConeTypes='LMS';
             stim.stimLMS.dir=[1 1 1]; %
             stim.stimLMS.maxCont= .1;
-            stim.stimLMS.maxTestLevel = .07;
+            stim.stimLMS.maxTestLevel = .05;
             stim.stimLMS.minTestLevel = .0000001;
         end
         thisExp='LMS';
@@ -421,8 +421,11 @@ catch
     title(sprintf('%s cond at %.1f Hz Trial %d',dpy.ExptID,dpy.Freq,dpy.Repeat))
 end
 
+%log transform the contrast values before fitting function
+plotResponseData(thisLevel,1)=log10(plotResponseData(thisLevel,1));
+
 %fit psychometric function to data
-searchGrid.alpha = 0:1:30;
+searchGrid.alpha = log10(0.001:0.1:30); %log transform the alpha values to be tested
 searchGrid.beta = 0:0.5:10;
 searchGrid.gamma = .5;
 searchGrid.lambda = 0.02;
@@ -432,7 +435,7 @@ PF = @PAL_CumulativeNormal;
 
 [Data.Fit.paramValues,Data.Fit.LL,Data.Fit.exitFlag,Data.Fit.output] = PAL_PFML_Fit(plotResponseData(:,1),plotResponseData(:,2),...
     plotResponseData(:,3),searchGrid,paramsFree,PF);
-Data.contrastThresh=Data.Fit.paramValues(1);
+Data.contrastThresh=10^Data.Fit.paramValues(1); %convert back to contrast from the log transformed value
 
 try
     fprintf('Experiment Condition: %s    Freq: %.1f testLMpeak: %d\n',dpy.ExptID,dpy.Freq,dpy.LMpeak);
