@@ -74,7 +74,7 @@ if dpy.NumSpec==4 %if tetra stim
 elseif dpy.NumSpec==3; %if LMS stim
     if isfield(dpy,'shiftCone')==1 
         %if a shifted cone has been specified, create the spectra for it
-        coneSpectra=creatingShiftedConeSpectra(dpy);
+        [coneSpectra,dpy]=creatingShiftedConeSpectra(dpy);
     else %else default to using stockman LMS spectra
         dpy.ConeTypes='LMS';
         coneSpectra=creatingLMSspectra(dpy);
