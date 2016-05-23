@@ -164,13 +164,19 @@ CloseArduino(s);%close connection to arduino
 %in this session) in the command window
 for thisCond=1:length(theExptID) %for each expt id
     theCondName=theExptID{thisCond}; %get name of expt id
-    shifts=fieldnames(AllData);
+    if strcmp(theCondName,'OrderOfConditions')
+        %skip it
+        else
+    shifts=fieldnames(AllData.(theCondName));
+    
     for thisShift=1:length(shifts) %for each shift
         theShiftName=shifts{thisShift}; %get name of freq
+        
         fprintf('\nContrast Threshold for Cond %s  %s : %.2f%%      Fit %s\n',...
-            theCondName,theShiftName,AllData.(theCondName).(theShiftName).contrastThresh,...
+            theCondName,theShiftName,log10(AllData.(theCondName).(theShiftName).contrastThresh),...
             AllData.(theCondName).(theShiftName).fitExit);
         fprintf('\nThe max contrast for Cond %s is %.4f\n',theCondName,AllData.(theCondName).(theShiftName).dpy.MaxSensorValue.(theCondName));
+    end
     end
 end
 
