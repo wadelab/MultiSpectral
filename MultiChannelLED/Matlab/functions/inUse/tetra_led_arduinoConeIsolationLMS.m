@@ -31,7 +31,7 @@ function [LEDStim,dpy] = tetra_led_arduinoConeIsolationLMS(dpy,stimLMS)
 %     error('Wavelength ranges used for dpy.WLrange do not match the dpy.coneSpectra wavelengths. Edit dpy.WLranges to match')
 % end
 % specify the coneSpectra so that the stimulus can be built
-dpy.coneSpectra=coneSpectra(:,2:end); %remove the wavelengths column
+%dpy.coneSpectra=dpy.coneSpectra(:,2:end); %remove the wavelengths column
 
 %replace NaNs with 0
 dpy.coneSpectra(isnan(dpy.coneSpectra))=0;
