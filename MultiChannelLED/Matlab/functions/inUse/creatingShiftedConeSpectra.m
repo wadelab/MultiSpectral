@@ -40,6 +40,8 @@ coneToShiftWL_indx = find(CombinedRaw(:,coneIndx) == 1);
 %get the mean if more than one value is 1, round indx num to correspond to a row
 coneToShiftWL_indx = round(mean(coneToShiftWL_indx));
 
+%store original peak
+dpy.originalPeakWL=CombinedRaw(coneToShiftWL_indx,1);
 %calculate the shifted peak wavelength
 dpy.shiftPeakWL=CombinedRaw(coneToShiftWL_indx,1)+shiftPeak;
 
