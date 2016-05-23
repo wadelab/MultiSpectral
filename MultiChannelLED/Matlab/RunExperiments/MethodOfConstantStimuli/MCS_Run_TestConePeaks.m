@@ -108,14 +108,14 @@ for thisCond = 1:TotalNumConds %for each condition
     %specify what the condition expt ID and freq are using codes
     dpy.ExptID=theExptID{(shuffledConds(thisCond,1))}; %first col of shuffledConds is ExptIDs
     dpy.Freq=theFreq; 
-    dpy.shiftPeak=dpt.shiftLevels{(shuffledConds(thisCond,2))}; %second col of shuffledConds is shift IDs
+    dpy.shiftPeak=dpy.shiftLevels((shuffledConds(thisCond,2))); %second col of shuffledConds is shift IDs
     dpy.shiftCone=dpy.ExptID;
     
     % Now send experiment details out and start experiment trials.
     Data=MCS_Run_TetraExp_DUE_5LEDs(dpy,s);
     
     %store full condition name
-    fullCondName=sprintf('%s_peak%d',dpy.ExptID,dpy.shiftPeakWL); %save name of condition as string
+    fullCondName=sprintf('%s_peak%d',dpy.ExptID,Data.dpy.shiftPeakWL); %save name of condition as string
  
     %save out a file containing the data, SubID, experimentType, freq and
     %Session num - do this for each condition as the experiment runs - if it
@@ -126,7 +126,7 @@ for thisCond = 1:TotalNumConds %for each condition
     
     %save Data
     save(sprintf('SubID%s_Expt%s_Shift%d_Rep%d_%s.mat',...
-        dpy.SubID,dpy.ExptID,Data.dpy.shiftPeakWL,dpy.Repeat,Data.Date),'Data');
+        dpy.SubID,dpy.ExptID,round(Data.dpy.shiftPeakWL),dpy.Repeat,Data.Date),'Data');
     
     %save the figure - because, why not
     %go to figures folder
@@ -141,7 +141,7 @@ for thisCond = 1:TotalNumConds %for each condition
     
     %Save Data into a structure for all the conditions
     CondName=sprintf('%s',dpy.ExptID); %Expt ID name
-    shiftName=sprintf('Shift%d',Data.dpy.shiftPeakWL); %shift name (rounded up)
+    shiftName=sprintf('Shift%d',round(Data.dpy.shiftPeakWL)); %shift name (rounded up)
     AllData.OrderOfConditions{thisCond}=fullCondName; %save out order the conditions were presented in
     AllData.(CondName).(shiftName)=Data; %save all the Data associated with the condition in appropriate structure
     
