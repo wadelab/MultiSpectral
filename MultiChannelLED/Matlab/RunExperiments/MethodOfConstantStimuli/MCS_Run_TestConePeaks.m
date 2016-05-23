@@ -176,6 +176,8 @@ for thisCond=1:length(theExptID) %for each expt id
             theCondName,theShiftName,log10(AllData.(theCondName).(theShiftName).contrastThresh),...
             AllData.(theCondName).(theShiftName).fitExit);
         fprintf('\nThe max contrast for Cond %s is %.4f\n',theCondName,AllData.(theCondName).(theShiftName).dpy.MaxSensorValue.(theCondName));
+        AllData.(theCondName).(theShiftName).contrastThreshlog=log10(AllData.(theCondName).(theShiftName).contrastThresh);
+    
     end
     end
 end
