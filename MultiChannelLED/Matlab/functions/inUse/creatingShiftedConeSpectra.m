@@ -21,6 +21,15 @@ WLrange = dpy.WLrange; %desired WL range
 shiftPeak = dpy.shiftPeak; %the shift in nm from the original cone peak
 shiftCone = dpy.shiftCone; %the cone to shift
 
+%check whether need to work from the standard stockman CFs, or if any peaks
+%have been specified for the L or M cones
+if isfield('Lpeak',dpy)==1 || isfield('Mpeak',dpy)==1
+    Spectra=creatingLprime(dpy); %also exports an Lprime in col3, which we don't need here
+    WL=Spectra(:,1);
+    Lcone=interp1(WL,Spectra(:,2),WLrange);
+    Mcone=interp1(WL,Spectra(:,4),WLrange);
+    Scone=interp1(WL,Spectra(:,5),WLrange);
+else %if not pre-defined
 %load in the 0.1nm stockmanCFs
 load('stockman01nmCF.mat');
 %assign WLs to variable
@@ -29,9 +38,9 @@ WL=stockman.wavelength;
 Lcone=interp1(WL,stockman.Lcone,WLrange);
 Mcone=interp1(WL,stockman.Mcone,WLrange);
 Scone=interp1(WL,stockman.Scone,WLrange);
+end
 CombinedRaw=cat(2,WLrange,Lcone,Mcone,Scone);
 CombinedLabels={'WL','Lcone','Mcone','Scone'};
-
 %get the indx for the cone to shift - by comparing strings
 coneIndx=strncmp(CombinedLabels,shiftCone,1);
 
