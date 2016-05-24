@@ -29,7 +29,7 @@ dummyTrial(s);
 %set some of the experiment parameters
 dpy.NumSpec=3; %this is the number of assumed cones used to create stim (e.g. LMS, or L Lp M S, etc)
 %dpy.LprimePosition=0.5; %set this if running and experiments with Lprime, 0.5 puts the peak of Lp midway between L and M peaks
-theExptID={'L','M'}; %set the experiment ID(s) you want to test, 
+theExptID={'L'}; %set the experiment ID(s) you want to test, 
 %set how many peak levels should be tested
 dpy.NumShiftPeaks = 7; %must be odd number
 dpy.shiftSteps = 1.5; %step size of shift in nm
@@ -133,7 +133,7 @@ for thisCond = 1:TotalNumConds %for each condition
     cd('/Users/wade/Documents/Github_MultiSpectral/MultiChannelLED/DataFiles/IndividualConditions/Figures')
     %save figure
     savefig(sprintf('SubID%s_Expt%s_Shift%d_Rep%d_%s.fig',...
-        dpy.SubID,dpy.ExptID,Data.dpy.shiftPeakWL,dpy.Repeat,Data.Date));
+        dpy.SubID,dpy.ExptID,round(Data.dpy.shiftPeakWL),dpy.Repeat,Data.Date));
     
     %output text to command window when complete
     fprintf('\nSubject %s data saved\n',dpy.SubID);
@@ -173,10 +173,9 @@ for thisCond=1:length(theExptID) %for each expt id
         theShiftName=shifts{thisShift}; %get name of freq
         
         fprintf('\nContrast Threshold for Cond %s  %s : %.2f%%      Fit %s\n',...
-            theCondName,theShiftName,log10(AllData.(theCondName).(theShiftName).contrastThresh),...
+            theCondName,theShiftName,AllData.(theCondName).(theShiftName).contrastThresh,...
             AllData.(theCondName).(theShiftName).fitExit);
-        fprintf('\nThe max contrast for Cond %s is %.4f\n',theCondName,AllData.(theCondName).(theShiftName).dpy.MaxSensorValue.(theCondName));
-        AllData.(theCondName).(theShiftName).contrastThreshlog=log10(AllData.(theCondName).(theShiftName).contrastThresh);
+        fprintf('\nThe max contrast for Cond %s is %.4f\n',theCondName,(AllData.(theCondName).(theShiftName).dpy.MaxSensorValue.(theCondName)*100));
     
     end
     end
