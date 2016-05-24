@@ -422,7 +422,7 @@ catch
 end
 
 %log transform the contrast values before fitting function
-plotResponseData(thisLevel,1)=log10(plotResponseData(thisLevel,1));
+plotResponseData(:,1)=log10(plotResponseData(:,1));
 
 %fit psychometric function to data
 searchGrid.alpha = log10(0.001:0.1:30); %log transform the alpha values to be tested
