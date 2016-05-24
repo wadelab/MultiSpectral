@@ -21,8 +21,17 @@ else
 end
 
 WLrange = dpy.WLrange; %desired WL range
-Lpeak = dpy.Lpeak; %the subject's L peak
-Mpeak = dpy.Mpeak; %the subject's M peak
+%set the L and M cone peaks as specified, or default to the original peak
+if isfield('Lpeak',dpy)==1
+    Lpeak = dpy.Lpeak; %the subject's L peak
+else 
+    Lpeak = 570.5; %default
+end
+if isfield('Mpeak',dpy)==1
+    Mpeak = dpy.Mpeak; %the subject's M peak
+else
+    Mpeak = 543; %default
+end
 
 %load in the 0.1nm stockmanCFs
 load('stockman01nmCF.mat');
