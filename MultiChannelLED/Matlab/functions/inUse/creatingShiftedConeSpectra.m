@@ -23,15 +23,18 @@ shiftCone = dpy.shiftCone; %the cone to shift
 
 %check whether need to work from the standard stockman CFs, or if any peaks
 %have been specified for the L or M cones
-if isfield('Lpeak',dpy)==1 || isfield('Mpeak',dpy)==1
+if isfield(dpy,'Lpeak')==1 || isfield(dpy,'Mpeak')==1
     Spectra=creatingLprime(dpy); %also exports an Lprime in col3, which we don't need here
     WL=Spectra(:,1);
     Lcone=interp1(WL,Spectra(:,2),WLrange);
     Mcone=interp1(WL,Spectra(:,4),WLrange);
     Scone=interp1(WL,Spectra(:,5),WLrange);
+    dpy.theBaseSpectraUsed='usedSpecifiedPeaks';
+
 else %if not pre-defined
 %load in the 0.1nm stockmanCFs
 load('stockman01nmCF.mat');
+dpy.theBaseSpectraUsed='normalStockman';
 %assign WLs to variable
 WL=stockman.wavelength;
 %interpolate CFs to desired WL range
