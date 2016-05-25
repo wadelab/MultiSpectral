@@ -146,9 +146,9 @@ switch dpy.ExptID
     case {'L'} %L cone isolating
         if dpy.NumSpec==4 %4 cones used L Lp M S
             stim.stimLMS.dir=[1 0 0 0]; % L cone isolating
-            stim.stimLMS.maxCont = .008; %max possible?
+            stim.stimLMS.maxCont = .003; %max possible?
             tGuess=0.002;
-            stim.stimLMS.maxTestLevel = .005; %max level to use
+            stim.stimLMS.maxTestLevel = .0025; %max level to use
             stim.stimLMS.minTestLevel = .0001; %min level to use
         elseif dpy.NumSpec==3 %3 cones used L M S
             if isfield(dpy,'ConeTypes')==1 %see if ConeTypes is already set - not sure why, think it has to be set before here?!
@@ -168,14 +168,14 @@ switch dpy.ExptID
             stim.stimLMS.dir=[0 1 0 0]; % L' cone isolating
             if dpy.LprimePosition<0.25 || 0.75<dpy.LprimePosition
                 stim.stimLMS.maxCont= .0007;
-                tGuess=0.003;
-                stim.stimLMS.maxTestLevel = .005;
+                tGuess=0.0005;
+                stim.stimLMS.maxTestLevel = .0009;
                 stim.stimLMS.minTestLevel = .0001;
             else
                 stim.stimLMS.maxCont= .005;
-                tGuess=0.003;
-                stim.stimLMS.maxTestLevel = .0045;
-                stim.stimLMS.minTestLevel = .00001;
+                tGuess=0.0005;
+                stim.stimLMS.maxTestLevel = .0009;
+                stim.stimLMS.minTestLevel = .0001;
             end
         elseif dpy.NumSpec==3
             if isfield(dpy,'ConeTypes')==1
@@ -196,8 +196,8 @@ switch dpy.ExptID
         if dpy.NumSpec==4 %4 cones
             stim.stimLMS.dir=[0 0 1 0]; % M cone isolating
             stim.stimLMS.maxCont= .008;
-            tGuess=0.004;
-            stim.stimLMS.maxTestLevel = .005;
+            tGuess=0.001;
+            stim.stimLMS.maxTestLevel = .0019;
             stim.stimLMS.minTestLevel = .0001;
         elseif dpy.NumSpec==3 %3 cones
             if isfield(dpy,'ConeTypes')==1
@@ -348,7 +348,12 @@ beta=3.5;delta=0.01;gamma=0.5;
 q=QuestCreate(tGuess,tGuessSd,pThreshold,beta,delta,gamma);
 q.normalizePdf=1; % This adds a few ms per call to QuestUpdate, but otherwise the pdf will underflow after about 1000 trials.
 
-fprintf('Quest''s initial threshold estimate is %g +- %g\n for Shift%.1f',QuestMean(q),QuestSd(q),dpy.shiftPeakWL);
+try
+    fprintf('Quest''s initial threshold estimate is %g +- %g\n for Shift%.1f',QuestMean(q),QuestSd(q),dpy.shiftPeakWL);
+catch
+    fprintf('Quest''s initial threshold estimate is %g +- %g\n for Freq%d',QuestMean(q),QuestSd(q),dpy.Freq);
+
+end
 
 % Run a series of trials. 
 % On each trial we ask Quest to recommend an intensity and we call QuestUpdate to save the result in q.
@@ -450,15 +455,14 @@ end
 scatter(Data.PercentCorrect(:,1),Data.PercentCorrect(:,2));
 set(gca,'YLim',[0,100]);
 try
-    title(sprintf('LMpeak %d at %.1f Hz Trial %d',dpy.LMpeak,dpy.Freq,dpy.Repeat))
-catch
     title(sprintf('%s cond at %.1f Hz Trial %d',dpy.ExptID,dpy.Freq,dpy.Repeat))
+catch
 end
 
 try
-    fprintf('Experiment Condition: %s    Freq: %.1f testLMpeak: %d\n',dpy.ExptID,dpy.Freq,dpy.LMpeak);
-catch
     fprintf('Experiment Condition: %s    ShiftPeak: %.1f \n',dpy.ExptID,dpy.shiftPeakWL);
+catch 
+    fprintf('Experiment Condition: %s    Freq: %d \n',dpy.ExptID,dpy.Freq);    
 end
 
 fprintf('Final threshold estimate is %.2f%%  n\n',Data.contrastThresh); %first val is threshold
