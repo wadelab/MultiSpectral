@@ -30,24 +30,23 @@ dummyTrial(s);
 dpy.NumSpec=3; %this is the number of assumed cones used to create stim (e.g. LMS, or L Lp M S, etc)
 %dpy.LprimePosition=0.5; %set this if running and experiments with Lprime, 0.5 puts the peak of Lp midway between L and M peaks
 theExptID={'L'}; %set the experiment ID(s) you want to test, 
+theFreq=[10]; %the frequencies to test for each experiment ID, can be one or more (e.g. [2,4,8])
+dpy.NumTrials=50; %num trials for staircase
 
 %if you want to fix the L or M cone peak to a different value than the
 %stockman ones, set it here: either 'dpy.Lpeak' or 'dpy.Mpeak'. N.B. if you do
 %both then the values specified in this experiment will be based on those
 %peak, which is useful if you want to test around different means.
 dpy.Lpeak=555.5;
-dpy.Mpeak=541.5;
+dpy.Mpeak=543;
 
 %set how many peak levels should be tested
-dpy.NumShiftPeaks = 7; %must be odd number
+dpy.NumShiftPeaks = 5; %must be odd number
 dpy.shiftSteps = 1.5; %step size of shift in nm
 negShifts = -(((dpy.NumShiftPeaks-1)/2)*dpy.shiftSteps):dpy.shiftSteps:0;
 posShifts = 0:dpy.shiftSteps:((dpy.NumShiftPeaks-1)/2)*dpy.shiftSteps;
 dpy.shiftLevels = [negShifts,posShifts(2:end)]; %create list, excludes one of the zeros so not duplicated
 
-% can be more than one (e.g.'{'LM,'LMS'}'Possible values: LM, LLP, LPM, L, M ,S, LP, LMS
-theFreq=[2]; %the frequencies to test for each experiment ID, can be one or more (e.g. [2,4,8])
-dpy.NumTrials=50; %num trials for staircase
 
 % %Set details for the method of constant stimuli here, i.e. num levels, num
 % %trials at each level.  Details of max and min contrast levels will be set within the 
@@ -163,8 +162,9 @@ finalDate=datestr(now,30);
 %go to folder for saving all condition data (in one structure)
 cd('/Users/wade/Documents/Github_MultiSpectral/MultiChannelLED/DataFiles/AllConditions')
 %save data
-save(sprintf('SubID%s_TestCones_numSpec%d_Rep%d_%s.mat',...
-    dpy.SubID,dpy.NumSpec,dpy.Repeat,finalDate),'AllData');
+allExptIDs=strcat(theExptID{:});
+save(sprintf('SubID%s_TestCones%s_numSpec%d_Rep%d_%s.mat',...
+    dpy.SubID,allExptIDs,dpy.NumSpec,dpy.Repeat,finalDate),'AllData');
 
 %turn off LEDs and close connection to ardunio
 CloseArduino(s);%close connection to arduino
