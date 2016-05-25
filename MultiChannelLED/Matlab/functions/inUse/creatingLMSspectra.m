@@ -25,13 +25,26 @@ WLrange=dpy.WLrange;
 % MconeResample=Mcone'; %m cone
 % SconeResample=Scone'; %s cone
 
+if isfield(dpy,'Lpeak')==1 || isfield(dpy,'Mpeak')==1
+    Spectra=creatingLprime(dpy); %also exports an Lprime in col3, which we don't need here
+    WL=Spectra(:,1);
+    Lcone=interp1(WL,Spectra(:,2),WLrange);
+    Mcone=interp1(WL,Spectra(:,4),WLrange);
+    Scone=interp1(WL,Spectra(:,5),WLrange);
+    dpy.theBaseSpectraUsed='usedSpecifiedPeaks';
+
+else %if not pre-defined
+
 %load in the 0.1nm stockmanCFs
 load('stockman01nmCF.mat');
+dpy.theBaseSpectraUsed='normalStockman';
+
 %assign cones and WLs to variables
 Lcone=stockman.Lcone;
 Mcone=stockman.Mcone;
 Scone=stockman.Scone;
 WL=stockman.wavelength;
+end
 
 %resample to desired WLrange
 LconeResample=interp1(WL,Lcone,WLrange); %l cone
