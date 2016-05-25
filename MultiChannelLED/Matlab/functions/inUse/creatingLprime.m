@@ -12,8 +12,11 @@ function Spectra=creatingLprime(dpy)
 % written by LW 050315
 
 %set the location of the L prime with inputted LprimePos
+if isfield(dpy,'LprimePosition')==0
+    %if the field doesn't exist, set it to a default
+    dpy.LprimePosition=0.5; %default to 0.5
+end
 locationLprime=dpy.LprimePosition; %e.g. 0.5 for half way
-
 if locationLprime<1 || 0<locationLprime
     disp('Continue with LprimePosition values')
 else
@@ -22,12 +25,12 @@ end
 
 WLrange = dpy.WLrange; %desired WL range
 %set the L and M cone peaks as specified, or default to the original peak
-if isfield('Lpeak',dpy)==1
+if isfield(dpy,'Lpeak')==1
     Lpeak = dpy.Lpeak; %the subject's L peak
 else 
     Lpeak = 570.5; %default
 end
-if isfield('Mpeak',dpy)==1
+if isfield(dpy,'Mpeak')==1
     Mpeak = dpy.Mpeak; %the subject's M peak
 else
     Mpeak = 543; %default
@@ -99,7 +102,7 @@ if MconeOriginal_indx > MpeakIndx
     newMConeSpec=newMConeSpec(shiftDistance+1:end,1); %remove first rows corresponding to total number needing to shift
     newMConeSpec(end+1:end+shiftDistance,1)=0; %add 0's to end rows corresponding to total number needing to shift
 %if shifting to longer wavelength peak
-elseif MconeOriginal_indx < peakIndx
+elseif MconeOriginal_indx < MpeakIndx
     newMConeSpec=cat(1,zeros(shiftDistance,1),newMConeSpec); %create zeros to add to front of spectra
     newMConeSpec=newMConeSpec(1:(length(newMConeSpec)-shiftDistance),:); %remove last rows from spectra
 end
@@ -129,8 +132,8 @@ for thisL=1:length(LconeWL)
         Lindx=Lindx+1;
     end
 end
-LconePart1=LconeWL(1:WLindexL(1),:);
-LconePart2=LconeWL(WLindexL(end):end,:);
+part.LconePart1=LconeWL(1:WLindexL(1),:);
+part.LconePart2=LconeWL(WLindexL(end):end,:);
 
 %M cone
 Mindx=1;
@@ -140,25 +143,74 @@ for thisM=1:length(MconeWL)
         Mindx=Mindx+1;
     end
 end
-MconePart1=MconeWL(1:WLindexM(1),:);
-MconePart2=MconeWL(WLindexM(end):end,:);
+part.MconePart1=MconeWL(1:WLindexM(1),:);
+part.MconePart2=MconeWL(WLindexM(end):end,:);
 
-%S cone
-Sindx=1;
-for thisS=1:length(SconeWL)
-    if SconeWL(thisS,2)==1
-        WLindexS(Sindx,1)=thisS;
-        Sindx=Sindx+1;
+%run check to make sure all values are unique - if there are duplicates
+%anywhere then the interp wont work.
+eachPart={'LconePart1','LconePart2','MconePart1','MconePart2'};
+%for each part
+for thisPart=1:length(eachPart)
+    curPartname=eachPart{thisPart}; %get the current part name
+    curPart=part.(curPartname); %assign to curPart
+    if length(unique(curPart(:,2)))==length(curPart(:,2))
+        %total length and number of unique values are equal, so continue
+    else %values aren't equal, that mean some numbers are the same
+        theUniqueVals=unique(curPart(:,2));
+        for thisVal=1:length(theUniqueVals);
+            valsIndx=find(curPart(:,2)==theUniqueVals(thisVal));
+            numVals=length(valsIndx);
+            if numVals>=2 %if there are two or more cells with same number
+                if theUniqueVals(thisVal)==0 %if the value is zero, keep one and make rest NaNs
+                    if valsIndx(1)==1 %if at the start of array, keep last zero
+                        curPart(valsIndx(1):valsIndx(end-1),2)=NaN;
+                    else %if at end keep the first zero
+                        curPart(valsIndx(2):valsIndx(end),2)=NaN;
+                    end
+                else %if the unique val isn't a zero, just keep the middle value (or round up if even num)
+                    midVal=round(mean(valsIndx));
+                    for thisValIndx=1:numVals
+                        if valsIndx(thisValIndx)==midVal
+                            %leave it
+                        else
+                            curPart(valsIndx(thisValIndx),2)=NaN;
+                        end
+                    end
+                end
+            end
+        end
     end
+    %now that all redundant values are set to NaNs we need to remove those
+    %rows, as interp doesn't like Nans or inf values
+    nanIndx=isnan(curPart(:,2)); %find which rows have nans
+    j=1;
+    for thisRow=1:size(curPart,1)
+        if nanIndx(thisRow)==1 %if has a name, save the indx of row
+            removeVals(j)=thisRow;
+            j=j+1;
+        end
+    end
+    try
+        removeVals=removeVals';
+    curPart(removeVals,:)=[]; %remove the NaNs rows
+    catch %if no vals to remove
+    end
+    
+    clear removeVals
+    part.(curPartname)=curPart; %update the values
 end
-SconePart1=SconeWL(1:WLindexS(1),:);
-SconePart2=SconeWL(WLindexS(end):end,:);
+
+LconePart1=part.LconePart1;
+LconePart2=part.LconePart2;
+MconePart1=part.MconePart1;
+MconePart2=part.MconePart2;
 
 
 %specify range of sensitivity values for Lprime and desired peak
 valRangePart1=(0.001:0.001:1)'; %values to interpolate in to for first half of curve (low to high)
 valRangePart2=flipud(valRangePart1); %values to interpolate to for second half of curve (i.e. high to low)
 LPrimePeak=round((subLpeak-subMpeak)*locationLprime); %round peak so integer
+
 
 % Interpolate Part 1 of the curves to given sensitivity range
 xL1 = interp1(LconePart1(:,2),LconePart1(:,1),valRangePart1); %l cone
@@ -188,26 +240,40 @@ allMconeCF=cat(1,xM1,xM2);
 %allSconeCF=cat(1,xS1,xS2);
 allLprimeconeCF=cat(1,lPrimePart1,lPrimePart2); %this is the useful one
 
-cones.allLconeCFWLs=cat(2,allLconeCF,fullValRange);
-cones.allMconeCFWLs=cat(2,allMconeCF,fullValRange);
-cones.allSconeCFWLs=cat(2,Scone,WL);
+cones.allLconeCFWLs=cat(2,WLrange,newLConeSpec);
+cones.allMconeCFWLs=cat(2,WLrange,newMConeSpec);
+cones.allSconeCFWLs=cat(2,WLrange,Scone);
 cones.allLprimeconeCFWLs=cat(2,allLprimeconeCF,fullValRange);
+
+%remove nans for lprime
+nanLpIndx=isnan(cones.allLprimeconeCFWLs(:,:)); %find which rows have nans
+j=1;
+for thisRow=1:size(cones.allLprimeconeCFWLs,1)
+    if nanLpIndx(thisRow,1)==1 || nanLpIndx(thisRow,2)==1 %if has a name, save the indx of row
+        removeVals(j)=thisRow;
+        j=j+1;
+    end
+end
+try removeVals=removeVals';
+    cones.allLprimeconeCFWLs(removeVals,:)=[];
+catch
+end
+    
 
 %labels for cone variables - these must match those above! excluding the
 %'cone.' part of the name
-conevariables={'allLconeCFWLs','allMconeCFWLs','allSconeCFWLs','allLprimeconeCFWLs'};
-%remove any NaN rows from vals for each cone
-for thisConeVar=1:size(conevariables,2)
-    currentCone=conevariables{thisConeVar};
-    j=1; %index
-    for thisRow=1:length(cones.(currentCone))
-        if isnan(cones.(currentCone)(j,1))
-            cones.(currentCone)(j,:)=[];
-        else
-            j=j+1;
-        end
-    end
-end
+% conevariables={'allLconeCFWLs','allMconeCFWLs','allSconeCFWLs','allLprimeconeCFWLs'};
+% %remove any NaN rows from vals for each cone
+% for thisConeVar=1:size(conevariables,2)
+%     currentCone=conevariables{thisConeVar};    
+%     for thisRow=1:size(cones.(currentCone),1)
+%         if isnan(cones.(currentCone)(thisRow,2))==1
+%             cones.(currentCone)(thisRow,:)=[];
+%         else
+%            
+%         end
+%     end
+% end
     
 % 
 % %interpolate across the desired WL range set above, so in necessary format for use in
@@ -215,7 +281,6 @@ end
 % %resample to desired WLrange (needed to avoid duplicate values, which can't 
 % %be used in the interp)
 
-%use original LMS values
 finalLcone=newLConeSpec; %l cone
 finalMcone=newMConeSpec; %m cone
 finalScone=Scone; %s cone
