@@ -348,7 +348,7 @@ beta=3.5;delta=0.01;gamma=0.5;
 q=QuestCreate(tGuess,tGuessSd,pThreshold,beta,delta,gamma);
 q.normalizePdf=1; % This adds a few ms per call to QuestUpdate, but otherwise the pdf will underflow after about 1000 trials.
 
-fprintf('Quest''s initial threshold estimate is %g +- %g\n',QuestMean(q),QuestSd(q));
+fprintf('Quest''s initial threshold estimate is %g +- %g\n for Shift%.1f',QuestMean(q),QuestSd(q),dpy.shiftPeakWL);
 
 % Run a series of trials. 
 % On each trial we ask Quest to recommend an intensity and we call QuestUpdate to save the result in q.
