@@ -215,9 +215,9 @@ switch dpy.ExptID
     case {'LM'}
         if dpy.NumSpec==4
             stim.stimLMS.dir=[0.5 0 -1 0]; %
-            stim.stimLMS.maxCont= .005;
+            stim.stimLMS.maxCont= .003;
             tGuess=0.005;
-            stim.stimLMS.maxTestLevel = .01;
+            stim.stimLMS.maxTestLevel = .003;
             stim.stimLMS.minTestLevel = .001;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LMS';
@@ -266,9 +266,9 @@ switch dpy.ExptID
     case {'LMS'}
         if dpy.NumSpec==4
             stim.stimLMS.dir=[1 0 1 1]; %
-            stim.stimLMS.maxCont= .02;
+            stim.stimLMS.maxCont= .001;
             tGuess=0.015;
-            stim.stimLMS.maxTestLevel = .02;
+            stim.stimLMS.maxTestLevel = .001;
             stim.stimLMS.minTestLevel = .0001;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LMS';
