@@ -64,7 +64,14 @@ nLEDsTotal=length(LEDamps); %number of LEDs
 %the dpy.NumSpec determines how many cone spectra are used,i.e. LMS LLpMS
 %or maybe even just 2 cones (built this in incase back testing theory for 
 %how a tetrachromat would respond on 3 cone spectra stimuli)
-if dpy.NumSpec==4 %if tetra stim
+if dpy.NumSpec==5 %if tetra stim
+    %if using 4 cones, need to determine the peak of the Lprime
+    LprimePos=dpy.LprimePosition; %position of peak between the L and M cones, 0.5 is half way
+    %create the coneSpectra. use the LprimePos to interpolate the Lprime
+    %spectra from L and M cone fundamentals
+    coneSpectra=creatingLprime(dpy); %outputs the L L' M S spectra, with first column containing wavelengths
+    fprintf('LprimePos is %.2f\n',LprimePos);
+elseif dpy.NumSpec==4 %if tetra stim
     %if using 4 cones, need to determine the peak of the Lprime
     LprimePos=dpy.LprimePosition; %position of peak between the L and M cones, 0.5 is half way
     %create the coneSpectra. use the LprimePos to interpolate the Lprime
@@ -144,7 +151,13 @@ end
 % assumed (i.e. contrast has to be much lower when accounting for 4 cones)
 switch dpy.ExptID
     case {'L'} %L cone isolating
-        if dpy.NumSpec==4 %4 cones used L Lp M S
+        if dpy.NumSpec==5 %4 cones used L Lp M Mel S
+            stim.stimLMS.dir=[1 0 0 0 0]; % L cone isolating
+            stim.stimLMS.maxCont = .003; %max possible?
+            tGuess=0.002;
+            stim.stimLMS.maxTestLevel = .0025; %max level to use
+            stim.stimLMS.minTestLevel = .0001; %min level to use
+        elseif dpy.NumSpec==4 %4 cones used L Lp M S
             stim.stimLMS.dir=[1 0 0 0]; % L cone isolating
             stim.stimLMS.maxCont = .003; %max possible?
             tGuess=0.002;
