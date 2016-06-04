@@ -46,6 +46,13 @@ Mcone=interp1(WL,stockman.Mcone,WLrange);
 Scone=interp1(WL,stockman.Scone,WLrange);
 CombinedRaw=cat(2,WLrange,Lcone,Mcone,Scone);
 
+%load in and resample the melanopsin fundamentals
+load('MelanopsinLucas.mat')
+melWL=Melanopsin(:,1);
+melVals=Melanopsin(:,2);
+resampledMelanopsin=interp1(melWL,melVals,WLrange);
+
+
 %% find the WL peak of the each cone, i.e. where sensitivity is 1
 %L cone
 LconeOriginal_indx = find(CombinedRaw(:,2) == 1);
@@ -295,5 +302,8 @@ finalScone=Scone; %s cone
 finalLprimecone1nmResample=interp1(cones.allLprimeconeCFWLs(:,1),cones.allLprimeconeCFWLs(:,2),WLrange);
 
 %save out spectra with wavelengths (WL,L,L',M,S)
-Spectra=cat(2,WLrange,finalLcone,finalLprimecone1nmResample,finalMcone,finalScone);
-
+if dpy.NumSpec==5
+    Spectra=cat(2,WLrange,finalLcone,finalLprimecone1nmResample,finalMcone,resampledMelanopsin,finalScone);
+else
+    Spectra=cat(2,WLrange,finalLcone,finalLprimecone1nmResample,finalMcone,finalScone);
+end
