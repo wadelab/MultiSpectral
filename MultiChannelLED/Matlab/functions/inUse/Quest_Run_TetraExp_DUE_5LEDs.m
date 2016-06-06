@@ -262,7 +262,7 @@ switch dpy.ExptID
             stim.stimLMS.dir=[0.5 -1 0]; %
             stim.stimLMS.maxCont= .045;
             tGuess=0.02;
-            stim.stimLMS.maxTestLevel = .045;
+            stim.stimLMS.maxTestLevel = .19;
             stim.stimLMS.minTestLevel = .001;
         end;
         thisExp='LM';
@@ -319,7 +319,7 @@ switch dpy.ExptID
             stim.stimLMS.dir=[1 1 1]; %
             stim.stimLMS.maxCont= .1;
             tGuess=0.03;
-            stim.stimLMS.maxTestLevel = .05;
+            stim.stimLMS.maxTestLevel = .80;
             stim.stimLMS.minTestLevel = .001;
         end
         thisExp='LMS';
@@ -345,20 +345,20 @@ switch dpy.ExptID
             stim.stimLMS.maxTestLevel = .20;
             stim.stimLMS.minTestLevel = .001;
         elseif dpy.NumSpec==4
-            stim.stimLMS.dir=[0 0 0 1]; % S cone isolating
+            stim.stimLMS.dir=[0 0 0 1]; % 
             stim.stimLMS.maxCont= .25;
             tGuess=0.05;
             stim.stimLMS.maxTestLevel = .20;
             stim.stimLMS.minTestLevel = .001;
         elseif dpy.NumSpec==3
             dpy.ConeTypes='LMS';
-            stim.stimLMS.dir=[0 0 1]; % S cone isolating
+            stim.stimLMS.dir=[0 0 1]; % 
             stim.stimLMS.maxCont= .25;
             tGuess=0.05;
-            stim.stimLMS.maxTestLevel = .20;
+            stim.stimLMS.maxTestLevel = .75;
             stim.stimLMS.minTestLevel = .001;
         elseif dpy.NumSpec==2
-            stim.stimLMS.dir=[0 1]; % S cone isolating
+            stim.stimLMS.dir=[0 1]; % 
             stim.stimLMS.maxCont= .25;
             tGuess=0.05;
             stim.stimLMS.maxTestLevel = .10;
@@ -432,18 +432,22 @@ while ((k<trialsDesired) && (response ~= -1))
 
     dpy.theTrial=thisTrial; %save the current trial in dpy so that the target interval and wrong/right info can be saved within next function
     
-    %check whether the current tested value exceeds the max possible for
-    %the given direction. If so, set to the max possible instead.
-    if (tTest>log10(stim.stimLMS.maxTestLevel))
-        tTest=log10(stim.stimLMS.maxTestLevel);
-    end
+%     %check whether the current tested value exceeds the max possible for
+%     %the given direction. If so, set to the max possible instead. - for
+%     not default to max available
+%     if (tTest>log10(stim.stimLMS.maxTestLevel))
+%         tTest=log10(stim.stimLMS.maxTestLevel);
+%     end
 
     timeSplit=GetSecs;
     stim.stimLMS.scale=10^tTest; %assign tTest (contrast level) to stim - not logged
     
     if exit==0
         [response,dpy]=MCS_tetra_led_doLEDTrial_5LEDs(dpy,stim,s); % This should return 0 for an incorrect answer and 1 for correct
-        
+         %update tTest - will either be what was requested or the max
+         %available
+         tTest=log10(dpy.contrastLevelTested(dpy.theTrial,1));
+
         % Check if the response was given, and whether 'q' was pressed to quit
         % experiment
         if (response ~=-1)
