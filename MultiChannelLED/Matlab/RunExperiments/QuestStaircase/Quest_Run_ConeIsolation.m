@@ -27,10 +27,10 @@ s=ConnectToArduino;
 dummyTrial(s);
 
 %set some of the experiment parameters
-dpy.NumSpec=5; %this is the number of assumed cones used to create stim (e.g. LMS, or L Lp M S, etc)
+dpy.NumSpec=3; %this is the number of assumed cones used to create stim (e.g. LMS, or L Lp M S, etc)
 dpy.LprimePosition=0.5; %set this if running and experiments with Lprime, 0.5 puts the peak of Lp midway between L and M peaks
-theExptID={'L'}; %set the experiment ID(s) you want to test, 
-theFreqs =[10]; %set frequencies to test
+theExptID={'LM','LMS','S'}; %set the experiment ID(s) you want to test, 
+theFreqs =[2,4,8,16,32]; %set frequencies to test
 %if you want to fix the L or M cone peak to a different value than the
 %stockman ones, set it here: either 'dpy.Lpeak' or 'dpy.Mpeak'. It's OK to
 %remove them, the default values will be set to 570.5 and 543 in later
@@ -38,7 +38,7 @@ theFreqs =[10]; %set frequencies to test
 dpy.Lpeak=570.5;
 dpy.Mpeak=543;
 
-dpy.NumTrials=3; %num trials for staircase
+dpy.NumTrials=50; %num trials for staircase
 
 % %Set details for the method of constant stimuli here, i.e. num levels, num
 % %trials at each level.  Details of max and min contrast levels will be set within the 
@@ -179,7 +179,7 @@ for thisCond=1:length(theExptID) %for each expt id
     end
     end
 end
-
+ListenChar(1) %re-allows output into command window
 %output total time for experiment
 timeElapsed=toc/60;
 fprintf('Experiment complete in %.3f minutes\n',timeElapsed);
