@@ -3,7 +3,7 @@ function [response,dpy]=MCS_tetra_led_doLEDTrial_5LEDs(dpy,stim,serialObject,dum
 % Returns 0 or 1 for wrong/right
 % LEW
 
-
+ListenChar(2) %so keyboard presses are not outputted in the command window
 if (nargin < 5)
     dummyFlag=0;
 end
