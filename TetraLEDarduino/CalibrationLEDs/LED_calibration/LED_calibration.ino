@@ -6,9 +6,9 @@ void setup() {
 const int LEDs[] = {8,9,10,11,12}; //the LED pins available
 int nPins = 5;
 int ledOff = 0;
-int ledOn = 255;
+int ledOn = 255; //testing intensity at different % duty cycle: 20%=51, 40%=102, 60%=153, 80%=204, 100%=255
 
-int currentLEDon = 0; // specify which LED you want on
+int currentLEDon = 3; // specify which LED you want on
 
     for (int thisPin = 0; thisPin < nPins; thisPin++) {
         pinMode(LEDs[thisPin], OUTPUT);
