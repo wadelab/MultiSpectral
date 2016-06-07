@@ -1,5 +1,5 @@
-function [ConeExcitation, ShiftedConeExcitation] = plotConeExcitations_ForShiftedCones
-% [ConeExcitation, ShiftedConeExcitation] = plotConeExcitations_ForShiftedCones
+function [ConeExcitation, ShiftedConeExcitation, data] = plotConeExcitations_ForShiftedCones
+% [ConeExcitation, ShiftedConeExcitation, data] = plotConeExcitations_ForShiftedCones
 %
 % Calculates and plots the cone excitation values for a given condition.
 %
@@ -30,6 +30,9 @@ function [ConeExcitation, ShiftedConeExcitation] = plotConeExcitations_ForShifte
 % Outputs the calculated values for the shifted cone spectra in:
 %   ShiftedConeExcitation
 %
+% Outputs the data file that was originally imported in:
+%   data
+%
 % Make sure the relevant directory containing the data files is in the
 % path.
 %
@@ -41,14 +44,14 @@ function [ConeExcitation, ShiftedConeExcitation] = plotConeExcitations_ForShifte
 theData=uigetfile(pwd,'Select a file containing a single data condition');
 data=importdata((theData));
 
-%import the LED spectra
+%store the LED spectra
 LEDspec=data.dpy.LEDspectra;
 
-%import/enter the LED amps (given in vals +/- above or below half output of
+%store the LED amps (given in vals +/- above or below half output of
 %leds)
 LEDamps=data.dpy.targetLEDoutput(1,:)'; %just the first contrast condition (row)
 
-%import the cone spectra that was used to generate the amps
+%store the cone spectra that was used to generate the amps
 coneSpectra=data.dpy.coneSpectra;
 
 %save condition parameters
@@ -134,7 +137,7 @@ NumberOfSteps=(maxShift*2)/stepSize;
 rangeVals=(-(NumberOfSteps/2):1:NumberOfSteps/2)'; 
 %store the actual shifts in wavelengths for plotting
 WLshiftVals=-maxShift:stepSize:maxShift;
-
+ShiftedConeExcitation.WLshiftVals=WLshiftVals; %store the wavelength shift values
 
 %calculate the shifted cone spectras for each of the shifts - this is a
 %pretty basic method, literally adds/removes rows from start/end of column
