@@ -50,7 +50,7 @@ for thisInterval= 1:2
         LEDoutput=zeros(dpy.nLEDsTotal,1)';
     end
         
-    
+    keyboard
     
     if (isobject(serialObject))
             sound(sin(linspace(1,400*2*pi,1000))/3,4000); % Do a slightly different beep to indicate a response is required
