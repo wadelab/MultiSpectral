@@ -19,15 +19,15 @@ for thisInterval= 1:2
 
     
     if (thisInterval == signalInterval) % Is this is the interval with the modulation
-        try
-        dpy.contrastLevelTested(dpy.theTrial,1)=stim.stimLMS.scale; %don't save if just the dummy
-        catch
-        end
+        
         % Compute the LED levels we want
         stimOne=stim;
         stimOne.stimLMS.dir=stimOne.stimLMS.dir; % ex lum for now %%%% +(ones(dpy.NumSpec,1)'); %luminance plus target direction
         [stimTarget,dpy]=tetra_led_arduinoConeIsolationLMS(dpy,stimOne.stimLMS);
-        
+        try
+        dpy.contrastLevelTested(dpy.theTrial,1)=stimTarget.scale; %don't save if just the dummy
+        catch
+        end
                
         LEDoutputAmps=round(((stimTarget.dir)*(stimTarget.scale)*(2^(dpy.bitDepth)-1)))';
         LEDoutput=LEDoutputAmps/2;
