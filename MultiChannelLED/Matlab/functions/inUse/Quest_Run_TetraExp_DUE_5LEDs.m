@@ -390,7 +390,7 @@ end
 
 % Set the Question parameters for the staircase - quest wants values in
 % log10(contrast)
-tGuess=log10(tGuess)
+tGuess=log10(tGuess);
 
 tGuessSd=2;
 pThreshold=0.75;
