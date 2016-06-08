@@ -58,7 +58,7 @@ set(theNegPlot,'Color',[0,0,0],'LineWidth',3);
 %set plot properties
 set(gca,'LineWidth',3,'FontName','Arial','FontSize',22,'YTick',[-30,-20,-10,0,10,20,30],...
     'YTickLabel',{'-30','-20','-10','0','10','20','30'},'XLim',[400,720],...
-    'Position',[0.18 0.1443 0.7750 0.7736],'YLim',[-30,30])
+    'Position',[0.18 0.1443 0.7750 0.7736],'YLim',[-30,30],'Color','none')
 theXlabel=xlabel('Wavelength (nm)');
 set(theXlabel,'FontName','Arial','FontSize',24)
 theYlabel=ylabel('Modulatation (% of max range)');
@@ -67,14 +67,24 @@ set(theYlabel,'FontName','Arial','FontSize',24,'Position',[365 0])
 %add line at zero
 zeroLine=line([400,720],[0,0]);
 set(zeroLine,'LineWidth',2,'LineStyle',':','Color',[0 0 0])
-
-%add lines for LED peaks on the plot
+%add lines for LED peaks on the plot - do this first so they are behind mod
 LEDpeaks=[414.7,463.80,503.80,531,638.3]; %LED peaks
 lineColours=[0.4,0,0.5;0,0,0.9;0,0.5,0.2;0,0.9,0;0.9,0,0]; %Colours used in previous LED plots
 for thisLED=1:length(LEDpeaks) %for each LED
     theLEDline=line([LEDpeaks(thisLED),LEDpeaks(thisLED)],[30,-30]); %create the line
     set(theLEDline,'LineWidth',1.5,'LineStyle','--','Color',lineColours(thisLED,:)) %set properties of line
 end
+
+%re-plotting here so in front of the LED lines... can't remember how to
+%remove any background when plotting data
+
+%plot pos modulation
+thePosPlot=plot(WLs,PosMod);
+set(thePosPlot,'Color',[1,0,0],'LineWidth',3)
+hold on
+%plot neg modulation
+theNegPlot=plot(WLs,NegMod);
+set(theNegPlot,'Color',[0,0,0],'LineWidth',3);
 
 %add a legend
 theLeg = legend('Positive','Negative');
