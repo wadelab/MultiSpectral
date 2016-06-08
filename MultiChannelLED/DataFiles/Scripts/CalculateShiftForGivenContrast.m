@@ -38,12 +38,12 @@ end
 %Store the range of wavelength shifts used e.g. -5:0.5:5
 WLrange=TheData.ShiftedConeExcitation.WLshiftVals';
 
-%specify the desired range - using 0.1 so a level will correspond to the
+%specify the desired range - using 0.01 so a level will correspond to the
 %shifts specified in StDev above
 newWLrange=(min(WLrange):0.01:max(WLrange))';
 
-%store the cone contrasts - note that we are using actual calculated
-%values, not the ConeContrastChange in contrast
+%store the cone contrasts - note that we are using actual calculated cone
+%contrast values, not the ConeContrastChange 
 coneContrast=TheData.ShiftedConeExcitation.ConeContrast;
 numCones=size(TheData.ShiftedConeExcitation.ConeContrast,2);
 
@@ -64,9 +64,9 @@ try
 Data.Neg.NewConeContrasts=interp1(Data.Neg.WLrange,Data.Neg.coneContrasts,Data.Neg.newWLrange); %neg
 catch
     disp('Could not run Neg interp, values do not monotonically decrease.  Attempting smaller range.')
-    Data.Neg.WLrange=Data.Neg.WLrange(end-19:end); 
-    Data.Neg.newWLrange=Data.Neg.newWLrange(end-19:end); 
-    Data.Neg.coneContrasts=Data.Neg.coneContrasts(end-19:end);
+    Data.Neg.WLrange=Data.Neg.WLrange(end-((length(Data.Neg.WLrange)/2)-1):end); 
+    Data.Neg.newWLrange=Data.Neg.newWLrange(end-((length(Data.Neg.WLrange)/2)-1):end); 
+    Data.Neg.coneContrasts=Data.Neg.coneContrasts(end-((length(Data.Neg.WLrange)/2)-1):end);
     Data.Neg.NewConeContrasts=interp1(Data.Neg.WLrange,Data.Neg.coneContrasts,Data.Neg.newWLrange); %neg
 end
 
@@ -74,9 +74,9 @@ try
 Data.Pos.NewConeContrasts=interp1(Data.Pos.WLrange,Data.Pos.coneContrasts,Data.Pos.newWLrange); %pos
 catch
     disp('Could not run Pos interp, values do not monotonically increase.  Attempting smaller range.')
-    Data.Pos.WLrange=Data.Pos.WLrange(1:20); 
-    Data.Pos.newWLrange=Data.Pos.newWLrange(1:20); 
-    Data.Pos.coneContrasts=Data.Pos.coneContrasts(1:20);
+    Data.Pos.WLrange=Data.Pos.WLrange(1:(length(Data.Neg.WLrange)/2)); 
+    Data.Pos.newWLrange=Data.Pos.newWLrange(1:(length(Data.Neg.WLrange)/2)); 
+    Data.Pos.coneContrasts=Data.Pos.coneContrasts(1:(length(Data.Neg.WLrange)/2));
 
     Data.Pos.NewConeContrasts=interp1(Data.Pos.WLrange,Data.Pos.coneContrasts,Data.Pos.newWLrange); %pos
 end
