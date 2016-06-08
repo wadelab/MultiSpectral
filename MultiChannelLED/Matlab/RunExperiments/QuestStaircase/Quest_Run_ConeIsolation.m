@@ -29,8 +29,8 @@ dummyTrial(s);
 %set some of the experiment parameters
 dpy.NumSpec=3; %this is the number of assumed cones used to create stim (e.g. LMS, or L Lp M S, etc)
 dpy.LprimePosition=0.5; %set this if running and experiments with Lprime, 0.5 puts the peak of Lp midway between L and M peaks
-theExptID={'M'}; %set the experiment ID(s) you want to test, 
-theFreqs =[2]; %set frequencies to test
+theExptID={'LMS'}; %set the experiment ID(s) you want to test, 
+theFreqs =[2,4,32]; %set frequencies to test
 %if you want to fix the L or M cone peak to a different value than the
 %stockman ones, set it here: either 'dpy.Lpeak' or 'dpy.Mpeak'. It's OK to
 %remove them, the default values will be set to 570.5 and 543 in later
