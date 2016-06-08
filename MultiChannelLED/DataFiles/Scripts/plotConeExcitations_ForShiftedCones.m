@@ -127,7 +127,7 @@ ConeExcitation.ConeContrast=(ConeExcitation.OverallConeExcitation/maxConeEx)*con
 % out plots/data for different conditions
 
 % first we need to specify what level of shift to test
-maxShift=5;%Shift to test either side in nm 
+maxShift=2;%Shift to test either side in nm 
 %calculate the step size of the wavelengths used
 stepSize=WLs(2)-WLs(1); %look at difference between two wavelength values
 
@@ -238,6 +238,7 @@ for thisCone=1:size(coneSpectra,2)
 end %next cone
 
 %set properties of the figure to make it look a bit better :-)
+%maxLevelToPlot=max(max(ShiftedConeExcitation.ShiftFromOriginal)); %find max level to be plotted for Ylim can be set
 maxLevelToPlot=max(max(ShiftedConeExcitation.ConeContrastChange)); %find max level to be plotted for Ylim can be set
 %set axis properties
 set(gca,'FontName','Arial','FontSize',18,'LineWidth',3,'YLim',[0,round(maxLevelToPlot,1)],...
@@ -247,10 +248,10 @@ set(gca,'FontName','Arial','FontSize',18,'LineWidth',3,'YLim',[0,round(maxLevelT
 theXlabel=xlabel('Shift in Peak Wavelength (nm)');
 theYlabel=ylabel('Change in Cone Contrast (%)');
 theLeg=legend(coneLabels);
-set(theXlabel,'FontName','Arial','FontSize',22,'Position',[0 -0.25])
+set(theXlabel,'FontName','Arial','FontSize',22)
 set(theYlabel,'FontName','Arial','FontSize',22)
 posY=get(theYlabel,'Position');
-posY(1)=-(maxShift+1.5);
+posY(1)=-(maxShift+0.6);
 set(theYlabel,'Position',posY)
 set(theLeg,'FontName','Arial','FontSize',22,'Box','off','Location','North')
 
