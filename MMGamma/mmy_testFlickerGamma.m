@@ -270,7 +270,7 @@ Data.LprimePosition=dpy.LprimePosition;
 Data.modulationRateHz=modulationRateHz;
 Data.Repeat=Repeat;
 Data.Date=Date;
-
+ 
 %save out a file containing the contrastThresh, SubID, experimentType, freq and
 %Session num
 
