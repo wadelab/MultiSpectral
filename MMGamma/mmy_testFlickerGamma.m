@@ -1,7 +1,7 @@
 clear all
 close all
 
-addpath(genpath('/Users/wadelab/Github_MultiSpectral/TetraLEDarduino'))
+%addpath(genpath('/Users/wadelab/Github_MultiSpectral/TetraLEDarduino'))
 
 SubID=-1; % Ask the user to enter a Subject ID number
 while(SubID<1)
@@ -11,23 +11,8 @@ while(SubID<1)
     end
 end
 
-modulationRateHz=-1; % Ask the user to enter a valid experiment type probing a particuar direction in LMS space
-while((modulationRateHz<0) || (modulationRateHz>65))
-    modulationRateHzString=input ('Frequency in Hz e.g. 0.5, 1, 2, 4, etc: ','s'); %enter the Hz for exp
-    modulationRateHz=str2num(modulationRateHzString);
-    if(isempty(modulationRateHz))
-        modulationRateHz=-1;
-    end
-end
+modulationRateHz=4;
 
-Repeat=-1; % Ask the user to enter a session number
-while(Repeat<1)
-    RepeatString=input ('Enter the session number for this condition: ','s'); %=2;% 1=L-M, 2=(L+M+S), 3=S cone isolating
-    Repeat=str2num(RepeatString);
-    if(isempty(Repeat))
-        Repeat=-1;
-    end
-end
 SubID=str2num(SubID);
 
 %% connect to arduino
@@ -39,7 +24,7 @@ end
 
 if (CONNECT_TO_ARDUINO)  
 
-    s=serial('/dev/tty.usbmodem5d11');%,'BaudRate',9600);q
+    s=serial('/dev/cu.usbmodem1411');%,'BaudRate',9600);q
     fopen(s);
     disp('*** Connecting to Arduino');
     
@@ -75,8 +60,8 @@ clear LEDspectra
 %the LED calibs, without the column for wavelengths)
 dpy.WLrange=(400:1:720)'; %must use range from 400 to 720 
 dpy.bitDepth=BITDEPTH;
-dpy.noiseLevel=1; %amount of noise to add to intervals - added to the direction of stim, so [1 0 0 0] becomes [1.1 .1 .1 .1]
-dpy.noiseScale=0.06;
+dpy.noiseLevel=0; %amount of noise to add to intervals - added to the direction of stim, so [1 0 0 0] becomes [1.1 .1 .1 .1]
+dpy.noiseScale=0.00;
 spectrumIndex=0;
 for thisLED=LEDsToUse
     spectrumIndex=spectrumIndex+1;
@@ -84,11 +69,10 @@ for thisLED=LEDsToUse
 end
 LEDspectra(LEDspectra<0)=0;
 
-%LEDspectra=LEDspectra-repmat(min(LEDspectra),size(LEDspectra,1),1);
-%sumLED=sum(LEDspectra);
+
 maxLED=max(LEDspectra);
 LEDscale=1./maxLED;
-%LEDscale=[128 128 128 128 128];
+
 
 
 % ********** this isn't currently used anywhere else... should it be?!
@@ -97,8 +81,7 @@ actualLEDScale=LEDscale./max(LEDscale);
 
 dpy.LEDspectra=LEDspectra(:,LEDsToUse); %specify which LEDs to use
 dpy.LEDsToUse=LEDsToUse;
-%dpy.bitDepth=8; % Can be 12 on new arduinos
-%dpy.backLED.dir=double(LEDbaseLevel(LEDsToUse))./max(double(LEDbaseLevel(LEDsToUse)))
+
 dpy.backLED.dir=double(LEDbaseLevel)/double(max(LEDbaseLevel));
 
 dpy.backLED.scale=.5;
@@ -274,20 +257,8 @@ Data.Date=Date;
 %save out a file containing the contrastThresh, SubID, experimentType, freq and
 %Session num
 
-save(sprintf('SubID%d_Cond%s_lPrimePos%.1f_Freq%.1f_Rep%d_%s.mat',...
-    SubID,thisExp,dpy.LprimePosition,modulationRateHz,Repeat,Date),'Data');
-
-%save figure
-savefig(sprintf('SubID%s_Cond%s_Freq%.1f_Rep%d_%s.fig',...
-   SubID,thisExp,modulationRateHz,Repeat,Date));
-fprintf('\nSubject %d data saved\n',SubID);
-fprintf('\n******** End of Experiment ********\n');
-
-TempDataThresh.(thisExp)=contrastThresh;
 
 end
-timeElapsed=toc/60;
-fprintf('Experiment complete in %.3f minutes',timeElapsed);
 
 system('say All conditions complete')
 for thisCond=1:size(Conditions,2)
